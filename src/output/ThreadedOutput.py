@@ -44,4 +44,6 @@ class ThreadedOutput(Output):
         self.thread.interrupt()
         
     def write(self):
-        print self.changes
+        changes = self.changes
+        self.changes = None
+        print changes
