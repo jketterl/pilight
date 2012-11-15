@@ -9,3 +9,4 @@ class Output(object):
         pass
 
 from .ConsoleOutput import ConsoleOutput
+from .ThreadedOutput import ThreadedOutput
