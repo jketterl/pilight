@@ -37,7 +37,7 @@ class ThreadedOutput(Output):
         self.changesLock = Lock()
         
     def setChannel(self, channel, value):
-        self.changesLock.aquire(True)
+        self.changesLock.acquire(True)
         if self.changes is None:
             self.changes = {channel:value}
         else:
@@ -46,7 +46,7 @@ class ThreadedOutput(Output):
         self.thread.interrupt()
         
     def update(self):
-        self.changesLock.aquire(True)
+        self.changesLock.acquire(True)
         changes = self.changes
         self.changes = None
         self.changesLock.release()
