@@ -10,3 +10,5 @@ class Output(object):
 
 from .ConsoleOutput import ConsoleOutput
 from .ThreadedOutput import ThreadedOutput
+from .BufferedOutput import *
+from .LPD8806Output import *

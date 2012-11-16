@@ -19,8 +19,7 @@ class WriterThread(Thread):
             self.event.wait(60)
             if self.event.isSet():
                 self.event.clear()
-            print "writing output to whatever"
-            self.output.write()
+            self.output.update()
     
     def stop(self):
         self.doStop = True
@@ -43,7 +42,10 @@ class ThreadedOutput(Output):
             self.changes[channel] = value
         self.thread.interrupt()
         
-    def write(self):
+    def update(self):
         changes = self.changes
         self.changes = None
-        print changes
+        self.applyChanges(changes)
+        
+    def applyChanges(self, changes):
+        pass
