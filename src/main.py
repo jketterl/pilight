@@ -11,18 +11,20 @@ import random, time
 if __name__ == '__main__':
     universe = Universe()
     universe.setOutput(LPD8806Output(480))
-    fixture = RGBFixture()
-    fixture.mapToChannels({
-        'red' : universe[2],
-        'green' : universe[1],
-        'blue' : universe[0]
-    })
-    
-    fixture.setChannels({'red':10,'green':20,'blue':30});
+
+    fixtures = []
+    for i in range(160):
+        fixture = RGBFixture()
+        fixture.mapToChannels({
+            'red' : universe[i * 3 + 2],
+            'green' : universe[i * 3 +1],
+            'blue' : universe[i * 3]
+        })
+	fixtures.append(fixture)
     
     while True:
+	for fixture in fixtures:
+            fixture.setChannels({'red':random.randint(0, 255),
+                                 'green':random.randint(0, 255),
+                                 'blue':random.randint(0, 255)})
         time.sleep(5)
-        fixture.setChannels({'red':random.randint(0, 255),
-                             'green':random.randint(0, 255),
-                             'blue':random.randint(0, 255)})
-        print "channel values set."
