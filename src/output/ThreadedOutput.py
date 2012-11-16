@@ -5,7 +5,7 @@ Created on 16.11.2012
 '''
 
 from . import Output
-from threading import Thread, Event
+from threading import Thread, Event, Lock
 
 class WriterThread(Thread):
     def __init__(self, output):
@@ -34,17 +34,22 @@ class ThreadedOutput(Output):
         self.thread.start()
         super(ThreadedOutput, self).__init__()
         self.changes = None
+        self.changesLock = Lock()
         
     def setChannel(self, channel, value):
+        self.changesLock.aquire(True)
         if self.changes is None:
             self.changes = {channel:value}
         else:
             self.changes[channel] = value
+        self.changesLock.release()
         self.thread.interrupt()
         
     def update(self):
+        self.changesLock.aquire(True)
         changes = self.changes
         self.changes = None
+        self.changesLock.release()
         self.applyChanges(changes)
         
     def applyChanges(self, changes):
