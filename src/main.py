@@ -10,10 +10,10 @@ import random, time
 
 if __name__ == '__main__':
     universe = Universe()
-    universe.setOutput(LPD8806Output(480))
+    universe.setOutput(LPD8806Output(180))
 
     fixtures = []
-    for i in range(160):
+    for i in range(60):
         fixture = RGBFixture()
         fixture.mapToChannels({
             'red' : universe[i * 3 + 2],
@@ -27,4 +27,4 @@ if __name__ == '__main__':
             fixture.setChannels({'red':random.randint(0, 255),
                                  'green':random.randint(0, 255),
                                  'blue':random.randint(0, 255)})
-        time.sleep(5)
+        time.sleep(1)
