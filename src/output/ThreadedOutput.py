@@ -50,7 +50,7 @@ class ThreadedOutput(Output):
         changes = self.changes
         self.changes = None
         self.changesLock.release()
-        self.applyChanges(changes)
+        if changes is not None: self.applyChanges(changes)
         
     def applyChanges(self, changes):
         pass
