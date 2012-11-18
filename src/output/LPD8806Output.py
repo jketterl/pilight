@@ -16,4 +16,4 @@ class LPD8806Output(BufferedOutput):
         for i in range(len(self.buffer)):
             output[i] = 0x80 | int(round(self.buffer[i] / 2))
         self.spidev.write(output)
-	self.spidev.flush()
+        self.spidev.flush()
