@@ -8,6 +8,7 @@ from fixture import RGBFixture
 from output import Output
 from threading import Thread
 import random, time
+from show.KnightRider import KnightRider
 
 class Snowflake(Thread):
     def __init__(self, device):
@@ -46,20 +47,9 @@ if __name__ == '__main__':
                 time.sleep(.01)
             time.sleep(1)
 
-        previous = fixtures[0]
-        for n in range(15):
-            for i in range(len(fixtures)):
-                previous.setChannels({'red':0,'green':0,'blue':0})
-                previous = fixtures[i]
-                previous.setChannels({'red':255,'blue':255,'green':255})
-                time.sleep(.01)
-
-            for i in range(len(fixtures) - 2, 0, -1):
-                previous.setChannels({'red':0,'green':0,'blue':0})
-                previous = fixtures[i]
-                previous.setChannels({'red':255,'blue':255,'green':255})
-                time.sleep(.01)
-        previous.setChannels({'red':0,'green':0,'blue':0})
+        show = KnightRider(fixtures, {'red':255,'green':0,'blue':0}, {'red':0,'green':0,'blue':0})
+        show.start()
+        show.waitForEnd()
 
         for i in range(200):
             channel = random.randint(0, len(fixtures) - 1)
