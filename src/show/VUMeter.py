@@ -24,6 +24,7 @@ class VUMeter(Show):
         
         while self.doRun:
             l, data = self.sound.read()
+            if l < 0: continue
             vu = (math.log(float(max(audioop.max(data, 2), 1))) - log_lo) / (log_hi - log_lo)
             vu = min(max(int(vu * (len(self.fixtures) + 1)), 0), len(self.fixtures))
             

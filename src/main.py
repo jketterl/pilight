@@ -23,7 +23,7 @@ class Snowflake(Thread):
 
 if __name__ == '__main__':
     universe = Universe()
-    universe.setOutput(Output.factory('WebsocketOutput'))
+    universe.setOutput(Output.factory('LPD8806Output', 180))
 
     fixtures = []
     for i in range(60):
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         fixtures.append(fixture)
     
     while True:
-        show = VUMeter(fixtures)
+        show = VUMeter(fixtures, 'hw:1,0')
         show.start()
         time.sleep(60);
         show.stop()
