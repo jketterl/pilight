@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>LPD8806 LED Strip simulator</title>
+		<style type="text/css">
+			body {
+				background-color:#000;
+				color:#fff;
+			}
+			#simulator div {
+				float:left;
+				width:30px;
+				height:30px;
+				padding:0;
+				margin:0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="simulator"></div>
+		<script type="text/javascript">
+			var el = document.getElementById('simulator');
+			var socket = new WebSocket('ws://localhost:8080/socket');
+			var colorSequence = ['g', 'r', 'b'];
+			var applyChanges = function(channel, value) {
+			    var index = Math.floor(channel / 3);
+			    var color = colorSequence[channel % 3];
+			    while (el.children.length <= index) {
+			        var div = document.createElement('div');
+			        div.colors = {r:0,g:0,b:0}
+			        el.appendChild(div);
+			    }
+			    var div = el.children.item(index);
+			    div.colors[color] = value;
+			    div.style['background-color'] = 'rgb(' + div.colors.r + ',' +  div.colors.g + ',' + div.colors.b + ')';
+			}
+			socket.onmessage = function(message){
+			    var data = JSON.parse(message.data);
+			    for (var channel in data) {
+			        applyChanges(channel, data[channel]);
+			    }
+			}
+		</script>
+	</body>
+</html>

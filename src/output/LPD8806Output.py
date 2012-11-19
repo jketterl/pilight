@@ -4,7 +4,7 @@ Created on 16.11.2012
 @author: jakob
 '''
 
-from . import BufferedOutput
+from .BufferedOutput import BufferedOutput
 
 class LPD8806Output(BufferedOutput):
     def __init__(self, channels, device="/dev/spidev0.0"):

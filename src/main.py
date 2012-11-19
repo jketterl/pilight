@@ -5,7 +5,7 @@ Created on 01.11.2012
 '''
 from universe import Universe
 from fixture import RGBFixture
-from output import LPD8806Output
+from output import Output
 from threading import Thread
 import random, time
 
@@ -21,7 +21,7 @@ class Snowflake(Thread):
 
 if __name__ == '__main__':
     universe = Universe()
-    universe.setOutput(LPD8806Output(180))
+    universe.setOutput(Output.factory('WebsocketOutput'))
 
     fixtures = []
     for i in range(60):
@@ -46,20 +46,24 @@ if __name__ == '__main__':
                 time.sleep(.01)
             time.sleep(1)
 
+        previous = fixtures[0]
         for n in range(15):
             for i in range(len(fixtures)):
-                fixtures[i - 1].setChannels({'red':0,'green':0,'blue':0})
-                fixtures[i].setChannels({'red':255,'blue':255,'green':255})
+                previous.setChannels({'red':0,'green':0,'blue':0})
+                previous = fixtures[i]
+                previous.setChannels({'red':255,'blue':255,'green':255})
                 time.sleep(.01)
 
             for i in range(len(fixtures) - 2, 0, -1):
-                fixtures[i + 1].setChannels({'red':0,'green':0,'blue':0})
-                fixtures[i].setChannels({'red':255,'blue':255,'green':255})
+                previous.setChannels({'red':0,'green':0,'blue':0})
+                previous = fixtures[i]
+                previous.setChannels({'red':255,'blue':255,'green':255})
                 time.sleep(.01)
+        previous.setChannels({'red':0,'green':0,'blue':0})
 
         for i in range(200):
             channel = random.randint(0, len(fixtures) - 1)
             flake = Snowflake(fixtures[channel])
             flake.start()
-            time.sleep(.2)
+            time.sleep(random.random() * .4)
         time.sleep(10)

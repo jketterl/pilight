@@ -4,7 +4,7 @@ Created on 16.11.2012
 @author: jakob
 '''
 
-from . import ThreadedOutput
+from .ThreadedOutput import ThreadedOutput
 
 class BufferedOutput(ThreadedOutput):
     def __init__(self, channels):
