@@ -14,7 +14,7 @@ class Snowflake(Thread):
         self.device = device
         super(Snowflake, self).__init__()
     def run(self):
-	for i in range(255, 0, -8):
+        for i in range(255, 0, -8):
             self.device.setChannels({'red':i,'green':i,'blue':i})
             time.sleep(.05)
         self.device.setChannels({'red':0,'green':0,'blue':0})
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             'green' : universe[i * 3],
             'blue' : universe[i * 3 + 2]
         })
-	fixtures.append(fixture)
+        fixtures.append(fixture)
     
     while True:
         for i in range(10):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 fixture.setChannels({'red':random.randint(0, 255),
                                      'green':random.randint(0, 255),
                                      'blue':random.randint(0, 255)})
-		time.sleep(.01)
+                time.sleep(.01)
             #time.sleep(1)
             for fixture in fixtures:
                 fixture.setChannels({'red':0,'green':0,'blue':0})
