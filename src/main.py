@@ -9,6 +9,7 @@ from output import Output
 from threading import Thread
 import random, time
 from show.KnightRider import KnightRider
+from show.VUMeter import VUMeter
 
 class Snowflake(Thread):
     def __init__(self, device):
@@ -35,6 +36,11 @@ if __name__ == '__main__':
         fixtures.append(fixture)
     
     while True:
+        show = VUMeter(fixtures)
+        show.start()
+        time.sleep(60);
+        show.stop()
+        
         for i in range(10):
             for fixture in fixtures:
                 fixture.setChannels({'red':random.randint(0, 255),
