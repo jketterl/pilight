@@ -18,16 +18,16 @@ class KnightRider(Show):
         previous = self.fixtures[0]
         for n in range(15):
             for i in range(len(self.fixtures)):
-                previous.setChannels({'red':0,'green':0,'blue':0})
+                previous.setChannels(self.lowval)
                 previous = self.fixtures[i]
-                previous.setChannels({'red':255,'blue':255,'green':255})
+                previous.setChannels(self.highval)
                 time.sleep(.01)
 
             for i in range(len(self.fixtures) - 2, 0, -1):
-                previous.setChannels({'red':0,'green':0,'blue':0})
+                previous.setChannels(self.lowval)
                 previous = self.fixtures[i]
-                previous.setChannels({'red':255,'blue':255,'green':255})
+                previous.setChannels(self.highval)
                 time.sleep(.01)
-        previous.setChannels({'red':0,'green':0,'blue':0})
+        previous.setChannels(self.lowval)
         
         self.endEvent.set()
