@@ -30,9 +30,9 @@ class SmoothingThread(threading.Thread):
     def __init__(self, output):
         self.output = output
         self.doRun = True
-        self.current = 0
+        self.current = float(0)
         self.target = 0
-        self.smoothingFactor = 8
+        self.smoothingFactor = float(4)
         super(SmoothingThread, self).__init__()
     def run(self):
         while(self.doRun):
@@ -45,7 +45,7 @@ class SmoothingThread(threading.Thread):
         self.doRun = False
     def set(self, value):
         self.current = value
-        self.output.setValue(value)
+        self.output.setValue(int(round(value)))
 
 class VUOutput(object):
     def __init__(self, fixtures):
@@ -54,6 +54,7 @@ class VUOutput(object):
         yellow = count * .7
         red = count * .95
         self.colorMap = [0] * count
+        self.value = 0
         for i in range(count):
             if (i < yellow):
                 colors = ['green']
@@ -72,6 +73,14 @@ class VUOutput(object):
     
     def setValue(self, value):
         output = []
+        if (value > self.value):
+            for index in range(self.value, value):
+               self.fixtures[index].setChannels(self.colorMap[index])
+        else:
+            for index in range(value, self.value):
+                self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
+
+        '''
         for index in range(len(self.fixtures)):
             if (index < value):
                 output.append(self.colorMap[index])
@@ -79,6 +88,8 @@ class VUOutput(object):
                 output.append({'red':0,'green':0,'blue':0})
         for fixture in self.fixtures:
             fixture.setChannels(output.pop(0))
+        '''
+        self.value = value
 
 class VUMeter(Show):
     def __init__(self, fixtures, card = 'hw:0,0'):
@@ -86,7 +97,7 @@ class VUMeter(Show):
         self.card = card
         super(VUMeter, self).__init__()
     def run(self):
-        lo = 2000
+        lo = 4000
         hi = 32000
         log_lo = math.log(lo)
         log_hi = math.log(hi)
