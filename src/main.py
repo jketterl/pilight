@@ -40,6 +40,7 @@ if __name__ == '__main__':
         show.start()
         time.sleep(60);
         show.stop()
+        show.waitForEnd()
         
         for i in range(10):
             for fixture in fixtures:
