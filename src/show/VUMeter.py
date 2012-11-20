@@ -25,6 +25,27 @@ class AudioReader(threading.Thread):
             self.event.set()
     def stop(self):
         self.doRun = False
+        
+class SmoothingThread(threading.Thread):
+    def __init__(self, output):
+        self.output = output
+        self.doRun = True
+        self.current = 0
+        self.target = 0
+        self.smoothingFactor = 8
+        super(SmoothingThread, self).__init__()
+    def run(self):
+        while(self.doRun):
+            if self.current != self.target:
+                self.set(self.current + (self.target - self.current) / self.smoothingFactor)
+            time.sleep(.02)
+    def update(self, value):
+        self.target = value
+    def stop(self):
+        self.doRun = False
+    def set(self, value):
+        self.current = value
+        self.output.setValue(value)
 
 class VUOutput(object):
     def __init__(self, fixtures):
@@ -43,8 +64,13 @@ class VUOutput(object):
                 
             self.colorMap[i] = dict(zip(colors, [255] * len(colors)))
             
+        self.smoother = SmoothingThread(self)
+        self.smoother.start()
             
     def update(self, value):
+        self.smoother.update(value)
+    
+    def setValue(self, value):
         output = []
         for index in range(len(self.fixtures)):
             if (index < value):
@@ -83,5 +109,6 @@ class VUMeter(Show):
             
             output.update(vu)
 
-        audioReader.stop()            
+        audioReader.stop()
+        output.smoother.stop()
         self.endEvent.set()
