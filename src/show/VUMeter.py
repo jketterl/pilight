@@ -26,6 +26,34 @@ class AudioReader(threading.Thread):
     def stop(self):
         self.doRun = False
 
+class VUOutput(object):
+    def __init__(self, fixtures):
+        self.fixtures = fixtures;
+        count = len(fixtures)
+        yellow = count * .7
+        red = count * .95
+        self.colorMap = [0] * count
+        for i in range(count):
+            if (i < yellow):
+                colors = ['green']
+            elif (i < red):
+                colors = ['green', 'red']
+            else:
+                colors = ['red']
+                
+            self.colorMap[i] = dict(zip(colors, [255] * len(colors)))
+            
+            
+    def update(self, value):
+        output = []
+        for index in range(len(self.fixtures)):
+            if (index < value):
+                output.append(self.colorMap[index])
+            else:
+                output.append({'red':0,'green':0,'blue':0})
+        for fixture in self.fixtures:
+            fixture.setChannels(output.pop(0))
+
 class VUMeter(Show):
     def __init__(self, fixtures, card = 'hw:0,0'):
         self.fixtures = fixtures
@@ -36,6 +64,10 @@ class VUMeter(Show):
         hi = 32000
         log_lo = math.log(lo)
         log_hi = math.log(hi)
+        
+        count = len(self.fixtures)
+        
+        output = VUOutput(self.fixtures)
 
         audioReader = AudioReader(self.card)
         audioReader.start()
@@ -47,23 +79,9 @@ class VUMeter(Show):
                 continue
 
             vu = (math.log(float(max(audioop.max(audioReader.data, 2), 1))) - log_lo) / (log_hi - log_lo)
-            vu = min(max(int(vu * (len(self.fixtures) + 1)), 0), len(self.fixtures))
+            vu = min(max(int(vu * (count + 1)), 0), count)
             
-            for index, fixture in enumerate(self.fixtures):
-                if (index < len(self.fixtures) * .7):
-                    colors = ['green']
-                elif (index < len(self.fixtures) * .95):
-                    colors = ['green', 'red']
-                else:
-                    colors = ['red']
-                    
-                color = {}
-                for c in colors: color[c] = 255
-                
-                if index < vu:
-                    fixture.setChannels(color)
-                else:
-                    fixture.setChannels({'red':0,'green':0,'blue':0})
+            output.update(vu)
 
         audioReader.stop()            
         self.endEvent.set()
