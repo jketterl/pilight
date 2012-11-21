@@ -4,7 +4,8 @@ Created on Nov 21, 2012
 @author: jketterl
 '''
 
-import threading, time
+from audio.AudioReader import AudioReader
+import threading, numpy, struct
 
 class BeatDetector(threading.Thread):
     def __init__(self, delegate):
@@ -13,10 +14,20 @@ class BeatDetector(threading.Thread):
         self.BPM = 130
         super(BeatDetector, self).__init__()
     def run(self):
+        audioreader = AudioReader()
+        audioreader.start()
+        
         while self.doRun:
-            self.delegate.onBeat()
-            time.sleep(1.0 / self.BPM * 60)
-            pass
+            audioreader.event.wait()
+            audioreader.event.clear()
+            
+            format = '<%dH' % (audioreader.l * 2)
+            data = numpy.average(numpy.array(struct.unpack(format, audioreader.data), dtype='h'))
+            
+            powers = numpy.power(data, 2)
+            print powers
+            
+        audioreader.stop()
     def stop(self):
         self.doRun = False
 
