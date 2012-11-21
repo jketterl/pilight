@@ -54,23 +54,12 @@ class VUOutput(object):
         self.smoother.update(value)
     
     def setValue(self, value):
-        output = []
         if (value > self.value):
             for index in range(self.value, value):
-               self.fixtures[index].setChannels(self.colorMap[index])
+                self.fixtures[index].setChannels(self.colorMap[index])
         else:
             for index in range(value, self.value):
                 self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
-
-        '''
-        for index in range(len(self.fixtures)):
-            if (index < value):
-                output.append(self.colorMap[index])
-            else:
-                output.append({'red':0,'green':0,'blue':0})
-        for fixture in self.fixtures:
-            fixture.setChannels(output.pop(0))
-        '''
         self.value = value
 
 class VUMeter(Show):
