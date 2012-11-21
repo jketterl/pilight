@@ -27,6 +27,7 @@ class BPM(Show, BeatDelegate):
                 if (index >= len(self.fixtures)): index = 0
             self.fixtures[index].setChannels({'blue':255})
             self.event.clear()
+        self.fixtures[index].setChannels({'blue':0})
         self.endEvent.set()
     def onBeat(self):
         self.event.set()
