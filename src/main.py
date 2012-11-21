@@ -10,6 +10,7 @@ from threading import Thread
 import random, time
 from show.KnightRider import KnightRider
 from show.VUMeter import VUMeter
+from show.BPM import BPM
 
 class Snowflake(Thread):
     def __init__(self, device):
@@ -36,9 +37,15 @@ if __name__ == '__main__':
         fixtures.append(fixture)
     
     while True:
+        show = BPM(fixtures)
+        show.start()
+        time.sleep(60)
+        show.stop()
+        show.waitForEnd()
+        
         show = VUMeter(fixtures, 'hw:1,0')
         show.start()
-        time.sleep(60);
+        time.sleep(60)
         show.stop()
         show.waitForEnd()
         
