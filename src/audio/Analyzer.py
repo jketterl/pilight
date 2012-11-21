@@ -4,9 +4,8 @@ Created on Nov 20, 2012
 @author: jketterl
 '''
 
-from . import Show
-from .VUMeter import AudioReader
+from . import AudioReader
 
-class Analyzer(Show):
+class Analyzer(object):
     def run(self):
         pass
