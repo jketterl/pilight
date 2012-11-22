@@ -24,8 +24,8 @@ class BeatDetector(threading.Thread):
             audioreader.event.wait()
             audioreader.event.clear()
             
-            form = '<%dH' % (audioreader.l * 2)
-            data = numpy.array(struct.unpack(form, audioreader.data), dtype='h')
+            form = '<%dh' % (audioreader.l * 2)
+            data = struct.unpack(form, audioreader.data)
             
             powers = numpy.power(data, 2)
             powers = numpy.average(powers)
