@@ -20,8 +20,10 @@ class AudioReader(threading.Thread):
         super(AudioReader, self).__init__()
     def run(self):
         while self.doRun:
-            self.l, self.data = self.sound.read()
-            if self.l < 0: continue
+            l, data = self.sound.read()
+            if l < 0: continue
+            self.l = l
+            self.data = data
             self.event.set()
     def stop(self):
         self.doRun = False
