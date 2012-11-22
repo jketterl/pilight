@@ -77,8 +77,8 @@ class VUMeter(Show):
         
         output = VUOutput(self.fixtures)
 
-        audioReader = AudioReader(self.card)
-        audioReader.start()
+        audioReader = AudioReader.instance(self.card)
+        #audioReader.start()
         
         while self.doRun:
             audioReader.event.wait()
@@ -89,6 +89,6 @@ class VUMeter(Show):
             
             output.update(vu)
 
-        audioReader.stop()
+        #audioReader.stop()
         output.smoother.stop()
         self.endEvent.set()

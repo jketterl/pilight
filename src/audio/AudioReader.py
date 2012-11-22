@@ -7,6 +7,13 @@ Created on Nov 21, 2012
 import alsaaudio, threading
 
 class AudioReader(threading.Thread):
+    _instances = {}
+    @staticmethod
+    def instance(card="hw:0,0"):
+        if not card in AudioReader._instances:
+            AudioReader._instances[card] = AudioReader(card)
+            AudioReader._instances[card].start()
+        return AudioReader._instances[card]
     def __init__(self, card='hw:0,0'):
         self.sound = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL, card)
         self.sound.setformat(alsaaudio.PCM_FORMAT_S16_LE)

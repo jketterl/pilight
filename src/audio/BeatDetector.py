@@ -14,20 +14,20 @@ class BeatDetector(threading.Thread):
         self.BPM = 130
         super(BeatDetector, self).__init__()
     def run(self):
-        audioreader = AudioReader()
-        audioreader.start()
+        audioreader = AudioReader.instance()
+        #audioreader.start()
         
         while self.doRun:
             audioreader.event.wait()
             audioreader.event.clear()
             
-            format = '<%dH' % (audioreader.l * 2)
-            data = numpy.average(numpy.array(struct.unpack(format, audioreader.data), dtype='h'))
+            form = '<%dH' % (audioreader.l * 2)
+            data = numpy.array(struct.unpack(form, audioreader.data), dtype='h')
             
-            powers = numpy.power(data, 2)
+            powers = numpy.average(numpy.power(data, 2))
             print powers
             
-        audioreader.stop()
+        #audioreader.stop()
     def stop(self):
         self.doRun = False
 
