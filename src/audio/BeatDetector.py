@@ -17,6 +17,9 @@ class BeatDetector(threading.Thread):
         audioreader = AudioReader.instance()
         #audioreader.start()
         
+        backlog = []
+        beat = False
+        
         while self.doRun:
             audioreader.event.wait()
             audioreader.event.clear()
@@ -24,9 +27,18 @@ class BeatDetector(threading.Thread):
             form = '<%dH' % (audioreader.l * 2)
             data = numpy.array(struct.unpack(form, audioreader.data), dtype='h')
             
-            powers = numpy.average(numpy.power(data, 2))
-            print powers
+            powers = numpy.power(data, 2)
+            powers = numpy.average(powers)
+            if powers < 0: continue
             
+            backlog.append(powers)
+            while len(backlog) > 50: backlog.pop(0)
+
+            if powers > numpy.average(backlog) * 1.3 and not beat:
+                self.delegate.onBeat()
+                beat = True
+            else:
+                beat = False
         #audioreader.stop()
     def stop(self):
         self.doRun = False
