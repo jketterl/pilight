@@ -8,9 +8,6 @@ from fixture import RGBFixture
 from output import Output
 from threading import Thread
 import random, time
-from show.KnightRider import KnightRider
-from show.VUMeter import VUMeter
-from show.BPM import BPM
 from lirc import *
 
 class ShowRunner(object):
@@ -33,37 +30,44 @@ class ShowRunner(object):
         self.currentShow = None
 
 class LircListener(LircDelegate):
-    _showMappings = {
-        '1': {
+    _showMappings = [
+        {
+            'keys':['1'],
             'show':'VUMeter',
             'args':[
                 'hw:1,0'
             ]
         },
-        '2': {
+        {
+            'keys':['2'],
             'show':'KnightRider',
             'args':[
                 {'red':255, 'green':0, 'blue':0},
                 {'red':0,   'green':0, 'blue':0}
             ]
         },
-        '3': {
+        {
+            'keys':['3'],
             'show':'BPM'
         }
-    }
+    ]
     def __init__(self, showRunner):
         self.showRunner = showRunner;
+        self.keyMap = {}
+        for mapping in LircListener._showMappings:
+            for key in mapping['keys']:
+                self.keyMap[key] = mapping
         super(LircListener, self).__init__()
     def onKey(self, key, remote):
-        if key in LircListener._showMappings:
-            config = LircListener._showMappings[key]
+        if key in self.keyMap:
+            config = self.keyMap[key]
             args = []
             if 'args' in config: args = config['args'][:]
             
             # always pass a list of fixtures as the first parameter
             args.insert(0, fixtures)
             self.showRunner.startShow(config['show'], *tuple(args))
-        elif key == 'stop':
+        elif key == 'stop' or key == 'standby':
             self.showRunner.stopCurrentShow()
 
 class Snowflake(Thread):

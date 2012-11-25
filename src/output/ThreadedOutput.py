@@ -33,24 +33,21 @@ class ThreadedOutput(Output):
         self.thread = WriterThread(self)
         self.thread.start()
         super(ThreadedOutput, self).__init__()
-        self.changes = None
+        self.changes = {}
         self.changesLock = Lock()
         
     def setChannel(self, channel, value):
         self.changesLock.acquire(True)
-        if self.changes is None:
-            self.changes = {channel:value}
-        else:
-            self.changes[channel] = value
+        self.changes[channel] = value
         self.changesLock.release()
         self.thread.interrupt()
         
     def update(self):
         self.changesLock.acquire(True)
         changes = self.changes
-        self.changes = None
+        self.changes = {}
         self.changesLock.release()
-        if changes is not None: self.applyChanges(changes)
+        self.applyChanges(changes)
         
     def applyChanges(self, changes):
         pass
