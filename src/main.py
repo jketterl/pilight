@@ -53,6 +53,10 @@ class LircListener(LircDelegate):
         {
             'keys':['4'],
             'show':'Snow'
+        },
+        {
+            'keys':['5'],
+            'show':'ColorFader'
         }
     ]
     def __init__(self, showRunner):
