@@ -16,7 +16,7 @@ class WriterThread(Thread):
     
     def run(self):
         while not self.doStop:
-            self.event.wait(60)
+            self.event.wait(10)
             if self.event.isSet():
                 self.event.clear()
             self.output.update()
