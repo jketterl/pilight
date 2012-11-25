@@ -69,6 +69,8 @@ class LircListener(LircDelegate):
             self.showRunner.startShow(config['show'], *tuple(args))
         elif key == 'stop' or key == 'standby':
             self.showRunner.stopCurrentShow()
+            for fixture in fixtures:
+                fixture.setChannels({'red':0,'green':0,'blue':0})
 
 class Snowflake(Thread):
     def __init__(self, device):
