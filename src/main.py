@@ -11,6 +11,34 @@ import random, time
 from show.KnightRider import KnightRider
 from show.VUMeter import VUMeter
 from show.BPM import BPM
+from lirc import *
+
+class ShowRunner(object):
+    def __init__(self):
+        self.currentShow = None
+        super(ShowRunner, self).__init__()
+    def startShow(self, showClass, *args, **kwargs):
+        self.stopCurrentShow()
+        print 'OMG, starting show %s' % showClass
+
+        mod = __import__("show.%s" % showClass, fromlist=[showClass])
+        cls = getattr(mod, showClass)
+        self.currentShow = cls(*args, **kwargs)
+        self.currentShow.start()
+    def stopCurrentShow(self):
+        if self.currentShow is None: return
+        self.currentShow.stop()
+        self.currentShow.waitForEnd()
+
+class LircListener(LircDelegate):
+    def __init__(self, showRunner):
+        self.showRunner = showRunner;
+        super(LircListener, self).__init__()
+    def onKey(self, key, remote):
+        if key == '1':
+            self.showRunner.startShow('VUMeter', fixtures, 'hw:1,0')
+        elif key == 'stop':
+            self.showRunner.stopCurrentShow()
 
 class Snowflake(Thread):
     def __init__(self, device):
@@ -36,6 +64,9 @@ if __name__ == '__main__':
         })
         fixtures.append(fixture)
     
+    showRunner = ShowRunner()
+    lirc = LircClient(LircListener(showRunner))
+
     while True:
         show = BPM(fixtures)
         show.start()

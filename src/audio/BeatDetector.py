@@ -6,6 +6,7 @@ Created on Nov 21, 2012
 
 from audio.AudioReader import AudioReader
 import threading, numpy, struct
+import time
 
 class Band(object):
     def __init__(self, number):
@@ -13,7 +14,7 @@ class Band(object):
         self.backlog = []
         self.beat = False
     def update(self, data):
-        powers = numpy.average(numpy.power(data, 2))
+        powers = numpy.average(data)
         self.backlog.append(powers)
         while len(self.backlog) > 50: self.backlog.pop(0)
         if powers > numpy.average(self.backlog) * 1.3 and not self.beat:
@@ -31,13 +32,13 @@ class BeatDetector(threading.Thread):
         self.BPM = 130
         super(BeatDetector, self).__init__()
     def run(self):
-        audioreader = AudioReader.instance()
+        audioreader = AudioReader.instance('hw:1,0')
         #audioreader.start()
         
         beat = False
         
         bands = []
-        for i in range(64):
+        for i in range(8):
             bands.append(Band(i))
         
         while self.doRun:
@@ -47,21 +48,24 @@ class BeatDetector(threading.Thread):
             form = '<%dh' % (audioreader.l * 2)
             data = struct.unpack(form, audioreader.data)
             
-            #start = time.time()
+            starttime = time.time()
             fft = numpy.abs(numpy.fft.fft(data))
+            #print 'fft time is: ' + str(time.time() - starttime)
+
             fft = fft[0:len(fft)/2]
             ratio = float(len(fft)) / len(bands)
+            start = 0
             for index, band in enumerate(bands):
-                band.update(fft[int(index * ratio):int((index + 1) * ratio)])
+                end = start + ratio
+                band.update(fft[int(start):int(end)])
+                start = end
             
-            #elapsed = time.time() - start
-            #print 'fft time is: ' + str(elapsed)
-            
+            #print 'fft time is: ' + str(time.time() - starttime)
             count = 0
             for band in bands:
                 if band.hasBeat(): count += 1
                 
-            if count > 32 and not beat:
+            if count > 4 and not beat:
                 self.delegate.onBeat()
                 beat = True
             elif beat:

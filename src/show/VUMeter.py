@@ -91,4 +91,5 @@ class VUMeter(Show):
 
         #audioReader.stop()
         output.smoother.stop()
+        output.setValue(0)
         self.endEvent.set()
