@@ -64,9 +64,8 @@ class VUOutput(object):
 
 class VUMeter(Show):
     def __init__(self, fixtures, card = 'hw:0,0'):
-        self.fixtures = fixtures
         self.card = card
-        super(VUMeter, self).__init__()
+        super(VUMeter, self).__init__(fixtures)
     def run(self):
         lo = 4000
         hi = 32000

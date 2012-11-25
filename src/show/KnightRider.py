@@ -9,10 +9,9 @@ import time
 
 class KnightRider(Show):
     def __init__(self, fixtures, highval, lowval):
-        self.fixtures = fixtures
         self.highval = highval
         self.lowval = lowval
-        super(KnightRider, self).__init__();
+        super(KnightRider, self).__init__(fixtures);
         
     def run(self):
         previous = self.fixtures[0]

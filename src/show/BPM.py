@@ -11,8 +11,7 @@ import threading
 class BPM(Show, BeatDelegate):
     def __init__(self, fixtures):
         self.event = threading.Event()
-        self.fixtures = fixtures
-        super(BPM, self).__init__()
+        super(BPM, self).__init__(fixtures)
     def run(self):
         detector = BeatDetector(self)
         detector.start()
