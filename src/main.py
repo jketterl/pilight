@@ -49,6 +49,10 @@ class LircListener(LircDelegate):
         {
             'keys':['3'],
             'show':'BPM'
+        },
+        {
+            'keys':['4'],
+            'show':'Snow'
         }
     ]
     def __init__(self, showRunner):
@@ -71,16 +75,6 @@ class LircListener(LircDelegate):
             self.showRunner.stopCurrentShow()
             for fixture in fixtures:
                 fixture.setChannels({'red':0,'green':0,'blue':0})
-
-class Snowflake(Thread):
-    def __init__(self, device):
-        self.device = device
-        super(Snowflake, self).__init__()
-    def run(self):
-        for i in range(255, 0, -8):
-            self.device.setChannels({'red':i,'green':i,'blue':i})
-            time.sleep(.05)
-        self.device.setChannels({'red':0,'green':0,'blue':0})
 
 if __name__ == '__main__':
     universe = Universe()
@@ -137,11 +131,4 @@ if __name__ == '__main__':
         time.sleep(15)
         show.stop()
         show.waitForEnd()
-
-        for i in range(200):
-            channel = random.randint(0, len(fixtures) - 1)
-            flake = Snowflake(fixtures[channel])
-            flake.start()
-            time.sleep(random.random() * .4)
-        time.sleep(10)
         '''
