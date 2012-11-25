@@ -24,4 +24,6 @@ class LircClient(threading.Thread):
             match = regex.match(message)
             if match is None: continue
 
+            if match.group(2) != '00': continue
+
             self.delegate.onKey(match.group(3), match.group(2))

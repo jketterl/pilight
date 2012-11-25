@@ -30,6 +30,7 @@ class ShowRunner(object):
         print 'stopping current show'
         self.currentShow.stop()
         self.currentShow.waitForEnd()
+        self.currentShow = None
 
 class LircListener(LircDelegate):
     _showMappings = {
@@ -45,6 +46,9 @@ class LircListener(LircDelegate):
                 {'red':255, 'green':0, 'blue':0},
                 {'red':0,   'green':0, 'blue':0}
             ]
+        },
+        '3': {
+            'show':'BPM'
         }
     }
     def __init__(self, showRunner):
