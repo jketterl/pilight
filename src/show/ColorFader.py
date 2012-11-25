@@ -2,7 +2,7 @@ from . import Show
 import time, threading
 
 class Fader(threading.Thread):
-    def __init__(self, pattern, callback, interval = 41):
+    def __init__(self, pattern, callback, interval = 50.7):
         self.pattern = pattern
         self.doRun = True
         self.event = threading.Event()
@@ -23,6 +23,10 @@ class Fader(threading.Thread):
                 if not key in target: target[key] = origin[key]
                 deltas[key] = target[key] - origin[key]
 
+            a = deltas.values()
+            maxDelta = max(abs(min(a)), abs(max(a)))
+            sleep = max(self.interval / maxDelta, .1)
+
             start = time.time()
             end = start + self.interval
 
@@ -32,7 +36,7 @@ class Fader(threading.Thread):
                 for key in deltas:
                     current[key] = int(round(origin[key] + deltas[key] * ratio))
                 self.setColor(current)
-                time.sleep(.1)
+                time.sleep(sleep)
 
             self.setColor(target)
             self.event.wait(1)
