@@ -19,7 +19,7 @@ class ShowRunner(object):
         super(ShowRunner, self).__init__()
     def startShow(self, showClass, *args, **kwargs):
         self.stopCurrentShow()
-        print 'OMG, starting show %s' % showClass
+        print 'starting show %s' % showClass
 
         mod = __import__("show.%s" % showClass, fromlist=[showClass])
         cls = getattr(mod, showClass)
@@ -27,16 +27,38 @@ class ShowRunner(object):
         self.currentShow.start()
     def stopCurrentShow(self):
         if self.currentShow is None: return
+        print 'stopping current show'
         self.currentShow.stop()
         self.currentShow.waitForEnd()
 
 class LircListener(LircDelegate):
+    _showMappings = {
+        '1': {
+            'show':'VUMeter',
+            'args':[
+                'hw:1,0'
+            ]
+        },
+        '2': {
+            'show':'KnightRider',
+            'args':[
+                {'red':255, 'green':0, 'blue':0},
+                {'red':0,   'green':0, 'blue':0}
+            ]
+        }
+    }
     def __init__(self, showRunner):
         self.showRunner = showRunner;
         super(LircListener, self).__init__()
     def onKey(self, key, remote):
-        if key == '1':
-            self.showRunner.startShow('VUMeter', fixtures, 'hw:1,0')
+        if key in LircListener._showMappings:
+            config = LircListener._showMappings[key]
+            args = []
+            if 'args' in config: args = config['args'][:]
+            
+            # always pass a list of fixtures as the first parameter
+            args.insert(0, fixtures)
+            self.showRunner.startShow(config['show'], *tuple(args))
         elif key == 'stop':
             self.showRunner.stopCurrentShow()
 
@@ -67,7 +89,15 @@ if __name__ == '__main__':
     showRunner = ShowRunner()
     lirc = LircClient(LircListener(showRunner))
 
-    while True:
+    run = True
+    while run:
+        try:
+            time.sleep(10)
+        except (KeyboardInterrupt):
+            showRunner.stopCurrentShow()
+            run = False
+
+        '''
         show = BPM(fixtures)
         show.start()
         time.sleep(60)
@@ -94,6 +124,8 @@ if __name__ == '__main__':
 
         show = KnightRider(fixtures, {'red':255,'green':0,'blue':0}, {'red':0,'green':0,'blue':0})
         show.start()
+        time.sleep(15)
+        show.stop()
         show.waitForEnd()
 
         for i in range(200):
@@ -102,3 +134,4 @@ if __name__ == '__main__':
             flake.start()
             time.sleep(random.random() * .4)
         time.sleep(10)
+        '''

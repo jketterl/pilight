@@ -16,7 +16,7 @@ class KnightRider(Show):
         
     def run(self):
         previous = self.fixtures[0]
-        for n in range(15):
+        while self.doRun:
             for i in range(len(self.fixtures)):
                 previous.setChannels(self.lowval)
                 previous = self.fixtures[i]
