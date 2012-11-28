@@ -4,6 +4,7 @@ Created on 01.11.2012
 @author: jakob
 '''
 from universe import Universe
+from filter import AlphaFilter
 from fixture import RGBFixture
 from output import Output
 from threading import Thread
@@ -82,6 +83,7 @@ class LircListener(LircDelegate):
 
 if __name__ == '__main__':
     universe = Universe()
+    universe.addFilter(AlphaFilter())
     universe.setOutput(Output.factory('LPD8806Output', 180))
 
     fixtures = []
