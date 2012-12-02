@@ -96,6 +96,19 @@ if __name__ == '__main__':
         })
         fixtures.append(fixture)
     
+    universe = Universe()
+    universe.addFilter(AlphaFilter())
+    universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'));
+
+    for i in range(4):
+        fixture = RGBFixture()
+        fixture.mapToChannels({
+            'red' : universe[i * 3 + 1],
+            'green' : universe[i * 3],
+            'blue' : universe[i * 3 + 2]
+        })
+        fixtures.append(fixture)
+
     showRunner = ShowRunner()
     lirc = LircClient(LircListener(showRunner))
 
