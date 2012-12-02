@@ -1,4 +1,5 @@
 from .BufferedOutput import BufferedOutput
+from artnet.packet import *
 
 class ArtnetOutput(BufferedOutput):
     def __init__(self, target):

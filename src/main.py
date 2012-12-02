@@ -3,6 +3,10 @@ Created on 01.11.2012
 
 @author: jakob
 '''
+
+import sys
+sys.path.append('../vendors/python-artnet/src/')
+
 from universe import Universe
 from filter import AlphaFilter
 from fixture import RGBFixture
