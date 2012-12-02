@@ -1,0 +1,3 @@
+[submodule "vendors/python-artnet"]
+	path = vendors/python-artnet
+	url = git@github.com:jketterl/pilight.git
