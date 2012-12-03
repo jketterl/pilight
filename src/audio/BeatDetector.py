@@ -6,7 +6,8 @@ Created on Nov 21, 2012
 
 from audio.AudioReader import AudioReader
 import threading, numpy, struct
-import time
+#import time
+import math
 
 class Band(object):
     def __init__(self, number):
@@ -48,15 +49,15 @@ class BeatDetector(threading.Thread):
             form = '<%dh' % (audioreader.l * 2)
             data = struct.unpack(form, audioreader.data)
             
-            starttime = time.time()
+            #starttime = time.time()
             fft = numpy.abs(numpy.fft.fft(data))
-            #print 'fft time is: ' + str(time.time() - starttime)
 
             fft = fft[0:len(fft)/2]
-            ratio = float(len(fft)) / len(bands)
+            ratio = math.log(len(fft), 2) / len(bands)
+            
             start = 0
             for index, band in enumerate(bands):
-                end = start + ratio
+                end = math.pow(2, (index + 1) * ratio)
                 band.update(fft[int(start):int(end)])
                 start = end
             
@@ -65,7 +66,7 @@ class BeatDetector(threading.Thread):
             for band in bands:
                 if band.hasBeat(): count += 1
                 
-            if count > 4 and not beat:
+            if count > len(bands) / 2 and not beat:
                 self.delegate.onBeat()
                 beat = True
             elif beat:
