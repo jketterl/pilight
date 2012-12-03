@@ -1,9 +1,15 @@
 from .BufferedOutput import BufferedOutput
 from artnet.packet import *
+import socket
 
 class ArtnetOutput(BufferedOutput):
     def __init__(self, target):
         self.target = target
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
+        self.socket.connect((target, 6454))
         super(ArtnetOutput, self).__init__(256)
     def write(self):
-        print self.buffer
+        packet = DmxPacket()
+        for i, value in enumerate(self.buffer):
+            packet[i] = value
+        self.socket.send(packet.encode())
