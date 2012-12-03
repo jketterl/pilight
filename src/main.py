@@ -6,6 +6,7 @@ Created on 01.11.2012
 
 import sys
 sys.path.append('../vendors/python-artnet/src/')
+sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
 
 from universe import Universe
 from filter import AlphaFilter
