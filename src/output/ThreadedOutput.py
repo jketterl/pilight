@@ -36,7 +36,7 @@ class ThreadedOutput(Output):
         self.changes = {}
         self.changesLock = Lock()
         
-    def setChannel(self, channel, value):
+    def _setChannelValue(self, channel, value):
         self.changesLock.acquire(True)
         self.changes[channel] = value
         self.changesLock.release()

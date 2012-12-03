@@ -87,8 +87,9 @@ class LircListener(LircDelegate):
 
 if __name__ == '__main__':
     universe = Universe()
-    universe.addFilter(AlphaFilter())
-    universe.setOutput(Output.factory('LPD8806Output', 180))
+    output = Output.factory('LPD8806Output', 180)
+    output.addFilter(AlphaFilter())
+    universe.setOutput(output)
 
     fixtures = []
     for i in range(60):
@@ -101,7 +102,6 @@ if __name__ == '__main__':
         fixtures.append(fixture)
     
     universe = Universe()
-    universe.addFilter(AlphaFilter())
     universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'));
 
     for i in range(4):
