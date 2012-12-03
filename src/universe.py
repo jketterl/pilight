@@ -20,6 +20,9 @@ class Universe(object):
             
     def __getitem__(self, index):
         return self.channels[index]
+
+    def __len__(self):
+        return len(self.channels)
     
     def onValueChange(self, source, value):
         for filter in self.filters:
