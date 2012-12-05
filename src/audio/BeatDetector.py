@@ -18,7 +18,13 @@ class Band(object):
         powers = numpy.average(data)
         self.backlog.append(powers)
         while len(self.backlog) > 50: self.backlog.pop(0)
-        if powers > numpy.average(self.backlog) * 1.3 and not self.beat:
+        average = numpy.average(self.backlog)
+        v = 0.0
+        for entry in self.backlog:
+            v += entry
+        v = (v / (len(self.backlog) * 32768))
+        c = (-0.0025714 * v) + 1.5142857
+        if powers > average * c and not self.beat:
             #print '%d: BEAT' % self.number
             self.beat = True
         elif self.beat:
