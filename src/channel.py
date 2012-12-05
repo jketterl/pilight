@@ -15,6 +15,7 @@ class Channel(object):
         self.listeners.remove(listener)
         
     def setValue(self, value):
+        if self.value == value: return
         self.value = value
         for listener in self.listeners:
             listener.onValueChange(self, value)
