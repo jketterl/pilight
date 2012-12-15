@@ -81,7 +81,6 @@ class VUMeter(Show):
         
         while self.doRun:
             audioReader.event.wait()
-            audioReader.event.clear()
 
             vu = (math.log(float(max(audioop.max(audioReader.data, 2), 1))) - log_lo) / (log_hi - log_lo)
             vu = min(max(int(vu * (count + 1)), 0), count)

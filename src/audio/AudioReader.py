@@ -32,5 +32,6 @@ class AudioReader(threading.Thread):
             self.l = l
             self.data = data
             self.event.set()
+            self.event.clear()
     def stop(self):
         self.doRun = False

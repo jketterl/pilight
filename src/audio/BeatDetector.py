@@ -50,7 +50,6 @@ class BeatDetector(threading.Thread):
         
         while self.doRun:
             audioreader.event.wait()
-            audioreader.event.clear()
             
             form = '<%dh' % (audioreader.l * 2)
             data = struct.unpack(form, audioreader.data)

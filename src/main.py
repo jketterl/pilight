@@ -67,6 +67,10 @@ class LircListener(LircDelegate):
         {
             'keys':['6'],
             'show':'ColorWheel'
+        },
+        {
+            'keys':['7'],
+            'show':'FFT'
         }
     ]
     def __init__(self, showRunner):
