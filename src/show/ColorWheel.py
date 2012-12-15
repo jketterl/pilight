@@ -25,4 +25,6 @@ class ColorWheel(Show):
                 self.fixtures[i].setChannels(self.wheel[position]);
             offset = (offset + 1) % self.wheelCount
             time.sleep(.1)
+        for i in range(self.count):
+            self.fixtures[i].setChannels({'red':0,'green':0,'blue':0})
         self.endEvent.set()
