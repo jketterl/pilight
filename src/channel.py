@@ -19,3 +19,6 @@ class Channel(object):
         self.value = value
         for listener in self.listeners:
             listener.onValueChange(self, value)
+            
+    def getValue(self):
+        return self.value
