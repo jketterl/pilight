@@ -17,10 +17,10 @@ class SnowDecayThread(threading.Thread):
 
 class Snow(Show):
     def run(self):
+        self.lock = threading.Lock()
+        self.flakes = {}
         decayer = SnowDecayThread(self)
         decayer.start()
-        self.flakes = {}
-        self.lock = threading.Lock()
 
         while(self.doRun):
             self.lock.acquire()
