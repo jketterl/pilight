@@ -15,6 +15,7 @@ from output import Output
 from threading import Thread
 import random, time
 from lirc import *
+from output.WebsocketOutput import WebsocketListener
 
 class ShowRunner(object):
     def __init__(self):
@@ -34,6 +35,12 @@ class ShowRunner(object):
         self.currentShow.stop()
         self.currentShow.waitForEnd()
         self.currentShow = None
+        
+class WsListener(WebsocketListener):
+    def __init__(self, lirc):
+        self.lirc = lirc
+    def receive(self, message):
+        self.lirc.onKey(message, None)
 
 class LircListener(LircDelegate):
     _showMappings = [
@@ -97,17 +104,14 @@ class LircListener(LircDelegate):
 if __name__ == '__main__':
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
+    #output = Output.factory('WebsocketOutput')
     output.addFilter(AlphaFilter())
     universe.setOutput(output)
 
     fixtures = []
     for i in range(60):
         fixture = RGBFixture()
-        fixture.mapToChannels({
-            'red' : universe[i * 3 + 1],
-            'green' : universe[i * 3],
-            'blue' : universe[i * 3 + 2]
-        })
+        fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
     
     universe = Universe()
@@ -115,15 +119,14 @@ if __name__ == '__main__':
 
     for i in range(4):
         fixture = RGBFixture()
-        fixture.mapToChannels({
-            'red' : universe[i * 3 + 1],
-            'green' : universe[i * 3],
-            'blue' : universe[i * 3 + 2]
-        })
+        fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
 
     showRunner = ShowRunner()
-    lirc = LircClient(LircListener(showRunner))
+    lircListener = LircListener(showRunner)
+
+    lirc = LircClient(lircListener)
+    #output.addListener(WsListener(lircListener))
 
     run = True
     while run:
@@ -132,35 +135,3 @@ if __name__ == '__main__':
         except (KeyboardInterrupt):
             showRunner.stopCurrentShow()
             run = False
-
-        '''
-        show = BPM(fixtures)
-        show.start()
-        time.sleep(60)
-        show.stop()
-        show.waitForEnd()
-        
-        show = VUMeter(fixtures, 'hw:1,0')
-        show.start()
-        time.sleep(60)
-        show.stop()
-        show.waitForEnd()
-        
-        for i in range(10):
-            for fixture in fixtures:
-                fixture.setChannels({'red':random.randint(0, 255),
-                                     'green':random.randint(0, 255),
-                                     'blue':random.randint(0, 255)})
-                time.sleep(.01)
-            #time.sleep(1)
-            for fixture in fixtures:
-                fixture.setChannels({'red':0,'green':0,'blue':0})
-                time.sleep(.01)
-            time.sleep(1)
-
-        show = KnightRider(fixtures, {'red':255,'green':0,'blue':0}, {'red':0,'green':0,'blue':0})
-        show.start()
-        time.sleep(15)
-        show.stop()
-        show.waitForEnd()
-        '''
