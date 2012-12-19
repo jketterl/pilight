@@ -14,14 +14,16 @@ from fixture import RGBFixture
 from output import Output
 import time
 from lirc import *
-from output.WebsocketOutput import WebsocketListener
+#from output.WebsocketOutput import WebsocketListener
 from module import SubMaster, ShowRunner
 
+'''
 class WsListener(WebsocketListener):
     def __init__(self, lirc):
         self.lirc = lirc
     def receive(self, message):
         self.lirc.onKey(message, None)
+'''
 
 class LircListener(LircDelegate):
     _showMappings = [
@@ -85,36 +87,41 @@ class LircListener(LircDelegate):
             ]
         },
         {
-            'keys':['R'],
+            'keys':['stop','standby'],
+            'module':'showRunner',
+            'method':'stopCurrentShow'
+        },
+        {
+            'keys':['red','R'],
             'module':'subMaster',
             'method':'selectChannel',
             'args':['red']
         },                     
         {
-            'keys':['G'],
+            'keys':['green','G'],
             'module':'subMaster',
             'method':'selectChannel',
             'args':['green']
         },                     
         {
-            'keys':['B'],
+            'keys':['blue','B'],
             'module':'subMaster',
             'method':'selectChannel',
             'args':['blue']
         },                     
         {
-            'keys':['M'],
+            'keys':['txt','M'],
             'module':'subMaster',
             'method':'selectChannel',
             'args':['master']
         },                     
         {
-            'keys':['U'],
+            'keys':['chan+','U'],
             'module':'subMaster',
             'method':'increaseValue'
         },
         {
-            'keys':['D'],
+            'keys':['chan-','D'],
             'module':'subMaster',
             'method':'decreaseValue'
         }
@@ -135,10 +142,6 @@ class LircListener(LircDelegate):
             # always pass a list of fixtures as the second parameter
             args.insert(1, fixtures)
             getattr(self.modules[config['module']], config['method'])(*tuple(args))
-        elif key == 'stop' or key == 'standby':
-            self.showRunner.stopCurrentShow()
-            for fixture in fixtures:
-                fixture.setChannels({'red':0,'green':0,'blue':0})
 
 if __name__ == '__main__':
     universe = Universe()

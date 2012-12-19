@@ -16,7 +16,7 @@ class ShowRunner(object):
         cls = getattr(mod, showClass)
         self.currentShow = cls(*args, **kwargs)
         self.currentShow.start()
-    def stopCurrentShow(self):
+    def stopCurrentShow(self, *args):
         if self.currentShow is None: return
         print 'stopping current show'
         self.currentShow.stop()
