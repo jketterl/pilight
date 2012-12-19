@@ -15,47 +15,13 @@ from output import Output
 import time
 from lirc import *
 from output.WebsocketOutput import WebsocketListener
-from channel import ChannelMapping
+from module import SubMaster, ShowRunner
 
-class ShowRunner(object):
-    def __init__(self):
-        self.currentShow = None
-        super(ShowRunner, self).__init__()
-    def startShow(self, showClass, *args, **kwargs):
-        self.stopCurrentShow()
-        print 'starting show %s' % showClass
-
-        mod = __import__("show.%s" % showClass, fromlist=[showClass])
-        cls = getattr(mod, showClass)
-        self.currentShow = cls(*args, **kwargs)
-        self.currentShow.start()
-    def stopCurrentShow(self):
-        if self.currentShow is None: return
-        print 'stopping current show'
-        self.currentShow.stop()
-        self.currentShow.waitForEnd()
-        self.currentShow = None
-        
 class WsListener(WebsocketListener):
     def __init__(self, lirc):
         self.lirc = lirc
     def receive(self, message):
         self.lirc.onKey(message, None)
-
-class SubMaster(Universe):
-    def __init__(self, channelNames = [], count = 512):
-        self.channelNames = channelNames
-        super(SubMaster, self).__init__(count)
-    def selectChannel(self, channel, fixtures):
-        self.currentChannel = self.getChannel(channel)
-    def getChannel(self, name):
-        return self[self.channelNames.index(name)]
-    def increaseValue(self, *args):
-        self.currentChannel.setValue(self.currentChannel.getValue() + 10)
-    def decreaseValue(self, *args):
-        self.currentChannel.setValue(self.currentChannel.getValue() - 10)
-    def mapChannel(self, name, target):
-        ChannelMapping(self.getChannel(name), target)
 
 class LircListener(LircDelegate):
     _showMappings = [
