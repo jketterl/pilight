@@ -12,10 +12,10 @@ from universe import Universe
 from filter import AlphaFilter
 from fixture import RGBFixture
 from output import Output
-from threading import Thread
-import random, time
+import time
 from lirc import *
 from output.WebsocketOutput import WebsocketListener
+from channel import ChannelMapping
 
 class ShowRunner(object):
     def __init__(self):
@@ -42,46 +42,113 @@ class WsListener(WebsocketListener):
     def receive(self, message):
         self.lirc.onKey(message, None)
 
+class SubMaster(Universe):
+    def __init__(self, channelNames = [], count = 512):
+        self.channelNames = channelNames
+        super(SubMaster, self).__init__(count)
+    def selectChannel(self, channel, fixtures):
+        self.currentChannel = self.getChannel(channel)
+    def getChannel(self, name):
+        return self[self.channelNames.index(name)]
+    def increaseValue(self, *args):
+        self.currentChannel.setValue(self.currentChannel.getValue() + 10)
+    def decreaseValue(self, *args):
+        self.currentChannel.setValue(self.currentChannel.getValue() - 10)
+    def mapChannel(self, name, target):
+        ChannelMapping(self.getChannel(name), target)
+
 class LircListener(LircDelegate):
     _showMappings = [
         {
             'keys':['1'],
-            'show':'VUMeter',
+            'module':'showRunner',
+            'method':'startShow',
             'args':[
+                'VUMeter',
                 'hw:1,0'
             ]
         },
         {
             'keys':['2'],
-            'show':'KnightRider',
+            'module':'showRunner',
+            'method':'startShow',
             'args':[
+                'KnightRider',
                 {'red':255, 'green':0, 'blue':0},
                 {'red':0,   'green':0, 'blue':0}
             ]
         },
         {
             'keys':['3'],
-            'show':'BPM'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'BPM'
+            ]
         },
         {
             'keys':['4'],
-            'show':'Snow'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'Snow'
+            ]
         },
         {
             'keys':['5'],
-            'show':'ColorFader'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'ColorFader'
+            ]
         },
         {
             'keys':['6'],
-            'show':'ColorWheel'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'ColorWheel'
+            ]
         },
         {
             'keys':['7'],
-            'show':'FFT'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'FFT'
+            ]
+        },
+        {
+            'keys':['R'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['red']
+        },                     
+        {
+            'keys':['G'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['green']
+        },                     
+        {
+            'keys':['B'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['blue']
+        },                     
+        {
+            'keys':['U'],
+            'module':'subMaster',
+            'method':'increaseValue'
+        },
+        {
+            'keys':['D'],
+            'module':'subMaster',
+            'method':'decreaseValue'
         }
     ]
-    def __init__(self, showRunner):
-        self.showRunner = showRunner;
+    def __init__(self, modules):
+        self.modules = modules
         self.keyMap = {}
         for mapping in LircListener._showMappings:
             for key in mapping['keys']:
@@ -93,9 +160,9 @@ class LircListener(LircDelegate):
             args = []
             if 'args' in config: args = config['args'][:]
             
-            # always pass a list of fixtures as the first parameter
-            args.insert(0, fixtures)
-            self.showRunner.startShow(config['show'], *tuple(args))
+            # always pass a list of fixtures as the second parameter
+            args.insert(1, fixtures)
+            getattr(self.modules[config['module']], config['method'])(*tuple(args))
         elif key == 'stop' or key == 'standby':
             self.showRunner.stopCurrentShow()
             for fixture in fixtures:
@@ -104,15 +171,19 @@ class LircListener(LircDelegate):
 if __name__ == '__main__':
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
-    #output = Output.factory('WebsocketOutput')
     output.addFilter(AlphaFilter())
+    #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
+
+    subMaster = SubMaster(['red', 'green', 'blue'], 3)
 
     fixtures = []
     for i in range(60):
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
+        for name in ['red', 'green', 'blue']:
+            subMaster.mapChannel(name, fixture.getNamedChannel(name));
     
     universe = Universe()
     universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'));
@@ -121,9 +192,15 @@ if __name__ == '__main__':
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
+        for name in ['red', 'green', 'blue']:
+            subMaster.mapChannel(name, fixture.getNamedChannel(name));
 
     showRunner = ShowRunner()
-    lircListener = LircListener(showRunner)
+    
+    lircListener = LircListener({
+        "showRunner":showRunner,
+        "subMaster":subMaster
+    })
 
     lirc = LircClient(lircListener)
     #output.addListener(WsListener(lircListener))
