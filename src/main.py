@@ -103,6 +103,12 @@ class LircListener(LircDelegate):
             'args':['blue']
         },                     
         {
+            'keys':['M'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['master']
+        },                     
+        {
             'keys':['U'],
             'module':'subMaster',
             'method':'increaseValue'
