@@ -1,5 +1,4 @@
 import threading, math, struct, numpy
-from universe import Universe
 from output import Output
 
 class FFTReader(threading.Thread):
@@ -7,14 +6,13 @@ class FFTReader(threading.Thread):
         self.doRun = True
         self.audioreader = audioreader
         self.bands = bands
-        self.universe = universe
 
         self.fftConversion = [0] * self.bands
         ratio = math.log(1023, 2) / self.bands
         start = 1
         for index in range(self.bands):
             end = math.pow(2, (index + 1) * ratio)
-            self.fftConversion[index] = [int(start), int(end) + 1]
+            self.fftConversion[index] = (universe[index], int(start), int(end) + 1)
             start = end
 
         self.endEvent = threading.Event()
@@ -31,12 +29,14 @@ class FFTReader(threading.Thread):
 
             fft = numpy.abs(numpy.fft.fft(data))
 
-            #fft = fft[0:len(fft)/2]
-
-            for index, data in enumerate(self.fftConversion):
-                power = numpy.amax(fft[data[0]:data[1]])
+            batch = []
+            for (channel, start, end) in self.fftConversion:
+                power = numpy.amax(fft[start:end])
                 power = int(((math.log(power) - lo) / (hi - lo)) * 255)
-                self.universe[index].setValue(max(min(power, 255), 0))
+                batch.append((channel, max(min(power, 255), 0)))
+
+            for (channel, value) in batch:
+                channel.setValue(value)
         self.endEvent.set()
     def stop(self):
         self.doRun = False

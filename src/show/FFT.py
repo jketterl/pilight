@@ -5,14 +5,13 @@ import time
 
 class FFT(Show):
     def run(self):
-        self.universe = Universe(16)
-        self.reader = FFTReader(AudioReader.instance("hw:1,0"), self.universe, 16)
-        for channel in self.universe:
-            channel.addListener(self)
+        bands = len(self.fixtures)
+        self.universe = Universe(bands)
+        for i in range(bands):
+            self.universe[i] = self.fixtures[i].getNamedChannel('blue');
+        self.reader = FFTReader(AudioReader.instance("hw:1,0"), self.universe, bands)
         self.reader.start()
         self.endEvent.wait()
-    def onValueChange(self, channel, value):
-        self.fixtures[self.universe.channelIndex(channel)].setChannels({'blue':value})
     def stop(self):
         self.reader.stop()
         self.reader.endEvent.wait()
