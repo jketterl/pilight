@@ -17,15 +17,15 @@ class WriterThread(Thread):
     def run(self):
         while not self.doStop:
             self.event.wait(10)
-            if self.event.isSet():
-                self.event.clear()
             self.output.update()
+            self.event.clear()
     
     def stop(self):
         self.doStop = True
         self.intterrupt()
         
     def interrupt(self):
+        if self.event.isSet(): return
         self.event.set()
         
 class ThreadedOutput(Output):
