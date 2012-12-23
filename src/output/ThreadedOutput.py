@@ -17,8 +17,8 @@ class WriterThread(Thread):
     def run(self):
         while not self.doStop:
             self.event.wait(10)
-            self.output.update()
             self.event.clear()
+            self.output.update()
     
     def stop(self):
         self.doStop = True
