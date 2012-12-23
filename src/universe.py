@@ -22,6 +22,9 @@ class Universe(object):
     def __getitem__(self, index):
         return self.channels[index]
 
+    def __setitem__(self, key, value):
+        self.channels[key] = value
+
     def __len__(self):
         return len(self.channels)
     
