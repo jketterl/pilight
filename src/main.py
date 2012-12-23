@@ -110,11 +110,17 @@ class LircListener(LircDelegate):
             'args':['blue']
         },                     
         {
+            'keys':['yellow'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['dj']
+        },
+        {
             'keys':['txt','M'],
             'module':'subMaster',
             'method':'selectChannel',
             'args':['master']
-        },                     
+        },
         {
             'keys':['chan+','U'],
             'module':'subMaster',
@@ -150,7 +156,7 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue'], 3)
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4)
 
     fixtures = []
     for i in range(60):
@@ -169,6 +175,11 @@ if __name__ == '__main__':
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name));
+
+    fixture = RGBFixture()
+    fixture.mapToUniverse(universe, 12)
+    for name in ['red', 'green', 'blue']:
+        subMaster.mapChannel('dj', fixture.getNamedChannel(name))
 
     showRunner = ShowRunner()
     
