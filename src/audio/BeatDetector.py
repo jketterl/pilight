@@ -4,33 +4,36 @@ Created on Nov 21, 2012
 @author: jketterl
 '''
 
-from audio.AudioReader import AudioReader
-import threading, numpy, struct
-#import time
+from .AudioReader import AudioReader
+from .FFTReader import FFTReader
+import threading, numpy, time
 import math
+from universe import Universe
 
 class Band(object):
     def __init__(self, number):
         self.number = number
         self.backlog = []
         self.beat = False
-    def update(self, data):
-        powers = numpy.average(data)
-        self.backlog.append(powers)
+    def update(self, value):
+        self.backlog.append(value)
         while len(self.backlog) > 50: self.backlog.pop(0)
         average = numpy.average(self.backlog)
         v = 0.0
         for entry in self.backlog:
             v += entry
-        v = (v / (len(self.backlog) * 32768))
+        v /= len(self.backlog)
+
         c = (-0.0025714 * v) + 1.5142857
-        if powers > average * c and not self.beat:
+        if value > average * c and not self.beat:
             #print '%d: BEAT' % self.number
             self.beat = True
         elif self.beat:
             self.beat = False
     def hasBeat(self):
         return self.beat
+    def onValueChange(self, channel, value):
+        self.update(value)
 
 class BeatDetector(threading.Thread):
     def __init__(self, delegate):
@@ -39,46 +42,33 @@ class BeatDetector(threading.Thread):
         self.BPM = 130
         super(BeatDetector, self).__init__()
     def run(self):
-        audioreader = AudioReader.instance('hw:1,0')
-        #audioreader.start()
-        
         beat = False
         
+        universe = Universe(8)
+        fftreader = FFTReader(AudioReader.instance("hw:1,0"), universe, 8)
+        fftreader.start()
+
         bands = []
         for i in range(8):
-            bands.append(Band(i))
+            band = Band(i)
+            bands.append(band)
+            universe[i].addListener(band)
         
         while self.doRun:
-            audioreader.event.wait()
-            
-            form = '<%dh' % (audioreader.l * 2)
-            data = struct.unpack(form, audioreader.data)
-            
-            #starttime = time.time()
-            fft = numpy.abs(numpy.fft.fft(data))
-
-            fft = fft[0:len(fft)/2]
-            ratio = math.log(len(fft), 2) / len(bands)
-            
-            start = 0
-            for index, band in enumerate(bands):
-                end = math.pow(2, (index + 1) * ratio)
-                band.update(fft[int(start):int(end)])
-                start = end
-            
-            #print 'fft time is: ' + str(time.time() - starttime)
             count = 0
             for band in bands:
                 if band.hasBeat(): count += 1
-                
-            if count > len(bands) / 2 and not beat:
+
+            if count >= len(bands) / 2 and not beat:
                 self.delegate.onBeat()
                 beat = True
             elif beat:
                 beat = False
+
+            time.sleep(.1)
+
+        fftreader.stop()
             
-            
-        #audioreader.stop()
     def stop(self):
         self.doRun = False
 
