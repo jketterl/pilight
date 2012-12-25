@@ -20,11 +20,15 @@ class ColorWheel(Show):
     def run(self):
         offset = 0
         while self.doRun:
+            batch = []
             for i in range(self.count):
                 position = int(round(offset + i * self.relation)) % self.wheelCount
-                self.fixtures[i].setChannels(self.wheel[position]);
+                #self.fixtures[i].setChannels(self.wheel[position]);
+                batch.append((self.fixtures[i], self.wheel[position]));
+            for (channel, value) in batch:
+                channel.setChannels(value)
             offset = (offset + 1) % self.wheelCount
-            time.sleep(.1)
+            time.sleep(.02)
         for i in range(self.count):
             self.fixtures[i].setChannels({'red':0,'green':0,'blue':0})
         self.endEvent.set()
