@@ -13,9 +13,19 @@ class FFT(Show):
         self.outputs = []
         self.ratio = float(len(self.fixtures)) / bands
         start = 0
+        colorConfig = {
+            'blue':{
+                'start':0,
+                'end':.8
+            },
+            'red':{
+                'start':.8,
+                'end':1
+            }
+        }
         for i in range(bands):
             end = int((i+1) * self.ratio)
-            self.outputs.append(VUOutput(self.fixtures[start:end]))
+            self.outputs.append(VUOutput(self.fixtures[start:end], colorConfig))
             start = end
 
         self.reader = FFTReader(AudioReader.instance("hw:1,0"), self.universe, bands)
