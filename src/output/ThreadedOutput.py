@@ -22,7 +22,7 @@ class WriterThread(Thread):
     
     def stop(self):
         self.doStop = True
-        self.intterrupt()
+        self.interrupt()
         
     def interrupt(self):
         if self.event.isSet(): return
@@ -48,6 +48,9 @@ class ThreadedOutput(Output):
         self.changes = {}
         self.changesLock.release()
         self.applyChanges(changes)
+
+    def stop(self):
+        self.thread.stop()
         
     def applyChanges(self, changes):
         pass
