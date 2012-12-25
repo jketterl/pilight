@@ -30,23 +30,31 @@ class SmoothingThread(threading.Thread):
         self.output.setValue(value)
 
 class VUOutput(object):
-    def __init__(self, fixtures):
+    def __init__(self, fixtures, colorConfig = None):
         self.fixtures = fixtures;
+        if colorConfig is None: colorConfig = {
+            'green':{
+                'start':0,
+                'end':.95
+            },
+            'red':{
+                'start':.7,
+                'end':1
+            }
+        }
         count = len(fixtures)
-        yellow = count * .7
-        red = count * .95
         self.colorMap = [0] * count
         self.value = 0
         for i in range(count):
-            if (i < yellow):
-                colors = ['green']
-            elif (i < red):
-                colors = ['green', 'red']
-            else:
-                colors = ['red']
-                
-            self.colorMap[i] = dict(zip(colors, [255] * len(colors)))
-            
+            res = {}
+            for color in colorConfig:
+                entry = colorConfig[color]
+                if i >= entry['start'] * count and i < entry['end'] * count:
+                    res[color] = 255
+                else:
+                    res[color] = 0
+
+            self.colorMap[i] = res
         self.smoother = SmoothingThread(self)
         self.smoother.start()
             
