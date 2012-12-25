@@ -62,6 +62,10 @@ class VUOutput(object):
                 self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
         self.value = value
 
+    def stop(self):
+        self.smoother.stop()
+        self.setValue(0)
+
 class VUMeter(Show):
     def __init__(self, fixtures, card = 'hw:0,0'):
         self.card = card
@@ -88,6 +92,5 @@ class VUMeter(Show):
             output.update(vu)
 
         #audioReader.stop()
-        output.smoother.stop()
-        output.setValue(0)
+        output.stop()
         self.endEvent.set()
