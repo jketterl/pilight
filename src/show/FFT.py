@@ -23,7 +23,7 @@ class FFT(Show):
         self.endEvent.wait()
     def onValueChange(self, channel, value):
         index = self.universe.channelIndex(channel)
-        value = float(value) / 255 * self.ratio
+        value = float(value) / 255
         self.outputs[index].update(value)
     def stop(self):
         self.reader.stop()

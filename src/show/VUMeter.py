@@ -27,7 +27,7 @@ class SmoothingThread(threading.Thread):
         self.doRun = False
     def set(self, value):
         self.current = value
-        self.output.setValue(int(round(value)))
+        self.output.setValue(value)
 
 class VUOutput(object):
     def __init__(self, fixtures):
@@ -54,6 +54,7 @@ class VUOutput(object):
         self.smoother.update(value)
     
     def setValue(self, value):
+        value = int(round(value * len(self.fixtures)))
         if (value > self.value):
             for index in range(self.value, value):
                 self.fixtures[index].setChannels(self.colorMap[index])
@@ -76,8 +77,6 @@ class VUMeter(Show):
         log_lo = math.log(lo)
         log_hi = math.log(hi)
         
-        count = len(self.fixtures)
-        
         output = VUOutput(self.fixtures)
 
         audioReader = AudioReader.instance(self.card)
@@ -87,7 +86,7 @@ class VUMeter(Show):
             audioReader.event.wait()
 
             vu = (math.log(float(max(audioop.max(audioReader.data, 2), 1))) - log_lo) / (log_hi - log_lo)
-            vu = min(max(int(vu * (count + 1)), 0), count)
+            vu = min(max(vu, 0), 1)
             
             output.update(vu)
 
