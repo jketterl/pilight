@@ -36,13 +36,13 @@ class Fader(threading.Thread):
                 for key in deltas:
                     current[key] = int(round(origin[key] + deltas[key] * ratio))
                 self.setColor(current)
-                time.sleep(sleep)
-
-            self.setColor(target)
-            self.event.wait(1)
+                self.event.wait(sleep)
 
             step += 1
             if step >= len(self.pattern): step = 0
+
+            if self.doRun: self.setColor(target)
+            self.event.wait(1)
     def setColor(self, color):
         self.color = color
         self.callback(color)
@@ -80,7 +80,10 @@ class ColorFader(Show):
                 fixture.setChannels(color)
         fader = Fader(self.colors, setColor)
         fader.start()
-        while (self.doRun):
-            time.sleep(1)
+        self.endEvent.wait()
         fader.stop()
+        setColor({'red':0,'green':0,'blue':0})
+
+    def stop(self):
         self.endEvent.set()
+        super(ColorFader, self).stop()

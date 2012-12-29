@@ -9,18 +9,18 @@ class SnowDecayThread(threading.Thread):
         super(SnowDecayThread, self).__init__()
     def run(self):
         while self.doRun:
-            self.event.wait(.02)
             self.show.decay()
+            self.event.wait(.02)
     def stop(self):
         self.doRun = False
         self.event.set()
 
 class Snow(Show):
     def run(self):
+        self.lock = threading.Lock()
+        self.flakes = {}
         decayer = SnowDecayThread(self)
         decayer.start()
-        self.flakes = {}
-        self.lock = threading.Lock()
 
         while(self.doRun):
             self.lock.acquire()
@@ -31,6 +31,8 @@ class Snow(Show):
             time.sleep(random.random() * .4)
             
         decayer.stop()
+        for channel in self.flakes:
+            self.fixtures[channel].setChannels({'red':0,'green':0,'blue':0})
         self.endEvent.set()
 
     def decay(self):

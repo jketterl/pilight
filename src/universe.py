@@ -13,13 +13,17 @@ class Universe(object):
         self.channels = [None] * channels
         for i in range(0, channels):
             channel = Channel()
+            channel.index = i
             channel.addListener(self)
             self.channels[i] = channel;
-        self.output = Output
+        self.output = Output()
         self.filters = []
             
     def __getitem__(self, index):
         return self.channels[index]
+
+    def __setitem__(self, key, value):
+        self.channels[key] = value
 
     def __len__(self):
         return len(self.channels)
@@ -27,7 +31,10 @@ class Universe(object):
     def onValueChange(self, source, value):
         for filter in self.filters:
             value = filter.filter(value)
-        self.getOutput().setChannel(self.channels.index(source), value)
+        self.getOutput().setChannel(self.channelIndex(source), value)
+
+    def channelIndex(self, channel):
+        return channel.index
         
     def getOutput(self):
         return self.output

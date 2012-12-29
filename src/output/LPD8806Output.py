@@ -10,10 +10,17 @@ class LPD8806Output(BufferedOutput):
     def __init__(self, channels, device="/dev/spidev0.0"):
         self.spidev = file(device, "wb")
         super(LPD8806Output, self).__init__(channels)
+
+        self.buffer = bytearray(channels + 3)
+        # initialize buffer with zero values (for the LPD8806 chip, 0x80 is zero)
+        for i in range(channels):
+            self.buffer[i] = 0x80
+
+    def applyChanges(self, changes):
+        for num in changes:
+            self.buffer[num] = (0x80 | changes[num] / 2)
+        self.write()
     
     def write(self):
-        output = bytearray(len(self.buffer) + 3)
-        for i in range(len(self.buffer)):
-            output[i] = 0x80 | int(round(self.buffer[i] / 2))
-        self.spidev.write(output)
+        self.spidev.write(self.buffer)
         self.spidev.flush()

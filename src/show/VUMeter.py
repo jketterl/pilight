@@ -27,26 +27,34 @@ class SmoothingThread(threading.Thread):
         self.doRun = False
     def set(self, value):
         self.current = value
-        self.output.setValue(int(round(value)))
+        self.output.setValue(value)
 
 class VUOutput(object):
-    def __init__(self, fixtures):
+    def __init__(self, fixtures, colorConfig = None):
         self.fixtures = fixtures;
+        if colorConfig is None: colorConfig = {
+            'green':{
+                'start':0,
+                'end':.95
+            },
+            'red':{
+                'start':.7,
+                'end':1
+            }
+        }
         count = len(fixtures)
-        yellow = count * .7
-        red = count * .95
         self.colorMap = [0] * count
         self.value = 0
         for i in range(count):
-            if (i < yellow):
-                colors = ['green']
-            elif (i < red):
-                colors = ['green', 'red']
-            else:
-                colors = ['red']
-                
-            self.colorMap[i] = dict(zip(colors, [255] * len(colors)))
-            
+            res = {}
+            for color in colorConfig:
+                entry = colorConfig[color]
+                if i >= entry['start'] * count and i < entry['end'] * count:
+                    res[color] = 255
+                else:
+                    res[color] = 0
+
+            self.colorMap[i] = res
         self.smoother = SmoothingThread(self)
         self.smoother.start()
             
@@ -54,6 +62,7 @@ class VUOutput(object):
         self.smoother.update(value)
     
     def setValue(self, value):
+        value = int(round(value * len(self.fixtures)))
         if (value > self.value):
             for index in range(self.value, value):
                 self.fixtures[index].setChannels(self.colorMap[index])
@@ -61,6 +70,10 @@ class VUOutput(object):
             for index in range(value, self.value):
                 self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
         self.value = value
+
+    def stop(self):
+        self.smoother.stop()
+        self.setValue(0)
 
 class VUMeter(Show):
     def __init__(self, fixtures, card = 'hw:0,0'):
@@ -72,8 +85,6 @@ class VUMeter(Show):
         log_lo = math.log(lo)
         log_hi = math.log(hi)
         
-        count = len(self.fixtures)
-        
         output = VUOutput(self.fixtures)
 
         audioReader = AudioReader.instance(self.card)
@@ -81,14 +92,12 @@ class VUMeter(Show):
         
         while self.doRun:
             audioReader.event.wait()
-            audioReader.event.clear()
 
             vu = (math.log(float(max(audioop.max(audioReader.data, 2), 1))) - log_lo) / (log_hi - log_lo)
-            vu = min(max(int(vu * (count + 1)), 0), count)
+            vu = min(max(vu, 0), 1)
             
             output.update(vu)
 
         #audioReader.stop()
-        output.smoother.stop()
-        output.setValue(0)
+        output.stop()
         self.endEvent.set()

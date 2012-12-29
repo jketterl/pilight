@@ -19,9 +19,19 @@ class Output(object):
 
     def addFilter(self, filter):
         self.filters.append(filter)
-    
+
+    def stop(self):
+        pass    
+
     @staticmethod
     def factory(classname, *args, **kwargs):
         mod = __import__("output.%s" % classname, fromlist=[classname])
         cls = getattr(mod, classname)
-        return cls(*args, **kwargs)
+        out = cls(*args, **kwargs)
+        if not hasattr(Output, '_outputs'): Output._outputs = []
+        Output._outputs.append(out)
+        return out
+    @staticmethod
+    def stopAll():
+        for out in Output._outputs:
+            out.stop()

@@ -17,15 +17,15 @@ class WriterThread(Thread):
     def run(self):
         while not self.doStop:
             self.event.wait(10)
-            if self.event.isSet():
-                self.event.clear()
+            self.event.clear()
             self.output.update()
     
     def stop(self):
         self.doStop = True
-        self.intterrupt()
+        self.interrupt()
         
     def interrupt(self):
+        if self.event.isSet(): return
         self.event.set()
         
 class ThreadedOutput(Output):
@@ -48,6 +48,9 @@ class ThreadedOutput(Output):
         self.changes = {}
         self.changesLock.release()
         self.applyChanges(changes)
+
+    def stop(self):
+        self.thread.stop()
         
     def applyChanges(self, changes):
         pass

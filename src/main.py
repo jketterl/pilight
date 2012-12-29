@@ -12,61 +12,130 @@ from universe import Universe
 from filter import AlphaFilter
 from fixture import RGBFixture
 from output import Output
-from threading import Thread
-import random, time
+import time
 from lirc import *
+#from output.WebsocketOutput import WebsocketListener
+from module import SubMaster, ShowRunner
 
-class ShowRunner(object):
-    def __init__(self):
-        self.currentShow = None
-        super(ShowRunner, self).__init__()
-    def startShow(self, showClass, *args, **kwargs):
-        self.stopCurrentShow()
-        print 'starting show %s' % showClass
+from lcdproc.server import Server as LCDServer
 
-        mod = __import__("show.%s" % showClass, fromlist=[showClass])
-        cls = getattr(mod, showClass)
-        self.currentShow = cls(*args, **kwargs)
-        self.currentShow.start()
-    def stopCurrentShow(self):
-        if self.currentShow is None: return
-        print 'stopping current show'
-        self.currentShow.stop()
-        self.currentShow.waitForEnd()
-        self.currentShow = None
+'''
+class WsListener(WebsocketListener):
+    def __init__(self, lirc):
+        self.lirc = lirc
+    def receive(self, message):
+        self.lirc.onKey(message, None)
+'''
 
 class LircListener(LircDelegate):
     _showMappings = [
         {
             'keys':['1'],
-            'show':'VUMeter',
+            'module':'showRunner',
+            'method':'startShow',
             'args':[
+                'VUMeter',
                 'hw:1,0'
             ]
         },
         {
             'keys':['2'],
-            'show':'KnightRider',
+            'module':'showRunner',
+            'method':'startShow',
             'args':[
+                'KnightRider',
                 {'red':255, 'green':0, 'blue':0},
                 {'red':0,   'green':0, 'blue':0}
             ]
         },
         {
             'keys':['3'],
-            'show':'BPM'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'BPM'
+            ]
         },
         {
             'keys':['4'],
-            'show':'Snow'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'Snow'
+            ]
         },
         {
             'keys':['5'],
-            'show':'ColorFader'
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'ColorFader'
+            ]
+        },
+        {
+            'keys':['6'],
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'ColorWheel'
+            ]
+        },
+        {
+            'keys':['7'],
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'FFT'
+            ]
+        },
+        {
+            'keys':['stop','standby'],
+            'module':'showRunner',
+            'method':'stopCurrentShow'
+        },
+        {
+            'keys':['red','R'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['red']
+        },                     
+        {
+            'keys':['green','G'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['green']
+        },                     
+        {
+            'keys':['blue','B'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['blue']
+        },                     
+        {
+            'keys':['yellow'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['dj']
+        },
+        {
+            'keys':['txt','M'],
+            'module':'subMaster',
+            'method':'selectChannel',
+            'args':['master']
+        },
+        {
+            'keys':['chan+','U'],
+            'module':'subMaster',
+            'method':'increaseValue'
+        },
+        {
+            'keys':['chan-','D'],
+            'module':'subMaster',
+            'method':'decreaseValue'
         }
     ]
-    def __init__(self, showRunner):
-        self.showRunner = showRunner;
+    def __init__(self, modules):
+        self.modules = modules
         self.keyMap = {}
         for mapping in LircListener._showMappings:
             for key in mapping['keys']:
@@ -78,44 +147,54 @@ class LircListener(LircDelegate):
             args = []
             if 'args' in config: args = config['args'][:]
             
-            # always pass a list of fixtures as the first parameter
-            args.insert(0, fixtures)
-            self.showRunner.startShow(config['show'], *tuple(args))
-        elif key == 'stop' or key == 'standby':
-            self.showRunner.stopCurrentShow()
-            for fixture in fixtures:
-                fixture.setChannels({'red':0,'green':0,'blue':0})
+            # always pass a list of fixtures as the second parameter
+            args.insert(1, fixtures)
+            getattr(self.modules[config['module']], config['method'])(*tuple(args))
 
 if __name__ == '__main__':
+    lcd = LCDServer()
+    lcd.start_session()
+
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
     output.addFilter(AlphaFilter())
+    #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
+
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4, lcd = lcd)
 
     fixtures = []
     for i in range(60):
         fixture = RGBFixture()
-        fixture.mapToChannels({
-            'red' : universe[i * 3 + 1],
-            'green' : universe[i * 3],
-            'blue' : universe[i * 3 + 2]
-        })
+        fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
+        for name in ['red', 'green', 'blue']:
+            subMaster.mapChannel(name, fixture.getNamedChannel(name));
     
     universe = Universe()
     universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'));
 
     for i in range(4):
         fixture = RGBFixture()
-        fixture.mapToChannels({
-            'red' : universe[i * 3 + 1],
-            'green' : universe[i * 3],
-            'blue' : universe[i * 3 + 2]
-        })
+        fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
+        for name in ['red', 'green', 'blue']:
+            subMaster.mapChannel(name, fixture.getNamedChannel(name));
+
+    fixture = RGBFixture()
+    fixture.mapToUniverse(universe, 12)
+    for name in ['red', 'green', 'blue']:
+        subMaster.mapChannel('dj', fixture.getNamedChannel(name))
 
     showRunner = ShowRunner()
-    lirc = LircClient(LircListener(showRunner))
+    
+    lircListener = LircListener({
+        "showRunner":showRunner,
+        "subMaster":subMaster
+    })
+
+    lirc = LircClient(lircListener)
+    #output.addListener(WsListener(lircListener))
 
     run = True
     while run:
@@ -123,36 +202,5 @@ if __name__ == '__main__':
             time.sleep(10)
         except (KeyboardInterrupt):
             showRunner.stopCurrentShow()
+            Output.stopAll()
             run = False
-
-        '''
-        show = BPM(fixtures)
-        show.start()
-        time.sleep(60)
-        show.stop()
-        show.waitForEnd()
-        
-        show = VUMeter(fixtures, 'hw:1,0')
-        show.start()
-        time.sleep(60)
-        show.stop()
-        show.waitForEnd()
-        
-        for i in range(10):
-            for fixture in fixtures:
-                fixture.setChannels({'red':random.randint(0, 255),
-                                     'green':random.randint(0, 255),
-                                     'blue':random.randint(0, 255)})
-                time.sleep(.01)
-            #time.sleep(1)
-            for fixture in fixtures:
-                fixture.setChannels({'red':0,'green':0,'blue':0})
-                time.sleep(.01)
-            time.sleep(1)
-
-        show = KnightRider(fixtures, {'red':255,'green':0,'blue':0}, {'red':0,'green':0,'blue':0})
-        show.start()
-        time.sleep(15)
-        show.stop()
-        show.waitForEnd()
-        '''

@@ -40,6 +40,10 @@
 			        applyChanges(channel, data[channel]);
 			    }
 			}
+			
+			document.onkeydown = function(event){
+				socket.send(String.fromCharCode(event.keyCode));
+			}
 		</script>
 	</body>
 </html>
