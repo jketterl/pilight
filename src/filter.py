@@ -10,6 +10,12 @@ class AlphaFilter(Filter):
     def filter(self, input):
         return self.filterTable[input]
 
+class ScalingFilter(Filter):
+    def __init__(self, maxOut):
+        self.max = maxOut
+    def filter(self, input):
+        return input * self.max / 256
+
 class ScalingAlphaFilter(AlphaFilter):
     def __init__(self, maxOut):
         self.filterTable = [0] * 256
