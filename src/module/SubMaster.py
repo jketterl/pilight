@@ -18,6 +18,7 @@ class SubMaster(Universe):
             self.channelMap[name] = channel 
             ChannelMapping(master, channel)
         self.channelMap['master'] = master
+        self.selectChannel('master', None)
     def selectChannel(self, channel, fixtures):
         self.currentChannel = self.getChannel(channel)
         Messenger.displayMessage('selected: %s' % channel);
