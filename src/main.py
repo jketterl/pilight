@@ -17,7 +17,8 @@ from lirc import *
 #from output.WebsocketOutput import WebsocketListener
 from module import SubMaster, ShowRunner
 
-from lcdproc.server import Server as LCDServer
+from message import Messenger
+from message.output import ConsoleOutput, LCDOutput
 
 '''
 class WsListener(WebsocketListener):
@@ -152,8 +153,8 @@ class LircListener(LircDelegate):
             getattr(self.modules[config['module']], config['method'])(*tuple(args))
 
 if __name__ == '__main__':
-    lcd = LCDServer()
-    lcd.start_session()
+    Messenger.addOutput(ConsoleOutput())
+    Messenger.addOutput(LCDOutput())
 
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
@@ -161,7 +162,7 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4, lcd = lcd)
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4)
 
     fixtures = []
     for i in range(60):
