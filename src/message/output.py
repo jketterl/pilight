@@ -13,6 +13,10 @@ class LCDOutput(Output):
     def __init__(self):
         self.lcd = Server()
         self.lcd.start_session()
+
+        idleScreen = self.lcd.add_screen("Idle")
+        idleScreen.set_backlight("off")
+
         self.screen = self.lcd.add_screen("Message")
         self.screen.add_title_widget("title", "pilight Message")
         self.screen.set_duration(5)
