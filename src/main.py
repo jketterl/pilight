@@ -90,6 +90,14 @@ class LircListener(LircDelegate):
             ]
         },
         {
+            'keys':['8'],
+            'module':'showRunner',
+            'method':'startShow',
+            'args':[
+                'Strobe'
+            ]
+        },
+        {
             'keys':['stop','standby'],
             'module':'showRunner',
             'method':'stopCurrentShow'
