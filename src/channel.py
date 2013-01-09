@@ -7,6 +7,7 @@ class Channel(object):
     def __init__(self):
         self.listeners = []
         self.value = 0
+        self.valueCheck = True
         
     def addListener(self, listener):
         self.listeners.append(listener)
@@ -16,7 +17,7 @@ class Channel(object):
         
     def setValue(self, value):
         value = max(min(value, 255), 0)
-        if self.value == value: return
+        if self.valueCheck and self.value == value: return
         self.value = value
         for listener in self.listeners:
             listener.onValueChange(self, value)
