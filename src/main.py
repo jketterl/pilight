@@ -149,6 +149,16 @@ class LircListener(LircDelegate):
             'keys':['chan-','D'],
             'module':'subMaster',
             'method':'decreaseValue'
+        },
+        {
+            'keys':['vol-'],
+            'module':'subMaster',
+            'method':'fullValue'
+        },
+        {
+            'keys':['mute'],
+            'module':'subMaster',
+            'method':'offValue'
         }
     ]
     def __init__(self, modules):

@@ -30,3 +30,7 @@ class SubMaster(Universe):
         self.currentChannel.setValue(self.currentChannel.getValue() - 10)
     def mapChannel(self, name, target):
         ChannelMapping(self.getChannel(name), target)
+    def fullValue(self, *args):
+        self.currentChannel.setValue(255);
+    def offValue(self, *args):
+        self.currentChannel.setValue(0);
