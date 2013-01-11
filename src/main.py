@@ -94,7 +94,7 @@ class LircListener(LircDelegate):
             'module':'showRunner',
             'method':'startShow',
             'args':[
-                'Strobe'
+                'BPMStrobe'
             ]
         },
         {

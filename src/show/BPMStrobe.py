@@ -8,10 +8,10 @@ from . import Show
 from audio import BeatDetector, BeatDelegate
 import threading, random, time
 
-class Strobe(Show, BeatDelegate):
+class BPMStrobe(Show, BeatDelegate):
     def __init__(self, fixtures):
         self.event = threading.Event()
-        super(Strobe, self).__init__(fixtures)
+        super(BPMStrobe, self).__init__(fixtures)
     def run(self):
         detector = BeatDetector(self)
         detector.start()
@@ -50,4 +50,4 @@ class Strobe(Show, BeatDelegate):
         self.event.set()
     def stop(self):
         self.event.set()
-        super(Strobe, self).stop()
+        super(BPMStrobe, self).stop()
