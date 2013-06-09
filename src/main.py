@@ -196,22 +196,31 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name));
+            subMaster.mapChannel(name, fixture.getNamedChannel(name))
     
     universe = Universe()
-    universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'));
+    universe.setOutput(Output.factory('ArtnetOutput', 'pilight01'))
 
     for i in range(4):
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name));
+            subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
     fixture = RGBFixture()
     fixture.mapToUniverse(universe, 12)
     for name in ['red', 'green', 'blue']:
         subMaster.mapChannel('dj', fixture.getNamedChannel(name))
+
+    universe = Universe()
+    universe.setOutput(Output.factory('ArtnetOutput', 'pilight03'))
+    for i in range(50):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, i * 3)
+        fixtures.append(fixture)
+        for name in ['red', 'green', 'blue']:
+            subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
     showRunner = ShowRunner()
     
