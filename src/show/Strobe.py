@@ -10,5 +10,5 @@ class Strobe(Show):
             time.sleep(.1)
         self.endEvent.set()
     def setValue(self, value):
-        for fixture in self.fixtures[60:63]:
+        for fixture in self.fixtures[60:64]:
             fixture.setChannels({'red':value,'green':value,'blue':value})
