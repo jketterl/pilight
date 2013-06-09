@@ -26,9 +26,18 @@ class Fixture(object):
         self.mapToChannels(channelMap)
     
 class RGBFixture(Fixture):
+    def __init__(self, channelSequence = 'GRB'):
+        self.channelSequence = channelSequence
     def getInputs(self):
-        return [
-            'green',
-            'red',
-            'blue'
-        ]
+        if (self.channelSequence == 'GRB'):
+            return [
+                'green',
+                'red',
+                'blue'
+            ]
+        elif (self.channelSequence == 'RGB'):
+            return [
+                'red',
+                'green',
+                'blue'
+            ]
