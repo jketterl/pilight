@@ -62,14 +62,26 @@ class VUOutput(object):
         self.smoother.update(value)
     
     def setValue(self, value):
-        value = int(round(value * len(self.fixtures)))
-        if (value > self.value):
-            for index in range(self.value, value):
+        v = value * len(self.fixtures)
+        r = v % 1
+        value = int(v)
+
+        #print "new values: ", value, int(r * 255)
+
+        if (v > self.value):
+            #print "setting: ", int(self.value), value
+            for index in range(int(self.value), value):
                 self.fixtures[index].setChannels(self.colorMap[index])
         else:
-            for index in range(value, self.value):
+            #print "unsetting: ", value + 1, int(self.value) + 1
+            for index in range(value + 1, int(self.value) + 1):
                 self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
-        self.value = value
+        x = self.colorMap[value].copy()
+        for k in x:
+            x[k] = int(round(x[k] * r))
+        #print "half-tone:", value, x
+        self.fixtures[value].setChannels(x)
+        self.value = v
 
     def stop(self):
         self.smoother.stop()
