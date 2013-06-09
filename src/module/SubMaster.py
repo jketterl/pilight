@@ -5,18 +5,21 @@ Created on 19.12.2012
 '''
 
 from universe import Universe
-from channel import Channel, ChannelMapping
+from channel import Channel, MultiChannelMapping
 from message import Messenger
 
 class SubMaster(Universe):
     def __init__(self, channelNames = [], count = 512):
         super(SubMaster, self).__init__(count)
         master = Channel()
+        masterMap = MultiChannelMapping(master)
         self.channelMap = {}
+        self.targetMap = {}
         for index, name in enumerate(channelNames):
             channel = self[index]
-            self.channelMap[name] = channel 
-            ChannelMapping(master, channel)
+            self.channelMap[name] = channel
+            self.targetMap[name] = MultiChannelMapping(channel)
+            masterMap.addTarget(channel) 
         self.channelMap['master'] = master
         self.selectChannel('master', None)
     def selectChannel(self, channel, fixtures):
@@ -29,7 +32,7 @@ class SubMaster(Universe):
     def decreaseValue(self, *args):
         self.currentChannel.setValue(self.currentChannel.getValue() - 10)
     def mapChannel(self, name, target):
-        ChannelMapping(self.getChannel(name), target)
+        self.targetMap[name].addTarget(target)
     def fullValue(self, *args):
         self.currentChannel.setValue(255);
     def offValue(self, *args):

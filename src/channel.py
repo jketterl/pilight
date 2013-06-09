@@ -33,3 +33,14 @@ class ChannelMapping(object):
     def onValueChange(self, source, value):
         if source is not self.source: return
         self.target.setValue(value)
+
+class MultiChannelMapping(ChannelMapping):
+    def __init__(self, source):
+        super(MultiChannelMapping, self).__init__(source, None)
+        self.targets = []
+    def onValueChange(self, source, value):
+        if source is not self.source: return
+        for target in self.targets:
+            target.setValue(value)
+    def addTarget(self, target):
+        self.targets.append(target)
