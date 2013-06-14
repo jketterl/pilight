@@ -25,4 +25,4 @@ class WS2801Output(BufferedOutput):
     def write(self):
         self.spidev.write(self.buffer)
         self.spidev.flush()
-	time.sleep(0.002)
+	time.sleep(0.0005)
