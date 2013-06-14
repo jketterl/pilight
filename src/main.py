@@ -214,7 +214,7 @@ if __name__ == '__main__':
         subMaster.mapChannel('dj', fixture.getNamedChannel(name))
 
     universe = Universe()
-    universe.setOutput(Output.factory('ArtnetOutput', 'pilight03'))
+    universe.setOutput(Output.factory('SocketOutput', 'ws2801'))
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
