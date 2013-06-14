@@ -12,4 +12,4 @@ class ArtnetOutput(BufferedOutput):
         packet = DmxPacket()
         for i, value in enumerate(self.buffer):
             packet[i] = value
-        self.socket.send(packet.encode())
+        self.socket.sendall(packet.encode())
