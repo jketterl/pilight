@@ -3,7 +3,7 @@ sys.path.append('../vendors/python-artnet/src/')
 
 from output import Output
 from filter import ScalingAlphaFilter
-from input import ArtnetInput
+from input import SocketInput
 from universe import Universe
 
 if __name__ == '__main__':
@@ -14,4 +14,4 @@ if __name__ == '__main__':
     universe = Universe(150)
     universe.setOutput(output)
 
-    input = ArtnetInput(universe)
+    input = SocketInput(universe, '192.168.4.2', 'ws2801')
