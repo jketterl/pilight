@@ -25,6 +25,10 @@ Ext.define('pilight.showrunner.Panel', {
             });
         });
 
+        var startshow = function(show) {
+            me.socket.sendCommand({module:'showmanager', command:'startShow', params:{id:show.get('id')}}); 
+        };
+
         me.dockedItems = [{
             dock:'top',
             ui:'toolbar',
@@ -33,7 +37,7 @@ Ext.define('pilight.showrunner.Panel', {
                 text:'Show starten',
                 handler:function(){
                     var show = me.getSelectionModel().getSelection()[0];
-                    me.socket.sendCommand({module:'showmanager', command:'startShow', params:{id:show.get('id')}}); 
+                    startshow(show);
                 }
             },{
                 xtype:'button',
@@ -43,6 +47,10 @@ Ext.define('pilight.showrunner.Panel', {
                 }
             }]
         }];
+
+        me.on('itemdblclick', function(grid, show) {
+            startshow(show);
+        });
 
         me.callParent(arguments);
     }
