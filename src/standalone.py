@@ -3,6 +3,7 @@ from universe import Universe
 from output import Output
 from fixture import RGBFixture
 from module import ShowRunner, SubMaster
+from filter import AlphaFilter
 
 ControlServer.getInstance()
 
@@ -12,7 +13,9 @@ if __name__ == '__main__':
     subMaster = SubMaster(['red', 'green', 'blue'], 3)
 
     universe = Universe()
-    universe.setOutput(Output.factory('WS2801Output', channels=150))
+    output = Output.factory('WS2801Output', channels=150)
+    output.addFilter(AlphaFilter())
+    universe.setOutput(output)
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
@@ -21,4 +24,3 @@ if __name__ == '__main__':
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
     showRunner = ShowRunner()
-    showRunner.startShow('KnightRider', fixtures, {'red':255}, {'red':0})

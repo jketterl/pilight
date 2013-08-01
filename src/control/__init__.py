@@ -11,7 +11,15 @@ class ControlSocket(websocket.WebSocketHandler):
     def open(self):
         print "socket opened!"
     def on_message(self, message):
-        pass
+        message = json.loads(message)
+        if not 'module' in message: return
+        if not 'command' in message: return
+        controllable = ControlServer.getInstance().getControllable(message['module'])
+        params = {}
+        if 'params' in message: params = message['params']
+        response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
+        if 'sequence' in message: response['sequence'] = message['sequence']
+        self.write_message(json.dumps(response))
     def on_close(self):
         pass
         
@@ -29,7 +37,7 @@ class ControlServer(object):
 
         self.controllables = {}
     def registerControllable(self, controllable):
-        self.controllables[controllalble.getId()] = controllable
+        self.controllables[controllable.getId()] = controllable
     def getControllable(self, id):
         return self.controllables[id]
 

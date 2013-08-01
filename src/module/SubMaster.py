@@ -7,8 +7,9 @@ Created on 19.12.2012
 from universe import Universe
 from channel import Channel, MultiChannelMapping
 from message import Messenger
+from control import Controllable
 
-class SubMaster(Universe):
+class SubMaster(Controllable, Universe):
     def __init__(self, channelNames = [], count = 512):
         super(SubMaster, self).__init__(count)
         master = Channel()
@@ -37,3 +38,12 @@ class SubMaster(Universe):
         self.currentChannel.setValue(255);
     def offValue(self, *args):
         self.currentChannel.setValue(0);
+
+    def getId(self):
+        return "submaster"
+    def executeCommand(self, command, **kwargs):
+        return getattr(self, command)(**kwargs)
+    def getChannels(self):
+        return self.channelMap.keys()
+    def setChannelValue(self, channel='main', value=0):
+        self.getChannel(channel).setValue(value)
