@@ -16,8 +16,21 @@ Ext.onReady(function(){
         var win = Ext.create('Ext.window.Window', {
             title:'Submaster',
             layout:'fit',
+            border:false,
             items:[
                 Ext.create('pilight.submaster.Panel', {
+                    socket:socket
+                })
+            ]
+        });
+
+        win.show()
+
+        var win = Ext.create('Ext.window.Window', {
+            title:'Shows',
+            layout:'fit',
+            items:[
+                Ext.create('pilight.showrunner.Panel', {
                     socket:socket
                 })
             ]

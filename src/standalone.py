@@ -5,12 +5,41 @@ from fixture import RGBFixture
 from module import ShowRunner, SubMaster
 from filter import AlphaFilter
 
-ControlServer.getInstance()
+class ShowManager(Controllable):
+    def __init__(self, *args, **kwargs):
+        super(ShowManager, self).__init__(*args, **kwargs)
+        self.runner = ShowRunner()
+        self.shows = {}
+    def getId(self):
+        return 'showmanager'
+    def getShows(self):
+        res = []
+        for id in self.shows:
+            res.append({'id':id, 'name':self.shows[id]['name']})
+        return res
+    def addShow(self, id, name, definition):
+        self.shows[id] = {'name':name, 'definition':definition}
+    def startShow(self, id=None):
+        if id is None: return
+        args = self.shows[id]['definition'][:]
+        # always pass a list of fixtures as the second parameter
+        args.insert(1, fixtures)
+
+        self.runner.startShow(*tuple(args))
+    def stopShow(self):
+        self.runner.stopCurrentShow()
 
 if __name__ == '__main__':
     fixtures = []
 
     subMaster = SubMaster(['red', 'green', 'blue'], 3)
+    showManager = ShowManager()
+
+    showManager.addShow('knightrider', 'Knight Rider', [
+        'KnightRider',
+        {'red':255, 'green':0, 'blue':0},
+        {'red':0,   'green':0, 'blue':0}
+    ])
 
     universe = Universe()
     output = Output.factory('WS2801Output', channels=150)
@@ -22,5 +51,3 @@ if __name__ == '__main__':
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
-
-    showRunner = ShowRunner()

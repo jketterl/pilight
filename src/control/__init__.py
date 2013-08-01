@@ -45,3 +45,6 @@ class Controllable(object):
     def __init__(self, *args, **kwargs):
         super(Controllable, self).__init__(*args, **kwargs)
         ControlServer.getInstance().registerControllable(self)
+    def executeCommand(self, command, **kwargs):
+        return getattr(self, command)(**kwargs)
+
