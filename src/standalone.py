@@ -44,6 +44,9 @@ if __name__ == '__main__':
     showManager.addShow('colorfader', 'Color Fader', ['ColorFader'])
     showManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'])
     showManager.addShow('strobe', 'Strobe', ['Strobe', 20, 30])
+    showManager.addShow('vu', 'VU Meter', ['VUMeter', 'hw:1,0'])
+    showManager.addShow('fft', 'FFT Show', ['FFT'])
+    showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
 
     universe = Universe()
     output = Output.factory('WS2801Output', channels=150)
