@@ -40,6 +40,10 @@ if __name__ == '__main__':
         {'red':255, 'green':0, 'blue':0},
         {'red':0,   'green':0, 'blue':0}
     ])
+    showManager.addShow('snow', 'Snow', ['Snow'])
+    showManager.addShow('colorfader', 'Color Fader', ['ColorFader'])
+    showManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'])
+    showManager.addShow('strobe', 'Strobe', ['Strobe', 20, 30])
 
     universe = Universe()
     output = Output.factory('WS2801Output', channels=150)

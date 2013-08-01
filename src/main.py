@@ -102,7 +102,9 @@ class LircListener(LircDelegate):
             'module':'showRunner',
             'method':'startShow',
             'args':[
-                'Strobe'
+                'Strobe',
+                60,
+                64
             ]
         },
         {
