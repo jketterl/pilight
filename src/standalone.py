@@ -47,6 +47,7 @@ if __name__ == '__main__':
     showManager.addShow('vu', 'VU Meter', ['VUMeter', 'hw:1,0'])
     showManager.addShow('fft', 'FFT Show', ['FFT'])
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
+    showManager.addShow('police', 'Police', ['Police'])
 
     universe = Universe()
     output = Output.factory('WS2801Output', channels=150)
