@@ -12,12 +12,21 @@ class ControlSocket(websocket.WebSocketHandler):
         print "socket opened!"
     def on_message(self, message):
         message = json.loads(message)
-        if not 'module' in message: return
+        if not 'module' in message:
+            controllable = ControlServer.getInstance()
+        else:
+            controllable = ControlServer.getInstance().getControllable(message['module'])
+
+        if controllable is None: return
         if not 'command' in message: return
-        controllable = ControlServer.getInstance().getControllable(message['module'])
         params = {}
         if 'params' in message: params = message['params']
-        response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
+
+        try:
+            response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
+        except Exception:
+            response = {'status':'EXCEPTION'}
+
         if 'sequence' in message: response['sequence'] = message['sequence']
         self.write_message(json.dumps(response))
     def on_close(self):
@@ -39,7 +48,10 @@ class ControlServer(object):
     def registerControllable(self, controllable):
         self.controllables[controllable.getId()] = controllable
     def getControllable(self, id):
-        return self.controllables[id]
+        try:
+            return self.controllables[id]
+        except KeyError:
+            return None
 
 class Controllable(object):
     def __init__(self, *args, **kwargs):
