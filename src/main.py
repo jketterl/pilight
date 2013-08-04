@@ -16,6 +16,7 @@ import time
 from lirc import *
 #from output.WebsocketOutput import WebsocketListener
 from module import SubMaster, ShowRunner
+from show import ShowManager
 
 from message import Messenger
 from message.output import ConsoleOutput, LCDOutput
@@ -226,6 +227,22 @@ if __name__ == '__main__':
 
     showRunner = ShowRunner()
     
+    showManager = ShowManager(fixtures, runner = showRunner)
+
+    showManager.addShow('knightrider', 'Knight Rider', [
+        'KnightRider',
+        {'red':255, 'green':0, 'blue':0},
+        {'red':0,   'green':0, 'blue':0}
+    ])
+    showManager.addShow('snow', 'Snow', ['Snow'])
+    showManager.addShow('colorfader', 'Color Fader', ['ColorFader'])
+    showManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'])
+    showManager.addShow('strobe', 'Strobe', ['Strobe', 20, 30])
+    showManager.addShow('vu', 'VU Meter', ['VUMeter', 'hw:1,0'])
+    showManager.addShow('fft', 'FFT Show', ['FFT'])
+    showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
+    showManager.addShow('police', 'Police', ['Police'])
+
     lircListener = LircListener({
         "showRunner":showRunner,
         "subMaster":subMaster
