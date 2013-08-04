@@ -24,7 +24,8 @@ class ControlSocket(websocket.WebSocketHandler):
 
         try:
             response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
-        except Exception:
+        except Exception as e:
+            print e
             response = {'status':'EXCEPTION'}
 
         if 'sequence' in message: response['sequence'] = message['sequence']
