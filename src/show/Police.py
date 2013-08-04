@@ -21,7 +21,7 @@ class PoliceLight(Thread):
             self.setValue(255)
             self.event.wait(.02)
             self.setValue(0)
-            self.event.wait(self.delay)
+            self.event.wait(self.delay + random.random() * .1 - .05)
         self.setValue(0)
     def setValue(self, v):
         for f in self.fixtures: f.setChannels({self.color:v})
