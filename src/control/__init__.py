@@ -8,6 +8,9 @@ from tornado import ioloop, web, websocket
 import threading, json
 
 class ControlSocket(websocket.WebSocketHandler):
+    def __init__(self, *args, **kwargs):
+        super(ControlSocket, self).__init__(*args, **kwargs)
+        self.listeners = []
     def open(self):
         print "socket opened!"
     def on_message(self, message):
@@ -32,7 +35,11 @@ class ControlSocket(websocket.WebSocketHandler):
         if 'sequence' in message: response['sequence'] = message['sequence']
         self.write_message(json.dumps(response))
     def on_close(self):
-        pass
+        print "socket closed"
+        for l in self.listeners:
+            l.onClose(self)
+    def addListener(self, listener):
+        self.listeners.append(listener);
         
 class Controllable(object):
     def __init__(self, *args, **kwargs):
@@ -45,7 +52,10 @@ class Controllable(object):
         for l in self.listeners:
             l.write_message(json.dumps({'source':self.getId(), 'data':data}));
     def listen(self, socket = None):
+        socket.addListener(self)
         self.listeners.append(socket)
+    def onClose(self, socket):
+        self.listeners.remove(socket)
 
 class ControlServer(Controllable):
     _instance = None
