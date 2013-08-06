@@ -43,7 +43,10 @@ class SocketServer(threading.Thread):
 
     def write(self, name, changes):
         if not name in self.clients: return
-        self.clients[name].sendChanges(changes)
+        try:
+            self.clients[name].sendChanges(changes)
+        except socket.error:
+            del self.clients[name]
 
     def registerClient(self, client, name):
         self.clients[name] = client
