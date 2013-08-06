@@ -30,7 +30,8 @@ class ShowManager(Controllable):
     def getShows(self, **kwargs):
         res = []
         for id in self.shows:
-            res.append({'id':id, 'name':self.shows[id]['name']})
+            show = self.shows[id]
+            res.append({'id':id, 'name':show['name'], 'running':id == self.show})
         return res
     def addShow(self, id, name, definition):
         self.shows[id] = {'name':name, 'definition':definition}
