@@ -33,85 +33,62 @@ class LircListener(LircDelegate):
     _showMappings = [
         {
             'keys':['1'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'VUMeter',
-                'hw:1,0'
-            ]
+            'args':['vu']
         },
         {
             'keys':['2'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'KnightRider',
-                {'red':255, 'green':0, 'blue':0},
-                {'red':0,   'green':0, 'blue':0}
-            ]
+            'args':['knightrider']
         },
         {
             'keys':['3'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'Police'
-            ]
+            'args':['police']
         },
         {
             'keys':['4'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'Snow'
-            ]
+            'args':['snow']
         },
         {
             'keys':['5'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'ColorFader'
-            ]
+            'args':['colorfader']
         },
         {
             'keys':['6'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'ColorWheel'
-            ]
+            'args':['colorwheel']
         },
         {
             'keys':['7'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'FFT'
-            ]
+            'args':['fft']
         },
         {
             'keys':['8'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'BPMStrobe'
-            ]
+            'args':['bpmstrobe']
         },
         {
             'keys':['9'],
-            'module':'showRunner',
+            'module':'showManager',
             'method':'startShow',
-            'args':[
-                'Strobe',
-                60,
-                64
-            ]
+            'args':['strobe']
         },
         {
             'keys':['stop','standby'],
-            'module':'showRunner',
-            'method':'stopCurrentShow'
+            'module':'showManager',
+            'method':'stopShow'
         },
         {
             'keys':['red','R'],
@@ -176,9 +153,6 @@ class LircListener(LircDelegate):
             config = self.keyMap[key]
             args = []
             if 'args' in config: args = config['args'][:]
-            
-            # always pass a list of fixtures as the second parameter
-            args.insert(1, fixtures)
             getattr(self.modules[config['module']], config['method'])(*tuple(args))
 
 if __name__ == '__main__':
@@ -237,15 +211,15 @@ if __name__ == '__main__':
     showManager.addShow('snow', 'Snow', ['Snow'])
     showManager.addShow('colorfader', 'Color Fader', ['ColorFader'])
     showManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'])
-    showManager.addShow('strobe', 'Strobe', ['Strobe', 20, 30])
+    showManager.addShow('strobe', 'Strobe', ['Strobe', 60, 64])
     showManager.addShow('vu', 'VU Meter', ['VUMeter', 'hw:1,0'])
     showManager.addShow('fft', 'FFT Show', ['FFT'])
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
     showManager.addShow('police', 'Police', ['Police'])
 
     lircListener = LircListener({
-        "showRunner":showRunner,
-        "subMaster":subMaster
+        "subMaster":subMaster,
+        "showManager":showManager
     })
 
     lirc = LircClient(lircListener)

@@ -39,7 +39,6 @@ class ShowManager(Controllable):
         args.insert(1, self.fixtures)
 
         self.runner.startShow(*tuple(args))
-        print "show started!"
     def stopShow(self):
         self.runner.stopCurrentShow()
         

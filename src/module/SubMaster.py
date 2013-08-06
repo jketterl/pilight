@@ -22,21 +22,21 @@ class SubMaster(Controllable, Universe):
             self.targetMap[name] = MultiChannelMapping(channel)
             masterMap.addTarget(channel) 
         self.channelMap['master'] = master
-        self.selectChannel('master', None)
-    def selectChannel(self, channel, fixtures):
+        self.selectChannel('master')
+    def selectChannel(self, channel):
         self.currentChannel = self.getChannel(channel)
         Messenger.displayMessage('selected: %s' % channel);
     def getChannel(self, name):
         return self.channelMap[name]
-    def increaseValue(self, *args):
+    def increaseValue(self):
         self.currentChannel.setValue(self.currentChannel.getValue() + 10)
-    def decreaseValue(self, *args):
+    def decreaseValue(self):
         self.currentChannel.setValue(self.currentChannel.getValue() - 10)
     def mapChannel(self, name, target):
         self.targetMap[name].addTarget(target)
-    def fullValue(self, *args):
+    def fullValue(self):
         self.currentChannel.setValue(255);
-    def offValue(self, *args):
+    def offValue(self):
         self.currentChannel.setValue(0);
 
     def getId(self):
