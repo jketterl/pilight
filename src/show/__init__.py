@@ -23,6 +23,8 @@ class ShowManager(Controllable):
             self.runner = runner
         self.shows = {}
         self.fixtures = fixtures
+
+        self.setShow(None)
     def getId(self):
         return 'showmanager'
     def getShows(self, **kwargs):
@@ -39,6 +41,10 @@ class ShowManager(Controllable):
         args.insert(1, self.fixtures)
 
         self.runner.startShow(*tuple(args))
+        self.setShow(id)
     def stopShow(self, **kwargs):
         self.runner.stopCurrentShow()
-        
+        self.setShow(None)
+    def setShow(self, show):
+        self.show = show
+        self.emit({'show':show})

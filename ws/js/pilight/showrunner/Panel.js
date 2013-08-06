@@ -2,7 +2,8 @@ Ext.define('pilight.showrunner.Show', {
     extend:'Ext.data.Model',
     fields:[
         {name:'id'},
-        {name:'name'}
+        {name:'name'},
+        {name:'running', type:'boolean'}
     ]
 });
 
@@ -13,7 +14,11 @@ Ext.define('pilight.showrunner.Panel', {
         data:[]
     }),
     columns:[
-        {'header':'Name', dataIndex:'name', flex:1}
+        {header:'Name', dataIndex:'name', flex:1},
+        {header:'', dataIndex:'running', width:50, renderer:function(v){
+            if (v) return 'ON';
+            return '';
+        }}
     ],
     width:250,
     height:300,
@@ -26,6 +31,8 @@ Ext.define('pilight.showrunner.Panel', {
                 me.store.add(show);
             });
         });
+
+        me.socket.listen('showmanager', me);
 
         var startshow = function(show) {
             me.socket.sendCommand({module:'showmanager', command:'startShow', params:{id:show.get('id')}}); 
@@ -55,5 +62,18 @@ Ext.define('pilight.showrunner.Panel', {
         });
 
         me.callParent(arguments);
+    },
+    receiveEvent:function(data){
+        var me = this;
+        var show;
+        while (show = me.store.getAt(me.store.find('running', true))) {
+            show.set('running', false);
+            show.commit();
+        }
+        if (data.show) {
+            var show = me.store.getById(data.show);
+            show.set('running', true);
+            show.commit();
+        }
     }
 });
