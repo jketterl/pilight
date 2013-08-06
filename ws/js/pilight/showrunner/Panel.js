@@ -26,7 +26,6 @@ Ext.define('pilight.showrunner.Panel', {
         var me = this;
 
         me.socket.sendCommand({module:'showmanager', command:'getShows'}, function(data){
-            console.info(data);
             data.forEach(function(data){
                 var show = Ext.create('pilight.showrunner.Show', data);
                 me.store.add(show);
