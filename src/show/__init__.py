@@ -25,20 +25,20 @@ class ShowManager(Controllable):
         self.fixtures = fixtures
     def getId(self):
         return 'showmanager'
-    def getShows(self):
+    def getShows(self, **kwargs):
         res = []
         for id in self.shows:
             res.append({'id':id, 'name':self.shows[id]['name']})
         return res
     def addShow(self, id, name, definition):
         self.shows[id] = {'name':name, 'definition':definition}
-    def startShow(self, id=None):
+    def startShow(self, id=None, **kwargs):
         if id is None: return
         args = self.shows[id]['definition'][:]
         # always pass a list of fixtures as the second parameter
         args.insert(1, self.fixtures)
 
         self.runner.startShow(*tuple(args))
-    def stopShow(self):
+    def stopShow(self, **kwargs):
         self.runner.stopCurrentShow()
         

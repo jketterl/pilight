@@ -9,10 +9,19 @@ from channel import Channel, MultiChannelMapping
 from message import Messenger
 from control import Controllable
 
+class ChannelListener(object):
+    def __init__(self, name, submaster):
+        self.name = name;
+        self.submaster = submaster;
+    def onValueChange(self, channel, value):
+        self.submaster.emit({'name':self.name, 'value':value})
+
 class SubMaster(Controllable, Universe):
     def __init__(self, channelNames = [], count = 512):
         super(SubMaster, self).__init__(count)
         master = Channel()
+        master.addListener(ChannelListener('master', self))
+
         masterMap = MultiChannelMapping(master)
         self.channelMap = {}
         self.targetMap = {}
@@ -21,6 +30,8 @@ class SubMaster(Controllable, Universe):
             self.channelMap[name] = channel
             self.targetMap[name] = MultiChannelMapping(channel)
             masterMap.addTarget(channel) 
+
+            channel.addListener(ChannelListener(name, self))
         self.channelMap['master'] = master
         self.selectChannel('master')
     def selectChannel(self, channel):
@@ -41,7 +52,7 @@ class SubMaster(Controllable, Universe):
 
     def getId(self):
         return "submaster"
-    def getChannels(self):
+    def getChannels(self, **kwargs):
         return self.channelMap.keys()
-    def setChannelValue(self, channel='main', value=0):
+    def setChannelValue(self, channel='main', value=0, **kwargs):
         self.getChannel(channel).setValue(value)

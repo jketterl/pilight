@@ -23,13 +23,32 @@ Ext.define('pilight.socket.Socket', {
 
         me.socket.onmessage = function(e){
             var message = Ext.JSON.decode(e.data);
-            if (typeof(message.sequence) != 'undefined' && me.callbacks[message.sequence]) me.callbacks[message.sequence](message.data || {});
+            if (typeof(message.sequence) != 'undefined' && me.callbacks[message.sequence]) {
+                me.callbacks[message.sequence](message.data || {});
+                return;
+            }
+            if (typeof(message.source) != 'undefined') {
+                if (me.listeners[message.source]) me.listeners[message.source].forEach(function(l){
+                    l.receiveEvent(message.data || {})
+                });
+                return;
+            }
         };
+
+        me.listeners = {};
 	},
     sendCommand:function(command, callback) {
         var me = this;
         if (callback) me.callbacks[me.sequence] = callback;
         Ext.apply(command, {sequence:me.sequence++});
         me.socket.send(Ext.JSON.encode(command));
+    },
+    listen:function(module, listener) {
+        var me = this;
+        if (!me.listeners[module]) {
+            me.listeners[module] = [];
+            me.sendCommand({module:module, command:'listen'});
+        }
+        me.listeners[module].push(listener);
     }
 });

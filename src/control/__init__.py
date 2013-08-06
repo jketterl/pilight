@@ -21,6 +21,7 @@ class ControlSocket(websocket.WebSocketHandler):
         if not 'command' in message: return
         params = {}
         if 'params' in message: params = message['params']
+        params['socket'] = self
 
         try:
             response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
@@ -37,8 +38,14 @@ class Controllable(object):
     def __init__(self, *args, **kwargs):
         super(Controllable, self).__init__(*args, **kwargs)
         ControlServer.getInstance().registerControllable(self)
+        self.listeners = []
     def executeCommand(self, command, **kwargs):
         return getattr(self, command)(**kwargs)
+    def emit(self, data):
+        for l in self.listeners:
+            l.write_message(json.dumps({'source':self.getId(), 'data':data}));
+    def listen(self, socket = None):
+        self.listeners.append(socket)
 
 class ControlServer(Controllable):
     _instance = None
@@ -53,8 +60,10 @@ class ControlServer(Controllable):
         threading.Thread(target = ioloop.IOLoop.instance().start).start()
 
         self.controllables = {}
+
         # instead of the super constructor call
         self.registerControllable(self)
+        self.listeners = []
     def registerControllable(self, controllable):
         self.controllables[controllable.getId()] = controllable
     def getControllable(self, id):
@@ -62,7 +71,7 @@ class ControlServer(Controllable):
             return self.controllables[id]
         except KeyError:
             return None
-    def getControllables(self):
+    def getControllables(self, **kwargs):
         result = []
         for key in self.controllables:
             controllable = self.controllables[key]
