@@ -12,36 +12,27 @@ Ext.onReady(function(){
 		port:9001
 	});
 
+    var typemap = {
+        'SubMaster' : 'pilight.submaster.Panel',
+        'ShowManager' : 'pilight.showrunner.Panel'
+    }
+
     socket.on('connect', function(){
-        var win = Ext.create('Ext.window.Window', {
-            title:'Submaster',
-            layout:'fit',
-            border:false,
-            x:250,
-            y:0,
-            items:[
-                Ext.create('pilight.submaster.Panel', {
-                    socket:socket
-                })
-            ]
+        socket.sendCommand({'command':'getControllables'}, function(data){
+            data.forEach(function(controllable){
+                var type = controllable.type;
+                if (typeof(typemap[type]) == 'undefined') return;
+                var win = Ext.create('Ext.window.Window', {
+                    layout:'fit',
+                    title:type,
+                    items:[
+                        Ext.create(typemap[type], {
+                            socket:socket
+                        })
+                    ]
+                });
+                win.show()
+            });
         });
-
-        win.show()
-
-        var win = Ext.create('Ext.window.Window', {
-            title:'Shows',
-            layout:'fit',
-            x:0,
-            y:0,
-            width:250,
-            height:300,
-            items:[
-                Ext.create('pilight.showrunner.Panel', {
-                    socket:socket
-                })
-            ]
-        });
-
-        win.show()
     });
 });

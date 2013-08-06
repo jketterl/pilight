@@ -33,27 +33,6 @@ class ControlSocket(websocket.WebSocketHandler):
     def on_close(self):
         pass
         
-class ControlServer(object):
-    _instance = None
-    @staticmethod
-    def getInstance():
-        if ControlServer._instance is None:
-            ControlServer._instance = ControlServer()
-        return ControlServer._instance
-    def __init__(self):
-        self.app = web.Application([(r"/control", ControlSocket)])
-        self.app.listen(9001)
-        threading.Thread(target = ioloop.IOLoop.instance().start).start()
-
-        self.controllables = {}
-    def registerControllable(self, controllable):
-        self.controllables[controllable.getId()] = controllable
-    def getControllable(self, id):
-        try:
-            return self.controllables[id]
-        except KeyError:
-            return None
-
 class Controllable(object):
     def __init__(self, *args, **kwargs):
         super(Controllable, self).__init__(*args, **kwargs)
@@ -61,3 +40,33 @@ class Controllable(object):
     def executeCommand(self, command, **kwargs):
         return getattr(self, command)(**kwargs)
 
+class ControlServer(Controllable):
+    _instance = None
+    @staticmethod
+    def getInstance():
+        if ControlServer._instance is None:
+            ControlServer._instance = ControlServer()
+        return ControlServer._instance
+    def __init__(self, *args, **kwargs):
+        self.app = web.Application([(r"/control", ControlSocket)])
+        self.app.listen(9001)
+        threading.Thread(target = ioloop.IOLoop.instance().start).start()
+
+        self.controllables = {}
+        # instead of the super constructor call
+        self.registerControllable(self)
+    def registerControllable(self, controllable):
+        self.controllables[controllable.getId()] = controllable
+    def getControllable(self, id):
+        try:
+            return self.controllables[id]
+        except KeyError:
+            return None
+    def getControllables(self):
+        result = []
+        for key in self.controllables:
+            controllable = self.controllables[key]
+            result.append({'id':controllable.getId(), 'type':controllable.__class__.__name__});
+        return result
+    def getId(self):
+        return 'controlserver'

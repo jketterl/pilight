@@ -15,6 +15,8 @@ Ext.define('pilight.showrunner.Panel', {
     columns:[
         {'header':'Name', dataIndex:'name', flex:1}
     ],
+    width:250,
+    height:300,
     initComponent:function(){
         var me = this;
 
