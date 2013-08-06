@@ -29,5 +29,9 @@ Ext.define('pilight.show.colorwheel.Panel', {
         fieldLabel:'Value',
         name:'value',
         value:100
+    }, {
+        fieldLabel:'Speed',
+        name:'speed',
+        value:50
     }]
 });

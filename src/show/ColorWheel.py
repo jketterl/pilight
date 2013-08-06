@@ -10,6 +10,7 @@ class ColorWheel(Controllable, Show):
 
         self.saturation = 1
         self.value = 1
+        self.speed = .5
 
         self.generateWheel()
         super(ColorWheel, self).__init__(fixtures)
@@ -37,20 +38,22 @@ class ColorWheel(Controllable, Show):
             for (channel, value) in batch:
                 channel.setChannels(value)
             offset = (offset + 1) % self.wheelCount
-            time.sleep(.02)
+            time.sleep(.01 / self.speed if self.speed > 0 else 1)
         for i in range(self.count):
             self.fixtures[i].setChannels({'red':0,'green':0,'blue':0})
         
         self.unregister()
         self.endEvent.set()
 
-    def setParams(self, saturation = None, value = None, **kwargs):
+    def setParams(self, saturation = None, value = None, speed = None, **kwargs):
         if not saturation is None:
             self.saturation = saturation / 100.0
+            self.wheel = None
         if not value is None:
             self.value = value / 100.0
-
-        self.wheel = None
+            self.wheel = None
+        if not speed is None:
+            self.speed = speed / 100.0
 
     def getId(self):
         return 'colorwheel'
