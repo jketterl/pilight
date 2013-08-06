@@ -56,6 +56,8 @@ class Controllable(object):
         self.listeners.append(socket)
     def onClose(self, socket):
         self.listeners.remove(socket)
+    def unregister(self):
+        ControlServer.getInstance().unregisterControllable(self)
 
 class ControlServer(Controllable):
     _instance = None
@@ -72,10 +74,16 @@ class ControlServer(Controllable):
         self.controllables = {}
 
         # instead of the super constructor call
-        self.registerControllable(self)
         self.listeners = []
+        self.registerControllable(self)
     def registerControllable(self, controllable):
-        self.controllables[controllable.getId()] = controllable
+        id = controllable.getId()
+        self.controllables[id] = controllable
+        self.emit({'add':{'id':id, 'type':controllable.__class__.__name__}})
+    def unregisterControllable(self, controllable):
+        id = controllable.getId()
+        self.emit({'remove':{'id':id}})
+        del self.controllables[id]
     def getControllable(self, id):
         try:
             return self.controllables[id]
