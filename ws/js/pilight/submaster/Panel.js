@@ -8,8 +8,8 @@ Ext.define('pilight.submaster.Panel', {
     initComponent:function(){
         var me = this;
 
-        me.socket.sendCommand({module:'submaster', command:'getChannels'}, function(data){
-            data.forEach(function(channel){
+        me.socket.sendCommand({module:'submaster', command:'getValues'}, function(data){
+            var addChannel = function(channel, value){
                 var fader = Ext.create('Ext.slider.Single', {
                     fieldLabel:channel,
                     name:channel,
@@ -18,7 +18,7 @@ Ext.define('pilight.submaster.Panel', {
                     width:50,
                     height:200,
                     maxValue:255,
-                    //animate:false,
+                    value:value
                 });
 
                 fader.on('change', function(slider, value){
@@ -40,7 +40,9 @@ Ext.define('pilight.submaster.Panel', {
                 });
 
                 me.add(fader);
-            });
+            }
+
+            for (var channel in data) addChannel(channel, data[channel]);
         });
 
         me.socket.listen('submaster', me);

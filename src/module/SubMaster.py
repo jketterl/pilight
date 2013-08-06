@@ -52,7 +52,10 @@ class SubMaster(Controllable, Universe):
 
     def getId(self):
         return "submaster"
-    def getChannels(self, **kwargs):
-        return self.channelMap.keys()
     def setChannelValue(self, channel='main', value=0, **kwargs):
         self.getChannel(channel).setValue(value)
+    def getValues(self, **kwargs):
+        res = {}
+        for key in self.channelMap:
+            res[key] = self.channelMap[key].getValue()
+        return res
