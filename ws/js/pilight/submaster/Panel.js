@@ -21,7 +21,7 @@ Ext.define('pilight.submaster.Panel', {
                     value:value
                 });
 
-                fader.on('change', function(slider, value){
+                var sendValue = function(value){
                     if (me.suspended) return;
                     if (me.locked) {
                         return me.backlog[channel] = value;
@@ -29,17 +29,45 @@ Ext.define('pilight.submaster.Panel', {
                     me.locked = true;
 
                     var callback = function(){
+                        me.locked = false;
                         for (var key in me.backlog) {
                             var value = me.backlog[key];
                             delete me.backlog[key];
-                            return me.socket.sendCommand({module:'submaster', command:'setChannelValue', params:{channel:key, value:value}}, callback);
+                            sendValue(value);
+                            //return me.socket.sendCommand({module:'submaster', command:'setChannelValue', params:{channel:key, value:value}}, callback);
                         }
-                        me.locked = false;
                     }
                     me.socket.sendCommand({module:'submaster', command:'setChannelValue', params:{channel:channel, value:value}}, callback);
+                };
+
+                fader.on('change', function(slider, value){
+                    sendValue(value)
                 });
 
-                me.add(fader);
+                var button = Ext.create('Ext.button.Button', {
+                    text:'Flash',
+                    listeners:{
+                        render:function() {
+                            this.el.on({
+                                mousedown:function(){
+                                    sendValue(255);
+                                },
+                                mouseup:function(){
+                                    sendValue(0);
+                                }
+                            });
+                        }
+                    }
+                });
+
+                me.add({
+                    xtype:'container',
+                    border:false,
+                    items:[
+                       fader,
+                       button
+                    ]
+                });
             }
 
             for (var channel in data) addChannel(channel, data[channel]);
