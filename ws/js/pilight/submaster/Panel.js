@@ -48,12 +48,19 @@ Ext.define('pilight.submaster.Panel', {
                     text:'Flash',
                     listeners:{
                         render:function() {
+                            var value = false;
                             this.el.on({
                                 mousedown:function(){
+                                    value = fader.getValue()
                                     sendValue(255);
                                 },
                                 mouseup:function(){
-                                    sendValue(0);
+                                    if (value !== false) sendValue(value);
+                                    value = false;
+                                },
+                                mouseout:function(){
+                                    if (value !== false) sendValue(value);
+                                    value = false;
                                 }
                             });
                         }
