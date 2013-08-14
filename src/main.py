@@ -14,12 +14,11 @@ from fixture import RGBFixture
 from output import Output
 import time
 from lirc import *
-#from output.WebsocketOutput import WebsocketListener
 from module import SubMaster, ShowRunner
 from show import ShowManager
 
 from message import Messenger
-from message.output import ConsoleOutput, LCDOutput
+from message.output import ConsoleOutput, LCDOutput, Messaging
 
 '''
 class WsListener(WebsocketListener):
@@ -158,6 +157,7 @@ class LircListener(LircDelegate):
 if __name__ == '__main__':
     Messenger.addOutput(ConsoleOutput())
     Messenger.addOutput(LCDOutput())
+    Messenger.addOutput(Messaging())
 
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)

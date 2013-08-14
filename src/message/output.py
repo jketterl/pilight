@@ -8,6 +8,7 @@ class ConsoleOutput(Output):
 
 from lcdproc.server import Server
 from threading import Timer
+from control import Controllable
 
 class LCDOutput(Output):
     def __init__(self):
@@ -34,3 +35,9 @@ class LCDOutput(Output):
         if hasattr(self, "timer"): self.timer.cancel()
         self.timer = Timer(5, hide)
         self.timer.start()
+
+class Messaging(Output, Controllable):
+    def getId(self):
+        return 'messenger'
+    def displayMessage(self, message):
+        self.emit({'message':message})

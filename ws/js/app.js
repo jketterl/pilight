@@ -17,7 +17,8 @@ Ext.onReady(function(){
     var typemap = {
         'SubMaster' : 'pilight.submaster.Panel',
         'ShowManager' : 'pilight.showrunner.Panel',
-        'ColorWheel' : 'pilight.show.colorwheel.Panel'
+        'ColorWheel' : 'pilight.show.colorwheel.Panel',
+        'Messaging' : 'pilight.messaging.Panel'
     }
 
     var windows = {};
