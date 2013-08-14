@@ -8,23 +8,28 @@ Ext.define('pilight.submaster.Panel', {
     initComponent:function(){
         var me = this;
 
-        me.socket.sendCommand({module:'submaster', command:'getValues'}, function(data){
-            var addChannel = function(channel, value){
+        var submaster = Ext.create('pilight.submaster.Submaster', {
+            socket:me.socket
+        });
+        
+        submaster.getChannels(function(channels){
+            channels.forEach(function(channel){
+                var name = channel.name;
                 var fader = Ext.create('Ext.slider.Single', {
-                    fieldLabel:channel,
-                    name:channel,
+                    fieldLabel:name,
+                    name:name,
                     vertical:true,
                     labelAlign:'top',
                     width:50,
                     height:200,
                     maxValue:255,
-                    value:value
+                    value:channel.getValue()
                 });
 
                 var sendValue = function(value){
                     if (me.suspended) return;
                     if (me.locked) {
-                        return me.backlog[channel] = value;
+                        return me.backlog[name] = value;
                     }
                     me.locked = true;
 
@@ -34,10 +39,9 @@ Ext.define('pilight.submaster.Panel', {
                             var value = me.backlog[key];
                             delete me.backlog[key];
                             sendValue(value);
-                            //return me.socket.sendCommand({module:'submaster', command:'setChannelValue', params:{channel:key, value:value}}, callback);
                         }
                     }
-                    me.socket.sendCommand({module:'submaster', command:'setChannelValue', params:{channel:channel, value:value}}, callback);
+                    channel.setValue(value, callback);
                 };
 
                 fader.on('change', function(slider, value){
@@ -51,7 +55,9 @@ Ext.define('pilight.submaster.Panel', {
                             var value = false;
                             this.el.on({
                                 mousedown:function(){
-                                    value = fader.getValue()
+                                    var v = fader.getValue();
+                                    if (v == 255) return;
+                                    value = v;
                                     sendValue(255);
                                 },
                                 mouseup:function(){
@@ -67,6 +73,15 @@ Ext.define('pilight.submaster.Panel', {
                     }
                 });
 
+                channel.on('valueChanged', function(value){
+                    if (typeof(me.backlog[name]) != 'undefined') return;
+                    var formData = {};
+                    formData[name] = value;
+                    me.suspended = true;
+                    me.getForm().setValues(formData);
+                    me.suspended = false;
+                });
+
                 me.add({
                     xtype:'container',
                     border:false,
@@ -75,21 +90,9 @@ Ext.define('pilight.submaster.Panel', {
                        button
                     ]
                 });
-            }
-
-            for (var channel in data) addChannel(channel, data[channel]);
+            });
         });
 
-        me.socket.listen('submaster', me);
         me.callParent(this, arguments)
     },
-    receiveEvent:function(data) {
-        var me = this;
-        if (typeof(me.backlog[data.name]) != 'undefined') return;
-        var formData = {};
-        formData[data.name] = data.value;
-        me.suspended = true;
-        me.getForm().setValues(formData);
-        me.suspended = false;
-    }
 });
