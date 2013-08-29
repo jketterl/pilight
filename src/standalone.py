@@ -21,7 +21,7 @@ if __name__ == '__main__':
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
-    showManager = ShowManager()
+    showManager = ShowManager(fixtures)
 
     showManager.addShow('knightrider', 'Knight Rider', [
         'KnightRider',
