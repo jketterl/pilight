@@ -10,7 +10,7 @@ sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
 
 from universe import Universe
 from filter import AlphaFilter
-from fixture import RGBFixture
+from fixture import RGBFixture, Dimmer
 from output import Output
 import time
 from lirc import *
@@ -199,6 +199,15 @@ if __name__ == '__main__':
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
+    bands = []
+    universe = Universe()
+    universe.setOutput(Output.factory('SocketOutput', 'fft'))
+    for i in range(16):
+        band = Dimmer()
+        band.mapToUniverse(universe, i)
+        bands.append(band)
+
+
     showRunner = ShowRunner()
     
     showManager = ShowManager(fixtures, runner = showRunner)
@@ -216,7 +225,7 @@ if __name__ == '__main__':
     showManager.addShow('fft', 'FFT Show', ['FFT'])
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
     showManager.addShow('police', 'Police', ['Police'])
-    #showManager.addShow('directffct', 'FFT Direct', ['DirectFFT'])
+    showManager.addShow('directffct', 'FFT Direct', ['DirectFFT', bands])
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
 
     lircListener = LircListener({
