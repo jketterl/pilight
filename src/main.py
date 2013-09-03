@@ -191,7 +191,8 @@ if __name__ == '__main__':
         subMaster.mapChannel('dj', fixture.getNamedChannel(name))
 
     universe = Universe()
-    universe.setOutput(Output.factory('SocketOutput', 'ws2801'))
+    #universe.setOutput(Output.factory('SocketOutput', 'ws2801'))
+    universe.setOutput(Output.factory('SerialOutput', 1))
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
