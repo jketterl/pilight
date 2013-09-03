@@ -25,6 +25,10 @@ class Fixture(object):
             offset += 1
         self.mapToChannels(channelMap)
     
+class Dimmer(Fixture):
+    def getInputs(self):
+        return ['brightness'];
+
 class RGBFixture(Fixture):
     def __init__(self, channelSequence = 'GRB'):
         self.channelSequence = channelSequence
