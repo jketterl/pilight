@@ -7,15 +7,7 @@ class FFT(Show):
     def __init__(self, *args, **kwargs):
         self.bands = 12
         super(FFT, self).__init__(*args, **kwargs)
-    def run(self):
-        self.universe = Universe(self.bands)
-        for channel in self.universe:
-            channel.addListener(self)
-
-        self.outputs = []
-        self.ratio = float(len(self.fixtures)) / self.bands
-        start = 0
-        colorConfig = {
+        self.colorConfig = {
             'blue':{
                 'start':0,
                 'end':.8
@@ -25,9 +17,17 @@ class FFT(Show):
                 'end':1
             }
         }
+    def run(self):
+        self.universe = Universe(self.bands)
+        for channel in self.universe:
+            channel.addListener(self)
+
+        self.outputs = []
+        self.ratio = float(len(self.fixtures)) / self.bands
+        start = 0
         for i in range(self.bands):
             end = int((i+1) * self.ratio)
-            self.outputs.append(VUOutput(self.fixtures[start:end], colorConfig))
+            self.outputs.append(VUOutput(self.fixtures[start:end], self.colorConfig))
             start = end
 
         self.reader = FFTReader(AudioReader.instance("hw:1,0"), self.universe, self.bands)
