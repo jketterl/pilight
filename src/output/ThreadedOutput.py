@@ -8,6 +8,7 @@ from . import Output
 from threading import Thread, Event, Lock
 
 class WriterThread(Thread):
+    timeout = -1
     def __init__(self, output):
         super(WriterThread, self).__init__();
         self.event = Event()
@@ -16,7 +17,10 @@ class WriterThread(Thread):
     
     def run(self):
         while not self.doStop:
-            self.event.wait(10)
+            if self.timeout > 0:
+                self.event.wait(self.timeout)
+            else:
+                self.event.wait()
             self.event.clear()
             self.output.update()
     
@@ -29,8 +33,9 @@ class WriterThread(Thread):
         self.event.set()
         
 class ThreadedOutput(Output):
+    writerCls = WriterThread
     def __init__(self):
-        self.thread = WriterThread(self)
+        self.thread = self.writerCls(self)
         self.thread.start()
         super(ThreadedOutput, self).__init__()
         self.changes = {}
