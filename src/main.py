@@ -176,7 +176,7 @@ if __name__ == '__main__':
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
     
     universe = Universe()
-    universe.setOutput(Output.factory('SocketOutput', 'pwm'))
+    universe.setOutput(Output.factory('SerialOutput', 0, 32))
 
     for i in range(4):
         fixture = RGBFixture()
