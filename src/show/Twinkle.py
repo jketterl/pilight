@@ -6,7 +6,7 @@ import random
 class Twinkle(Show):
     def __init__(self, *args, **kwargs):
         super(Twinkle, self).__init__(*args, **kwargs)
-        self.hue = .05
+        self.hue = .26
         self.saturation = 1
         self.value = 1
         self.twinkles = []
@@ -23,7 +23,7 @@ class Twinkle(Show):
 
             toDelete = []
             for index, twinkle in enumerate(self.twinkles):
-                twinkle['fixture'].setChannels(self.hsv_to_rgb(self.hue, self.saturation, twinkle['value']))
+                twinkle['fixture'].setChannels(self.hsv_to_rgb(self.hue, self.saturation - .3, twinkle['value']))
                 twinkle['value'] *= .9
 
                 if twinkle['value'] <= target:
