@@ -19,16 +19,26 @@ class SerialOutput(BufferedOutput):
         super(SerialOutput, self).__init__(*args, **kwargs)
         self.deviceId = deviceId
 
+    def xorChecksum(self, input):
+        result = 0
+        for byte in input:
+            result ^= ord(byte)
+        return result
+
     def applyChanges(self, changes):
         if changes:
             message = ''
             for key in changes:
                 message += struct.pack('BB', key, changes[key])
-            message = 'SYNC' + struct.pack('<BBH', self.deviceId, 0x01, len(message)) + message
+            if (len(message) > 512): print "delta frame with %i bytes" % len(message)
+            header = struct.pack('<BBH', self.deviceId, 0x01, len(message))
+            message = 'SYNC' + header + struct.pack('<BB', self.xorChecksum(header), self.xorChecksum(message)) + message
         else:
             message = ''
             for value in self.buffer:
                 message += struct.pack('B', value)
-            message = 'SYNC' + struct.pack('<BBH', self.deviceId, 0x00, len(message)) + message
+            if (len(message) > 512): print "alpha frame with %i bytes" % len(message)
+            header = struct.pack('<BBH', self.deviceId, 0x00, len(message))
+            message = 'SYNC' + header + struct.pack('<BB', self.xorChecksum(header), self.xorChecksum(message)) + message
         Writer.getWriter().write(message)
         super(SerialOutput, self).applyChanges(changes)
