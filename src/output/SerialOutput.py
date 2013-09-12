@@ -26,7 +26,9 @@ class SerialOutput(BufferedOutput):
         return result
 
     def applyChanges(self, changes):
-        if changes:
+        super(SerialOutput, self).applyChanges(changes)
+        if changes and len(changes) <= self.channelCount / 2:
+            # delta frame
             message = ''
             for key in changes:
                 message += struct.pack('BB', key, changes[key])
@@ -34,6 +36,7 @@ class SerialOutput(BufferedOutput):
             header = struct.pack('<BBH', self.deviceId, 0x01, len(message))
             message = 'SYNC' + header + struct.pack('<BB', self.xorChecksum(header), self.xorChecksum(message)) + message
         else:
+            # alpha frame
             message = ''
             for value in self.buffer:
                 message += struct.pack('B', value)
@@ -41,4 +44,3 @@ class SerialOutput(BufferedOutput):
             header = struct.pack('<BBH', self.deviceId, 0x00, len(message))
             message = 'SYNC' + header + struct.pack('<BB', self.xorChecksum(header), self.xorChecksum(message)) + message
         Writer.getWriter().write(message)
-        super(SerialOutput, self).applyChanges(changes)

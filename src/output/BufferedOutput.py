@@ -13,6 +13,7 @@ class BufferedWriter(WriterThread):
 class BufferedOutput(ThreadedOutput):
     writerCls = BufferedWriter
     def __init__(self, channels):
+        self.channelCount = channels
         self.buffer = [0] * channels
         super(BufferedOutput, self).__init__()
 
