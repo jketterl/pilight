@@ -185,10 +185,11 @@ if __name__ == '__main__':
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
-    fixture = RGBFixture()
-    fixture.mapToUniverse(universe, 12)
-    for name in ['red', 'green', 'blue']:
-        subMaster.mapChannel('dj', fixture.getNamedChannel(name))
+    # the fist of the channels on the secondary board is still unused, that's why counting starts at 13
+    for i in range(3):
+        fixture = Dimmer()
+        fixture.mapToUniverse(universe, 13 + i)
+        subMaster.mapChannel('dj', fixture.getNamedChannel('brightness'))
 
     universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'ws2801'))
