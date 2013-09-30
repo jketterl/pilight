@@ -20,6 +20,8 @@ from show import ShowManager
 from message import Messenger
 from message.output import ConsoleOutput, LCDOutput, Messaging
 
+from midi import MidiInput
+
 '''
 class WsListener(WebsocketListener):
     def __init__(self, lirc):
@@ -27,6 +29,14 @@ class WsListener(WebsocketListener):
     def receive(self, message):
         self.lirc.onKey(message, None)
 '''
+
+class MidiBridge(MidiInput):
+    def __init__(self, subMaster):
+        self.subMaster = subMaster
+        super(MidiBridge, self).__init__()
+    def update(self, channel, value):
+        if channel != 0: return
+        self.subMaster.setChannelValue('dj', value)
 
 class LircListener(LircDelegate):
     _showMappings = [
@@ -237,6 +247,8 @@ if __name__ == '__main__':
 
     lirc = LircClient(lircListener)
     #output.addListener(WsListener(lircListener))
+
+    MidiBridge(subMaster)
 
     run = True
     while run:
