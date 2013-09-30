@@ -18,8 +18,10 @@ class SmoothingThread(threading.Thread):
         super(SmoothingThread, self).__init__()
     def run(self):
         while(self.doRun):
-            if self.current != self.target:
+            if self.current > self.target:
                 self.set(self.current + (self.target - self.current) / self.smoothingFactor)
+            elif self.current < self.target:
+                self.set(self.target)
             time.sleep(.02)
     def update(self, value):
         self.target = value
@@ -42,14 +44,14 @@ class VUOutput(object):
                 'end':1
             }
         }
-        count = len(fixtures)
-        self.colorMap = [0] * count
+        self.len = len(fixtures)
+        self.colorMap = [0] * self.len
         self.value = 0
-        for i in range(count):
+        for i in range(self.len):
             res = {}
             for color in colorConfig:
                 entry = colorConfig[color]
-                if i >= entry['start'] * count and i < entry['end'] * count:
+                if i >= entry['start'] * self.len and i < entry['end'] * self.len:
                     res[color] = 255
                 else:
                     res[color] = 0
@@ -62,7 +64,8 @@ class VUOutput(object):
         self.smoother.update(value)
     
     def setValue(self, value):
-        v = value * len(self.fixtures)
+        if value > 1: print "alert"
+        v = value * self.len
         r = v % 1
         value = int(v)
 
@@ -74,13 +77,14 @@ class VUOutput(object):
                 self.fixtures[index].setChannels(self.colorMap[index])
         else:
             #print "unsetting: ", value + 1, int(self.value) + 1
-            for index in range(value + 1, int(self.value) + 1):
+            for index in range(value + 1, min(int(self.value) + 1, self.len)):
                 self.fixtures[index].setChannels({'red':0,'green':0,'blue':0})
-        x = self.colorMap[value].copy()
-        for k in x:
-            x[k] = int(round(x[k] * r))
-        #print "half-tone:", value, x
-        self.fixtures[value].setChannels(x)
+        if value < self.len:
+            x = self.colorMap[value].copy()
+            for k in x:
+                x[k] = int(round(x[k] * r))
+            #print "half-tone:", value, x
+            self.fixtures[value].setChannels(x)
         self.value = v
 
     def stop(self):
