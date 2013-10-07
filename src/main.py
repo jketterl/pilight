@@ -22,6 +22,18 @@ from message.output import ConsoleOutput, LCDOutput, Messaging
 
 from midi import MidiInput
 
+from alert import Alert
+import datetime
+
+class LightWake(Alert):
+    def __init__(self, manager):
+        print "initializing light wake"
+        self.manager = manager
+        super(LightWake, self).__init__(datetime.time(06, 00))
+    def run(self):
+        print "starting wakeup light show"
+        self.manager.startShow('colorfader')
+
 '''
 class WsListener(WebsocketListener):
     def __init__(self, lirc):
@@ -248,7 +260,9 @@ if __name__ == '__main__':
     lirc = LircClient(lircListener)
     #output.addListener(WsListener(lircListener))
 
-    MidiBridge(subMaster)
+    #MidiBridge(subMaster)
+
+    LightWake(showManager)
 
     run = True
     while run:
