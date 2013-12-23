@@ -187,7 +187,10 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4)
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj', 'tree red', 'tree green', 'tree blue', 'tree white'], 8)
+    for name in ['red', 'green', 'blue']:
+        subMaster.mapChannel(name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
 
     fixtures = []
     for i in range(60):
@@ -221,12 +224,14 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name))
+            #subMaster.mapChannel(name, fixture.getNamedChannel(name))
+            subMaster.mapChannel('tree ' + name, fixture.getNamedChannel(name))
 
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('SocketOutput', 'fft'))
-    for i in range(16):
+    #universe.setOutput(Output.factory('SerialOutput', 2, 32))
+    for i in range(32):
         band = Dimmer()
         band.mapToUniverse(universe, i)
         bands.append(band)
