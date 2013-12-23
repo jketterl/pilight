@@ -28,7 +28,7 @@ class FFTReader(threading.Thread):
             form = '<%dh' % (self.audioreader.l * 2)
             data = struct.unpack(form, self.audioreader.data)
 
-            fft = numpy.abs(numpy.fft.fft(data))
+            fft = numpy.abs(numpy.fft.rfft(data))
 
             batch = []
             for (channel, start, end) in self.fftConversion:
