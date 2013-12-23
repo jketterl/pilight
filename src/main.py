@@ -29,10 +29,10 @@ class LightWake(Alert):
     def __init__(self, manager):
         print "initializing light wake"
         self.manager = manager
-        super(LightWake, self).__init__(datetime.time(06, 00))
+        super(LightWake, self).__init__(datetime.time(05, 45))
     def run(self):
         print "starting wakeup light show"
-        self.manager.startShow('colorfader')
+        self.manager.startShow('wakelight')
 
 '''
 class WsListener(WebsocketListener):
@@ -251,6 +251,7 @@ if __name__ == '__main__':
     showManager.addShow('police', 'Police', ['Police'])
     showManager.addShow('directffct', 'FFT Direct', ['DirectFFT', bands])
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
+    showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
 
     lircListener = LircListener({
         "subMaster":subMaster,
