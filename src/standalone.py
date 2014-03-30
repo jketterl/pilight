@@ -37,4 +37,4 @@ if __name__ == '__main__':
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
     showManager.addShow('police', 'Police', ['Police'])
     showManager.addShow('twinke', 'Twinkle', ['Twinkle'])
-
+    showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
