@@ -36,5 +36,5 @@ if __name__ == '__main__':
     showManager.addShow('fft', 'FFT Show', ['FFT'])
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
     showManager.addShow('police', 'Police', ['Police'])
-
+    showManager.addShow('twinke', 'Twinkle', ['Twinkle'])
 
