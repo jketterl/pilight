@@ -257,6 +257,7 @@ if __name__ == '__main__':
     showManager.addShow('directffct', 'FFT Direct', ['DirectFFT', bands])
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
     showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
+    showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
 
     lircListener = LircListener({
         "subMaster":subMaster,
