@@ -20,6 +20,20 @@ from show import ShowManager
 from message import Messenger
 from message.output import ConsoleOutput, LCDOutput, Messaging
 
+from midi import MidiInput
+
+from alert import Alert
+import datetime
+
+class LightWake(Alert):
+    def __init__(self, manager):
+        print "initializing light wake"
+        self.manager = manager
+        super(LightWake, self).__init__(datetime.time(05, 45))
+    def run(self):
+        print "starting wakeup light show"
+        self.manager.startShow('wakelight')
+
 '''
 class WsListener(WebsocketListener):
     def __init__(self, lirc):
@@ -27,6 +41,14 @@ class WsListener(WebsocketListener):
     def receive(self, message):
         self.lirc.onKey(message, None)
 '''
+
+class MidiBridge(MidiInput):
+    def __init__(self, subMaster):
+        self.subMaster = subMaster
+        super(MidiBridge, self).__init__()
+    def update(self, channel, value):
+        if channel != 0: return
+        self.subMaster.setChannelValue('dj', value)
 
 class LircListener(LircDelegate):
     _showMappings = [
@@ -165,7 +187,10 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue', 'dj'], 4)
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj', 'tree red', 'tree green', 'tree blue', 'tree white'], 8)
+    for name in ['red', 'green', 'blue']:
+        subMaster.mapChannel(name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
 
     fixtures = []
     for i in range(60):
@@ -199,12 +224,14 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name))
+            #subMaster.mapChannel(name, fixture.getNamedChannel(name))
+            subMaster.mapChannel('tree ' + name, fixture.getNamedChannel(name))
 
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('SocketOutput', 'fft'))
-    for i in range(16):
+    #universe.setOutput(Output.factory('SerialOutput', 2, 32))
+    for i in range(32):
         band = Dimmer()
         band.mapToUniverse(universe, i)
         bands.append(band)
@@ -229,6 +256,7 @@ if __name__ == '__main__':
     showManager.addShow('police', 'Police', ['Police'])
     showManager.addShow('directffct', 'FFT Direct', ['DirectFFT', bands])
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
+    showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
 
     lircListener = LircListener({
         "subMaster":subMaster,
@@ -237,6 +265,10 @@ if __name__ == '__main__':
 
     lirc = LircClient(lircListener)
     #output.addListener(WsListener(lircListener))
+
+    #MidiBridge(subMaster)
+
+    LightWake(showManager)
 
     run = True
     while run:
