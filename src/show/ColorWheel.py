@@ -1,10 +1,12 @@
 from . import Show
 import time, colorsys
 from control import Controllable
+from fixture import FixtureManager
 
 class ColorWheel(Controllable, Show):
-    def __init__(self, fixtures):
-        self.count = len(fixtures)
+    def __init__(self):
+        self.fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        self.count = len(self.fixtures)
         self.relation = 4
         self.wheelCount = self.count * self.relation
 
@@ -13,7 +15,7 @@ class ColorWheel(Controllable, Show):
         self.speed = .5
 
         self.generateWheel()
-        super(ColorWheel, self).__init__(fixtures)
+        super(ColorWheel, self).__init__()
     def generateWheel(self):
         wheel = [0] * self.wheelCount
         for i in range(self.wheelCount):

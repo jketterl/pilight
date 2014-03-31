@@ -7,6 +7,7 @@ Created on Nov 21, 2012
 from . import Show
 from audio import BeatDetector, BeatDelegate
 import threading, random, time
+from fixture import FixtureManager
 
 class Bleep(object):
     def __init__(self, fixtures, position, color):
@@ -47,9 +48,10 @@ class Bleep(object):
         self.show()
 
 class BPMStrobe(Show, BeatDelegate):
-    def __init__(self, fixtures):
+    def __init__(self):
         self.event = threading.Event()
-        super(BPMStrobe, self).__init__(fixtures)
+        super(BPMStrobe, self).__init__()
+        self.fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
     def run(self):
         detector = BeatDetector(self)
         detector.start()

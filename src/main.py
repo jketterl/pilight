@@ -10,7 +10,7 @@ sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
 
 from universe import Universe
 from filter import AlphaFilter
-from fixture import RGBFixture, Dimmer
+from fixture import RGBFixture, Dimmer, FixtureManager
 from output import Output
 import time
 from lirc import *
@@ -187,16 +187,16 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue', 'dj', 'tree red', 'tree green', 'tree blue', 'tree white'], 8)
+    subMaster = SubMaster(['red', 'green', 'blue', 'dj', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue'], 11)
     for name in ['red', 'green', 'blue']:
-        subMaster.mapChannel(name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel(name))
         subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
 
-    fixtures = []
     for i in range(60):
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
-        fixtures.append(fixture)
+        fixture.addTags(['lpd8806', 'strip'])
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
     
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     for i in range(4):
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
-        fixtures.append(fixture)
+        fixture.addTags(['dimmer', 'old'])
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
@@ -214,6 +214,7 @@ if __name__ == '__main__':
     for i in range(3):
         fixture = Dimmer()
         fixture.mapToUniverse(universe, 13 + i)
+        fixture.addTags(['dimmer', 'ikea', 'old'])
         subMaster.mapChannel('dj', fixture.getNamedChannel('brightness'))
 
     universe = Universe()
@@ -222,7 +223,7 @@ if __name__ == '__main__':
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
-        fixtures.append(fixture)
+        fixture.addTags(['ws2801', 'pixel'])
         for name in ['red', 'green', 'blue']:
             #subMaster.mapChannel(name, fixture.getNamedChannel(name))
             subMaster.mapChannel('tree ' + name, fixture.getNamedChannel(name))
@@ -239,7 +240,7 @@ if __name__ == '__main__':
 
     showRunner = ShowRunner()
     
-    showManager = ShowManager(fixtures, runner = showRunner)
+    showManager = ShowManager(runner = showRunner)
 
     showManager.addShow('knightrider', 'Knight Rider', [
         'KnightRider',

@@ -1,7 +1,7 @@
 from .FFT import FFT
 
 class DirectFFT(FFT):
-    def __init__(self, fixtures, bands, *args, **kwargs):
+    def __init__(self, bands, *args, **kwargs):
         super(DirectFFT, self).__init__(bands, *args, **kwargs)
         self.bands = 12
         self.colorConfig = {

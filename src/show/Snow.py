@@ -1,5 +1,6 @@
 from . import Show
 import random, threading, time
+from fixture import FixtureManager
 
 class SnowDecayThread(threading.Thread):
     def __init__(self, show):
@@ -19,6 +20,7 @@ class Snow(Show):
     def run(self):
         self.lock = threading.Lock()
         self.flakes = {}
+        self.fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
         decayer = SnowDecayThread(self)
         decayer.start()
 

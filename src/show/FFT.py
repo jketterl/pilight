@@ -2,6 +2,7 @@ from . import Show
 from audio import FFTReader, AudioReader
 from universe import Universe
 from .VUMeter import VUOutput
+from fixture import FixtureManager
 
 class FFT(Show):
     def __init__(self, *args, **kwargs):
@@ -22,12 +23,14 @@ class FFT(Show):
         for channel in self.universe:
             channel.addListener(self)
 
+        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+
         self.outputs = []
-        self.ratio = float(len(self.fixtures)) / self.bands
+        self.ratio = float(len(fixtures)) / self.bands
         start = 0
         for i in range(self.bands):
             end = int((i+1) * self.ratio)
-            self.outputs.append(VUOutput(self.fixtures[start:end], self.colorConfig))
+            self.outputs.append(VUOutput(fixtures[start:end], self.colorConfig))
             start = end
 
         self.reader = FFTReader(AudioReader.instance("hw:1,0"), self.universe, self.bands)

@@ -1,9 +1,11 @@
 from . import Show
 import time
+from fixture import FixtureManager
 
 class Wakelight(Show):
     time = 15 * 60 # target time: 15 minutes
     def run(self):
+        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
         startTime = time.time()
         elapsed = 0
         while self.doRun and elapsed < self.time:
@@ -16,14 +18,14 @@ class Wakelight(Show):
 
             blue = green * 2
             if (elapsed > blue): color['blue'] = int(float(elapsed - blue) / (self.time - blue) * 255)
-            for f in self.fixtures:
+            for f in fixtures:
                 f.setChannels(color)
             time.sleep(.1)
 
         while self.doRun:
             time.sleep(1)
 
-        for f in self.fixtures:
+        for f in fixtures:
             f.setChannels({"red":0, "green":0, "blue":0})
 
         self.endEvent.set()

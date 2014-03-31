@@ -2,6 +2,7 @@ from . import Show
 import time
 import colorsys
 import random
+from fixture import FixtureManager
 
 class Twinkle(Show):
     def __init__(self, *args, **kwargs):
@@ -12,14 +13,15 @@ class Twinkle(Show):
         self.twinkles = []
     def run(self):
         baseColor = self.hsv_to_rgb(self.hue, self.saturation, self.value * .1)
-        for f in self.fixtures:
+        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        for f in fixtures:
             f.setChannels(baseColor)
         while self.doRun:
             target = self.value * .1
             if (random.random() < .1):
-                pos = random.randint(0, len(self.fixtures) - 1)
+                pos = random.randint(0, len(fixtures) - 1)
                 val = float(self.value) * (random.random() * .9 + .1)
-                self.twinkles.append({'fixture':self.fixtures[pos], 'value':val})
+                self.twinkles.append({'fixture':fixtures[pos], 'value':val})
 
             toDelete = []
             for index, twinkle in enumerate(self.twinkles):
@@ -35,7 +37,7 @@ class Twinkle(Show):
 
             time.sleep(.01)
 
-        for f in self.fixtures:
+        for f in fixtures:
             f.setChannels({'red':0,'green':0,'blue':0})
         self.endEvent.set()
     def hsv_to_rgb(self, h, s, v):

@@ -1,11 +1,12 @@
 from . import Show
 import threading, random
+from fixture import FixtureManager
 
 class Lichterkette(Show):
     def __init__(self, *args, **kwargs):
         super(Lichterkette, self).__init__(*args, **kwargs)
         self.shouldEnd = threading.Event()
-        self.fixtures = self.fixtures[64:]
+        self.fixtures = FixtureManager.filter(lambda f : f.hasTag('pixel'))
     def run(self):
         for f in self.fixtures:
             f.setChannels(self.getRandomColor())

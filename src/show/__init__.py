@@ -3,10 +3,9 @@ from control import Controllable
 from module import ShowRunner
 
 class Show(threading.Thread):
-    def __init__(self, fixtures):
+    def __init__(self):
         self.endEvent = threading.Event()
         self.doRun = True
-        self.fixtures = fixtures
         super(Show, self).__init__();
     def stop(self):
         self.doRun = False
@@ -15,14 +14,13 @@ class Show(threading.Thread):
             self.endEvent.wait(60)
 
 class ShowManager(Controllable):
-    def __init__(self, fixtures, runner = None, *args, **kwargs):
+    def __init__(self, runner = None, *args, **kwargs):
         super(ShowManager, self).__init__(*args, **kwargs)
         if runner is None:
             self.runner = ShowRunner()
         else:
             self.runner = runner
         self.shows = {}
-        self.fixtures = fixtures
 
         self.setShow(None)
     def getId(self):
@@ -38,8 +36,6 @@ class ShowManager(Controllable):
     def startShow(self, id=None, **kwargs):
         if id is None: return
         args = self.shows[id]['definition'][:]
-        # always pass a list of fixtures as the second parameter
-        args.insert(1, self.fixtures)
 
         self.runner.startShow(*tuple(args))
         self.setShow(id)

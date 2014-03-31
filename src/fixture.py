@@ -4,7 +4,23 @@ Created on 01.11.2012
 @author: jakob
 '''
 
+class Manager(object):
+    def __init__(self):
+        self.fixtures = []
+    def addFixture(self, fixture):
+        self.fixtures.append(fixture)
+    def filter(self, predicate):
+        result = []
+        for fixture in self.fixtures:
+            if (predicate(fixture)): result.append(fixture)
+        return result
+
+FixtureManager = Manager()
+
 class Fixture(object):
+    def __init__(self):
+        self.tags = []
+        FixtureManager.addFixture(self)
     def getInputs(self):
         return []
     def mapToChannels(self, config):
@@ -24,6 +40,17 @@ class Fixture(object):
             channelMap[channelName] = universe[offset]
             offset += 1
         self.mapToChannels(channelMap)
+    def getTags(self):
+        return self.tags
+    def addTag(self, tag):
+        if tag in self.tags: return
+        self.tags.append(tag)
+    def addTags(self, tags):
+        for tag in tags: self.addTag(tag)
+    def hasTag(self, *args):
+        for tag in args:
+            if not tag in self.tags: return False
+        return True
     
 class Dimmer(Fixture):
     def getInputs(self):
@@ -32,6 +59,8 @@ class Dimmer(Fixture):
 class RGBFixture(Fixture):
     def __init__(self, channelSequence = 'GRB'):
         self.channelSequence = channelSequence
+        super(RGBFixture, self).__init__()
+        self.addTag('rgb')
     def getInputs(self):
         if (self.channelSequence == 'GRB'):
             return [
