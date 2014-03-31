@@ -45,6 +45,8 @@ class SubMaster(Controllable, Universe):
         self.currentChannel.setValue(self.currentChannel.getValue() - 10)
     def mapChannel(self, name, target):
         self.targetMap[name].addTarget(target)
+    def mapChannels(self, name, target):
+        for c in target: self.mapChannel(name, c)
     def fullValue(self):
         self.currentChannel.setValue(255);
     def offValue(self):

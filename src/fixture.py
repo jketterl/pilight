@@ -4,16 +4,26 @@ Created on 01.11.2012
 @author: jakob
 '''
 
+class FixtureList(list):
+    def filter(self, predicate):
+        result = FixtureList()
+        for fixture in self:
+            if (predicate(fixture)): result.append(fixture)
+        return result
+    def getChannels(self, name):
+        result = []
+        for fixture in self:
+             result.append(fixture.getNamedChannel(name))
+        return result
+
 class Manager(object):
     def __init__(self):
-        self.fixtures = []
+        self.fixtures = FixtureList()
     def addFixture(self, fixture):
         self.fixtures.append(fixture)
     def filter(self, predicate):
-        result = []
-        for fixture in self.fixtures:
-            if (predicate(fixture)): result.append(fixture)
-        return result
+        return self.fixtures.filter(predicate)
+    
 
 FixtureManager = Manager()
 

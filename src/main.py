@@ -115,19 +115,19 @@ class LircListener(LircDelegate):
             'keys':['red','R'],
             'module':'subMaster',
             'method':'selectChannel',
-            'args':['red']
+            'args':['master red']
         },                     
         {
             'keys':['green','G'],
             'module':'subMaster',
             'method':'selectChannel',
-            'args':['green']
+            'args':['master green']
         },                     
         {
             'keys':['blue','B'],
             'module':'subMaster',
             'method':'selectChannel',
-            'args':['blue']
+            'args':['master blue']
         },                     
         {
             'keys':['yellow'],
@@ -187,18 +187,10 @@ if __name__ == '__main__':
     #output = Output.factory('WebsocketOutput')
     universe.setOutput(output)
 
-    subMaster = SubMaster(['red', 'green', 'blue', 'dj', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue'], 11)
-    for name in ['red', 'green', 'blue']:
-        subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
-        subMaster.mapChannel('master ' + name, subMaster.getChannel(name))
-        subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
-
     for i in range(60):
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['lpd8806', 'strip'])
-        for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name))
     
     universe = Universe()
     universe.setOutput(Output.factory('SerialOutput', 0, 32))
@@ -207,26 +199,19 @@ if __name__ == '__main__':
         fixture = RGBFixture()
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['dimmer', 'old'])
-        for name in ['red', 'green', 'blue']:
-            subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
-    # the fist of the channels on the secondary board is still unused, that's why counting starts at 13
+    # the first of the channels on the secondary board is still unused, that's why counting starts at 13
     for i in range(3):
         fixture = Dimmer()
         fixture.mapToUniverse(universe, 13 + i)
         fixture.addTags(['dimmer', 'ikea', 'old'])
-        subMaster.mapChannel('dj', fixture.getNamedChannel('brightness'))
 
     universe = Universe()
-    #universe.setOutput(Output.factory('SocketOutput', 'ws2801'))
     universe.setOutput(Output.factory('SerialOutput', 1, 150))
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel'])
-        for name in ['red', 'green', 'blue']:
-            #subMaster.mapChannel(name, fixture.getNamedChannel(name))
-            subMaster.mapChannel('tree ' + name, fixture.getNamedChannel(name))
 
     bands = []
     universe = Universe()
@@ -237,6 +222,21 @@ if __name__ == '__main__':
         band.mapToUniverse(universe, i)
         bands.append(band)
 
+
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj'], 16)
+    for name in ['red', 'green', 'blue']:
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('dimmer ' + name))
+        subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('strip white', subMaster.getChannel('strip ' + name))
+        subMaster.mapChannel('dimmer white', subMaster.getChannel('dimmer ' + name))
+
+        subMaster.mapChannels('strip ' + name, FixtureManager.filter(lambda f : f.hasTag('strip')).getChannels(name))
+        subMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('pixel')).getChannels(name))
+        subMaster.mapChannels('dimmer ' + name, FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer')).getChannels(name))
+
+    subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
 
     showRunner = ShowRunner()
     
