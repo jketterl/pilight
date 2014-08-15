@@ -17,11 +17,12 @@ if __name__ == '__main__':
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
+        fixture.addTags(['ws2801', 'pixel'])
         fixtures.append(fixture)
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
-    showManager = ShowManager(fixtures)
+    showManager = ShowManager()
 
     showManager.addShow('knightrider', 'Knight Rider', [
         'KnightRider',
