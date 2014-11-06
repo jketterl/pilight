@@ -38,7 +38,6 @@ public class SubMasterFragment extends Fragment {
      * @param controllableId ID of submaster
      * @return A new instance of fragment SubMasterFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static SubMasterFragment newInstance(String controllableId) {
         SubMasterFragment fragment = new SubMasterFragment();
         Bundle args = new Bundle();

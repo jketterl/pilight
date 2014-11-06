@@ -37,7 +37,7 @@ public class SubMaster extends Controllable {
 
         protected GetValuesCommand() {
             super("getValues");
-            setModule(SubMaster.this.getId());
+            setModule(SubMaster.this);
         }
 
         @Override
@@ -61,7 +61,7 @@ public class SubMaster extends Controllable {
     private class SetChannelValueCommand extends AbstractCommand {
         protected SetChannelValueCommand(String channel, int value) {
             super("setChannelValue");
-            setModule(SubMaster.this.getId());
+            setModule(SubMaster.this);
             JSONObject params = new JSONObject();
             try {
                 params.put("channel", channel);

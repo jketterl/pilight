@@ -3,11 +3,11 @@
 
     <string name="app_name">PiLight</string>
     <string name="action_settings">Settings</string>
+
+
     <string name="title_activity_main_settings">Settings</string>
     <string name="settings_server_host">Server</string>
     <string name="settings_server_port">Port</string>
     <string name="title_activity_controllable_viewer">ControllableViewer</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

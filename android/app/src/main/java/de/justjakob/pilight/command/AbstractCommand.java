@@ -9,9 +9,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.justjakob.pilight.control.Controllable;
+
 abstract public class AbstractCommand<T> {
     private String command;
-    private String module;
+    private Controllable module;
     private JSONObject params;
     private int sequence = -1;
     private List<CommandResultReceiver<T>> receivers = new ArrayList<CommandResultReceiver<T>>();
@@ -29,7 +31,7 @@ abstract public class AbstractCommand<T> {
         try {
             o.put("command", command);
             if (sequence >= 0) o.put("sequence", sequence);
-            if (module != null) o.put("module", module);
+            if (module != null) o.put("module", module.getId());
             if (params != null) o.put("params", params);
         } catch (JSONException ignored) {
             return null;
@@ -53,7 +55,7 @@ abstract public class AbstractCommand<T> {
         receivers.add(receiver);
     }
 
-    public void setModule(String module) {
+    public void setModule(Controllable module) {
         this.module = module;
     }
 
