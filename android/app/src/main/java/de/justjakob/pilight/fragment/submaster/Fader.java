@@ -8,9 +8,17 @@ import android.widget.TextView;
 public class Fader extends LinearLayout {
     private Channel channel;
 
-    public Fader(Context context, Channel channel) {
+    public static interface UpdateBlocker {
+        public void blockUpdates();
+        public void unblockUpdates();
+    }
+
+    private UpdateBlocker updateBlocker;
+
+    public Fader(Context context, Channel channel, UpdateBlocker ub) {
         super(context);
         this.channel = channel;
+        this.updateBlocker = ub;
         addViews();
     }
 
@@ -36,12 +44,12 @@ public class Fader extends LinearLayout {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                updateBlocker.blockUpdates();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                updateBlocker.unblockUpdates();
             }
         });
     }

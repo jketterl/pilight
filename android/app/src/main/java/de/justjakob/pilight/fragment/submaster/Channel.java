@@ -12,7 +12,7 @@ public class Channel {
     private final SubMaster subMaster;
 
     public static interface OnValueChangedListener {
-        public void valueChanged(int newValue);
+        public void valueChanged();
     }
 
     public String getName() {
@@ -51,7 +51,7 @@ public class Channel {
 
     public void receiveValueUpdate(int newValue) {
         value = newValue;
-        for (OnValueChangedListener l : listeners) l.valueChanged(newValue);
+        for (OnValueChangedListener l : listeners) l.valueChanged();
     }
 
     private List<OnValueChangedListener> listeners = new ArrayList<OnValueChangedListener>();

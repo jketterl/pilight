@@ -25,8 +25,8 @@ public class SubmasterChannelListAdapter implements ListAdapter {
         this.channels = channels;
         for (Channel c : channels) c.addOnValueChangedListener(new Channel.OnValueChangedListener() {
             @Override
-            public void valueChanged(int newValue) {
-                h.sendEmptyMessage(0);
+            public void valueChanged() {
+                fireUpdates();
             }
         });
     }
@@ -73,9 +73,34 @@ public class SubmasterChannelListAdapter implements ListAdapter {
         return false;
     }
 
+    private boolean updatesBlocked = false;
+    private boolean updatesMissed = false;
+
+    private Fader.UpdateBlocker updateBlocker = new Fader.UpdateBlocker() {
+        @Override
+        public void blockUpdates() {
+            updatesBlocked = true;
+        }
+
+        @Override
+        public void unblockUpdates() {
+            updatesBlocked = false;
+            if (updatesMissed) fireUpdates();
+            updatesMissed = false;
+        }
+    };
+
+    private void fireUpdates() {
+        if (updatesBlocked) {
+            updatesMissed = true;
+            return;
+        }
+        h.sendEmptyMessage(0);
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return new Fader(parent.getContext(), channels.get(position));
+        return new Fader(parent.getContext(), channels.get(position), updateBlocker);
     }
 
     @Override
