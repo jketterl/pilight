@@ -67,6 +67,23 @@ public class ShowManager extends Controllable {
         }
     }
 
+    private class StartShowComand extends AbstractCommand<Object> {
+        protected StartShowComand(Show show) {
+            super("startShow");
+            setModule(ShowManager.this);
+            JSONObject params = new JSONObject();
+            try {
+                params.put("id", show.getId());
+            } catch (JSONException ignored) {}
+            setParams(params);
+        }
+
+        @Override
+        protected Object parseResult(Object data) {
+            return null;
+        }
+    }
+
     @Override
     public String getDisplayName() {
         return "Show Manager";
@@ -85,6 +102,11 @@ public class ShowManager extends Controllable {
 
     public void stopShow() {
         StopShowCommand c = new StopShowCommand();
+        ConnectionService.runCommand(context, c);
+    }
+
+    public void startShow(Show show) {
+        StartShowComand c = new StartShowComand(show);
         ConnectionService.runCommand(context, c);
     }
 }
