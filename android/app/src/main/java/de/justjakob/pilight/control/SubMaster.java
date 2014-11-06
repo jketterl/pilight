@@ -27,7 +27,6 @@ public class SubMaster extends Controllable {
 
     public SubMaster(Context context) {
         this.context = context;
-        listen(context);
     }
 
     public static interface OnValueChangedListener {

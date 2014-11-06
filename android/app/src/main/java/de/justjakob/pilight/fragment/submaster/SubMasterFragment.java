@@ -51,6 +51,7 @@ public class SubMasterFragment extends Fragment {
         if (getArguments() != null) {
             subMaster = new SubMaster(getActivity());
             subMaster.setId(getArguments().getString(ARG_CONTROLLABLE_ID));
+            subMaster.listen(getActivity());
         }
 
         subMaster.getChannels(new CommandResultReceiver<List<Channel>>() {

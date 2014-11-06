@@ -20,7 +20,9 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.justjakob.pilight.command.AbstractCommand;
 import de.justjakob.pilight.command.ListenCommand;
@@ -35,7 +37,7 @@ public class ConnectionService extends Service {
 
     private WebSocketClient client;
 
-    private List<Controllable> listeners = new ArrayList<Controllable>();
+    private Map<String, List<Controllable>> listeners = new HashMap<String, List<Controllable>>();
 
     public class LocalBinder extends Binder {
         public void runCommand(AbstractCommand command) {
@@ -52,9 +54,25 @@ public class ConnectionService extends Service {
         }
 
         public void addListener(Controllable c) {
-            if (listeners.contains(c)) return;
-            runCommand(new ListenCommand(c));
-            listeners.add(c);
+            String id = c.getId();
+            List<Controllable> l;
+            if (listeners.containsKey(id)) {
+                l = listeners.get(id);
+            } else {
+                l = new ArrayList<Controllable>();
+                listeners.put(id, l);
+                runCommand(new ListenCommand(c));
+            }
+            l.add(c);
+        }
+
+        public void removeListener(Controllable c) {
+            String id = c.getId();
+            if (!listeners.containsKey(id)) return;
+            List<Controllable> l = listeners.get(id);
+            l.remove(c);
+            if (!l.isEmpty()) return;
+            listeners.remove(id);
         }
     }
 
@@ -158,9 +176,10 @@ public class ConnectionService extends Service {
                 }
             } else if (response.has("source")) {
                 String id = response.getString("source");
-                Controllable c = null;
-                for (Controllable candidate : listeners) if (candidate.getId().equals(id)) c = candidate;
-                if (c != null) c.receiveMessage(response.getJSONObject("data"));
+                JSONObject data = response.getJSONObject("data");
+                for (Controllable c : listeners.get(id)) {
+                    c.receiveMessage(data);
+                }
             } else {
                 Log.w(TAG, "unxpected message on socket: " + message);
             }
@@ -199,6 +218,23 @@ public class ConnectionService extends Service {
             }
         }, BIND_AUTO_CREATE);
     }
+
+    public static void stopListening(final Context context, final Controllable c) {
+        context.startService(new Intent(context, ConnectionService.class));
+
+        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                ((LocalBinder) service).removeListener(c);
+                context.unbindService(this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
 
     @Override
     public void onDestroy() {

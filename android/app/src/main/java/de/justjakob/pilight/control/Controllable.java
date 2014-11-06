@@ -26,5 +26,9 @@ abstract public class Controllable {
         ConnectionService.listen(context, this);
     }
 
+    public void stopListening(Context context) {
+        ConnectionService.stopListening(context, this);
+    }
+
     public abstract void receiveMessage(JSONObject data);
 }
