@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.justjakob.pilight.command.AbstractCommand;
+import de.justjakob.pilight.command.ListenCommand;
+import de.justjakob.pilight.control.Controllable;
 
 public class ConnectionService extends Service {
     private static final String TAG = "ConnectionService";
@@ -32,6 +34,8 @@ public class ConnectionService extends Service {
     private LocalBinder binder = new LocalBinder();
 
     private WebSocketClient client;
+
+    private List<Controllable> listeners = new ArrayList<Controllable>();
 
     public class LocalBinder extends Binder {
         public void runCommand(AbstractCommand command) {
@@ -45,6 +49,12 @@ public class ConnectionService extends Service {
             } else {
                 client.send(command.toJson());
             }
+        }
+
+        public void addListener(Controllable c) {
+            if (listeners.contains(c)) return;
+            runCommand(new ListenCommand(c));
+            listeners.add(c);
         }
     }
 
@@ -104,7 +114,7 @@ public class ConnectionService extends Service {
 
                     @Override
                     public void onMessage(String message) {
-                        parseResponse(message);
+                        parseMessage(message);
                     }
 
                     @Override
@@ -131,19 +141,28 @@ public class ConnectionService extends Service {
         return client;
     }
 
-    private void parseResponse(String message) {
-        Log.d(TAG, "parsing response: " + message);
+    private void parseMessage(String message) {
+        Log.d(TAG, "parsing message: " + message);
         try {
             JSONObject response = new JSONObject(message);
-            int sequence = response.getInt("sequence");
-            AbstractCommand command = requests.get(sequence);
-            if (command == null) {
-                Log.w(TAG, "unable to find request #" + sequence);
-            }
-            if (response.get("status").equals("OK")) {
-                command.success(response.get("data"));
+            if (response.has("sequence")) {
+                int sequence = response.getInt("sequence");
+                AbstractCommand command = requests.get(sequence);
+                if (command == null) {
+                    Log.w(TAG, "unable to find request #" + sequence);
+                }
+                if (response.get("status").equals("OK")) {
+                    command.success(response.get("data"));
+                } else {
+                    command.failure();
+                }
+            } else if (response.has("source")) {
+                String id = response.getString("source");
+                Controllable c = null;
+                for (Controllable candidate : listeners) if (candidate.getId().equals(id)) c = candidate;
+                if (c != null) c.receiveMessage(response.getJSONObject("data"));
             } else {
-                command.failure();
+                Log.w(TAG, "unxpected message on socket: " + message);
             }
         } catch (JSONException e) {
             Log.w(TAG, "unable to parse JSON" , e);
@@ -162,6 +181,22 @@ public class ConnectionService extends Service {
 
             @Override
             public void onServiceDisconnected(ComponentName name) {}
+        }, BIND_AUTO_CREATE);
+    }
+
+    public static void listen(final Context context, final Controllable c) {
+        context.startService(new Intent(context, ConnectionService.class));
+
+        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                ((LocalBinder) service).addListener(c);
+                context.unbindService(this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
         }, BIND_AUTO_CREATE);
     }
 

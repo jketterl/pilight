@@ -1,11 +1,7 @@
 package de.justjakob.pilight.control;
 
 import android.app.Fragment;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -31,6 +27,11 @@ public class SubMaster extends Controllable {
 
     public SubMaster(Context context) {
         this.context = context;
+        listen(context);
+    }
+
+    public static interface OnValueChangedListener {
+        public void valueChanged();
     }
 
     private class GetValuesCommand extends AbstractCommand<List<Channel>> {
@@ -86,9 +87,17 @@ public class SubMaster extends Controllable {
         return SubMasterFragment.newInstance(getId());
     }
 
+    private List<Channel> channels;
+
     public void getChannels(final CommandResultReceiver<List<Channel>> receiver) {
         GetValuesCommand c = new GetValuesCommand();
         c.addReceiver(receiver);
+        c.addReceiver(new CommandResultReceiver<List<Channel>>() {
+            @Override
+            public void receiveResult(List<Channel> result) {
+                channels = result;
+            }
+        });
         ConnectionService.runCommand(context, c);
     }
 
@@ -97,4 +106,24 @@ public class SubMaster extends Controllable {
         c.addReceiver(receiver);
         ConnectionService.runCommand(context, c);
     }
+
+    private Channel findChannel(String name) {
+        if (channels == null) return null;
+        for (Channel c : channels) if (c.getName().equals(name)) return c;
+        return null;
+    }
+
+    @Override
+    public void receiveMessage(JSONObject data) {
+        try {
+            String name = data.getString("name");
+            int value = data.getInt("value");
+            Channel c = findChannel(name);
+            if (c == null) return;
+            c.receiveValueUpdate(value);
+        } catch (JSONException e) {
+            Log.w("SubMaster", "received unsupported update", e);
+        }
+    }
+
 }

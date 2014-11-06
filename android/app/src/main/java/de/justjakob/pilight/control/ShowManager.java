@@ -94,6 +94,11 @@ public class ShowManager extends Controllable {
         return ShowManagerFragment.newInstance(getId());
     }
 
+    @Override
+    public void receiveMessage(JSONObject data) {
+
+    }
+
     public void getShows(CommandResultReceiver<List<Show>> receiver) {
         GetShowsCommand c = new GetShowsCommand();
         c.addReceiver(receiver);

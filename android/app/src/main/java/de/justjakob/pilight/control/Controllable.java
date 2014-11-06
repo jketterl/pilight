@@ -1,7 +1,11 @@
 package de.justjakob.pilight.control;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+
+import org.json.JSONObject;
+
+import de.justjakob.pilight.connection.ConnectionService;
 
 abstract public class Controllable {
     private String id;
@@ -18,5 +22,9 @@ abstract public class Controllable {
 
     abstract public Fragment getFragment();
 
+    public void listen(Context context) {
+        ConnectionService.listen(context, this);
+    }
 
+    public abstract void receiveMessage(JSONObject data);
 }
