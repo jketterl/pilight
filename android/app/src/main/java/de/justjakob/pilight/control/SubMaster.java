@@ -87,33 +87,14 @@ public class SubMaster extends Controllable {
     }
 
     public void getChannels(final CommandResultReceiver<List<Channel>> receiver) {
-        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                GetValuesCommand c = new GetValuesCommand();
-                c.addReceiver(receiver);
-                ((ConnectionService.LocalBinder) service).runCommand(c);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
+        GetValuesCommand c = new GetValuesCommand();
+        c.addReceiver(receiver);
+        ConnectionService.runCommand(context, c);
     }
 
-    public void setChannelValue(Channel channel, int value) {
+    public void setChannelValue(Channel channel, int value, CommandResultReceiver<Object> receiver) {
         final SetChannelValueCommand c = new SetChannelValueCommand(channel.getName(), value);
-        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                ((ConnectionService.LocalBinder) service).runCommand(c);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
+        c.addReceiver(receiver);
+        ConnectionService.runCommand(context, c);
     }
 }

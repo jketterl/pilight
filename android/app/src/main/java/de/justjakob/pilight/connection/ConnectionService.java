@@ -1,7 +1,10 @@
 package de.justjakob.pilight.connection;
 
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
@@ -47,6 +50,7 @@ public class ConnectionService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind()");
         return binder;
     }
 
@@ -111,6 +115,7 @@ public class ConnectionService extends Service {
                     @Override
                     public void onDisconnect(int code, String reason) {
                         Log.d(TAG, "websocket disconnected");
+                        client = null;
                     }
 
                     @Override
@@ -143,5 +148,26 @@ public class ConnectionService extends Service {
         } catch (JSONException e) {
             Log.w(TAG, "unable to parse JSON" , e);
         }
+    }
+
+    public static void runCommand(final Context context, final AbstractCommand c) {
+        context.startService(new Intent(context, ConnectionService.class));
+
+        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                ((LocalBinder) service).runCommand(c);
+                context.unbindService(this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {}
+        }, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (client != null) client.disconnect();
+        super.onDestroy();
     }
 }

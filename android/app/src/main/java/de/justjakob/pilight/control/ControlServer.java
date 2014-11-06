@@ -23,6 +23,10 @@ public class ControlServer {
 
     private final Context context;
 
+    public ControlServer() {
+        this.context = null;
+    }
+
     public ControlServer(Context context) {
         this.context = context;
     }
@@ -43,9 +47,13 @@ public class ControlServer {
                     type = o.getString("type");
                     String id = o.getString("id");
                     Class cls = Class.forName("de.justjakob.pilight.control." + type);
-                    Controllable c = (Controllable) cls.newInstance();
-                    c.setId(id);
-                    result.add(c);
+                    if (!Controllable.class.isAssignableFrom(cls)) {
+                        Log.w(TAG, "is not a controllable: " + type);
+                    } else {
+                        Controllable c = (Controllable) cls.newInstance();
+                        c.setId(id);
+                        result.add(c);
+                    }
                 } catch (JSONException e) {
                     Log.w(TAG, "JSON error", e);
                 } catch (ClassNotFoundException e) {
@@ -61,20 +69,8 @@ public class ControlServer {
     }
 
     public void getControllables(final CommandResultReceiver<List<Controllable>> receiver) {
-        context.bindService(new Intent(context, ConnectionService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
-                GetControllablesCommand command = new GetControllablesCommand();
-                command.addReceiver(receiver);
-                binder.runCommand(command);
-                context.unbindService(this);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
+        GetControllablesCommand command = new GetControllablesCommand();
+        command.addReceiver(receiver);
+        ConnectionService.runCommand(context, command);
     }
 }
