@@ -1,4 +1,4 @@
-package de.justjakob.pilight.control.submaster;
+package de.justjakob.pilight.fragment.submaster;
 
 import android.database.DataSetObserver;
 import android.view.View;
@@ -6,8 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
 import java.util.List;
-
-import de.justjakob.pilight.fragment.submaster.Fader;
 
 public class SubmasterChannelListAdapter implements ListAdapter {
 

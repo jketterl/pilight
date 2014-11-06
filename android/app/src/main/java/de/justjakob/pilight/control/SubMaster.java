@@ -18,7 +18,7 @@ import java.util.List;
 import de.justjakob.pilight.command.AbstractCommand;
 import de.justjakob.pilight.command.CommandResultReceiver;
 import de.justjakob.pilight.connection.ConnectionService;
-import de.justjakob.pilight.control.submaster.Channel;
+import de.justjakob.pilight.fragment.submaster.Channel;
 import de.justjakob.pilight.fragment.submaster.SubMasterFragment;
 
 public class SubMaster extends Controllable {

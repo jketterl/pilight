@@ -8,8 +8,6 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.List;
@@ -17,8 +15,6 @@ import java.util.List;
 import de.justjakob.pilight.R;
 import de.justjakob.pilight.command.CommandResultReceiver;
 import de.justjakob.pilight.control.SubMaster;
-import de.justjakob.pilight.control.submaster.Channel;
-import de.justjakob.pilight.control.submaster.SubmasterChannelListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -1,4 +1,4 @@
-package de.justjakob.pilight.control.submaster;
+package de.justjakob.pilight.fragment.submaster;
 
 import android.util.Log;
 

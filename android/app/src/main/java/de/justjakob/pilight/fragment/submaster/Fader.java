@@ -1,12 +1,9 @@
 package de.justjakob.pilight.fragment.submaster;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import de.justjakob.pilight.control.submaster.Channel;
 
 public class Fader extends LinearLayout {
     private Channel channel;
