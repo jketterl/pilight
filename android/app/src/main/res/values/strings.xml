@@ -10,4 +10,6 @@
     <string name="settings_server_port">Port</string>
     <string name="title_activity_controllable_viewer">ControllableViewer</string>
 
+    <string name="show_manager_stop_all">Stop all</string>
+
 </resources>

@@ -29,9 +29,9 @@ public class ShowManager extends Controllable {
     }
 
     private class GetShowsCommand extends AbstractCommand<List<Show>> {
-        protected GetShowsCommand(ShowManager m) {
+        protected GetShowsCommand() {
             super("getShows");
-            setModule(m);
+            setModule(ShowManager.this);
         }
 
         @Override
@@ -54,6 +54,19 @@ public class ShowManager extends Controllable {
         }
     }
 
+    private class StopShowCommand extends AbstractCommand<Object> {
+
+        protected StopShowCommand() {
+            super("stopShow");
+            setModule(ShowManager.this);
+        }
+
+        @Override
+        protected Object parseResult(Object data) {
+            return null;
+        }
+    }
+
     @Override
     public String getDisplayName() {
         return "Show Manager";
@@ -65,8 +78,13 @@ public class ShowManager extends Controllable {
     }
 
     public void getShows(CommandResultReceiver<List<Show>> receiver) {
-        GetShowsCommand c = new GetShowsCommand(this);
+        GetShowsCommand c = new GetShowsCommand();
         c.addReceiver(receiver);
+        ConnectionService.runCommand(context, c);
+    }
+
+    public void stopShow() {
+        StopShowCommand c = new StopShowCommand();
         ConnectionService.runCommand(context, c);
     }
 }

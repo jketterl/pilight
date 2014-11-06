@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.List;
 
@@ -74,7 +75,15 @@ public class ShowManagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_show_manager, container, false);
+        View v =  inflater.inflate(R.layout.fragment_show_manager, container, false);
+        Button stopAllButton = (Button) v.findViewById(R.id.stopAllButton);
+        stopAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showManager.stopShow();
+            }
+        });
+        return v;
     }
 
 
