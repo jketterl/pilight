@@ -60,6 +60,7 @@ public class ShowManagerFragment extends Fragment {
         if (getArguments() != null) {
             showManager = new ShowManager(getActivity());
             showManager.setId(getArguments().getString(ARG_CONTROLLABLE_ID));
+            showManager.listen(getActivity());
         }
 
         showManager.getShows(new CommandResultReceiver<List<Show>>() {
@@ -87,11 +88,16 @@ public class ShowManagerFragment extends Fragment {
         });
 
         final ShowListView slv = (ShowListView) v.findViewById(R.id.showList);
-        slv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        slv.setShowStartStopListener(new ShowListView.ShowStartStopListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Show s = (Show) slv.getItemAtPosition(position);
-                showManager.startShow(s);
+            public void startShow(Show show) {
+                showManager.startShow(show);
+            }
+
+            @Override
+            public void stopShow(Show show) {
+                if (!show.isRunning()) return;
+                showManager.stopShow();
             }
         });
 

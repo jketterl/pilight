@@ -96,12 +96,33 @@ public class ShowManager extends Controllable {
 
     @Override
     public void receiveMessage(JSONObject data) {
+        try {
+            String id = data.getString("show");
+            for (Show s : shows) {
+                s.setRunning(s.getId().equals(id));
+            }
+        } catch (JSONException e) {
+            Log.w("ShowManager", "unexpected status update", e);
+        }
+    }
 
+    private List<Show> shows;
+
+    private Show findShow(String id) {
+        if (shows == null) return null;
+        for (Show s : shows) if (s.getId().equals(id)) return s;
+        return null;
     }
 
     public void getShows(CommandResultReceiver<List<Show>> receiver) {
         GetShowsCommand c = new GetShowsCommand();
         c.addReceiver(receiver);
+        c.addReceiver(new CommandResultReceiver<List<Show>>() {
+            @Override
+            public void receiveResult(List<Show> result) {
+                shows = result;
+            }
+        });
         ConnectionService.runCommand(context, c);
     }
 
