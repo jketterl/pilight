@@ -7,6 +7,7 @@ Created on 01.11.2012
 import sys
 sys.path.append('../vendors/python-artnet/src/')
 sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
+sys.path.append('../vendors/usbdmx/')
 
 from universe import Universe
 from filter import AlphaFilter
@@ -222,15 +223,23 @@ if __name__ == '__main__':
 
     bands = []
     universe = Universe()
-    universe.setOutput(Output.factory('SocketOutput', 'fft'))
+    universe.setOutput(Output.factory('DEOutput', '0000000000001337'))
+    for i in range(6):
+        fixture = Dimmer()
+        fixture.mapToUniverse(universe, i)
+        fixture.addTags(['dmx'])
+        bands.append(fixture)
+
+    #universe = Universe()
+    #universe.setOutput(Output.factory('SocketOutput', 'fft'))
     #universe.setOutput(Output.factory('SerialOutput', 2, 32))
-    for i in range(32):
-        band = Dimmer()
-        band.mapToUniverse(universe, i)
-        bands.append(band)
+    #for i in range(32):
+    #    band = Dimmer()
+    #    band.mapToUniverse(universe, i)
+    #    bands.append(band)
 
 
-    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj'], 16)
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj', 'dmx channels'], 17)
     for name in ['red', 'green', 'blue']:
         subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
@@ -244,7 +253,8 @@ if __name__ == '__main__':
         subMaster.mapChannels('dimmer ' + name, FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer')).getChannels(name))
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
-
+    subMaster.mapChannels('dmx channels', FixtureManager.filter(lambda f : f.hasTag('dmx')).getChannels('brightness'))
+    
     showRunner = ShowRunner()
     
     showManager = ShowManager(runner = showRunner)
