@@ -4,3 +4,6 @@
 [submodule "vendors/adafruit"]
 	path = vendors/adafruit
 	url = git@github.com:jketterl/Adafruit-Raspberry-Pi-Python-Code.git
+[submodule "vendors/usbdmx"]
+	path = vendors/usbdmx
+	url = git@github.com:jketterl/usbdmx.git
