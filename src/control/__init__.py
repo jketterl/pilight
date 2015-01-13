@@ -11,6 +11,8 @@ class ControlSocket(websocket.WebSocketHandler):
     def __init__(self, *args, **kwargs):
         super(ControlSocket, self).__init__(*args, **kwargs)
         self.listeners = []
+    def check_origin(self, origin):
+        return True
     def open(self):
         print "socket opened!"
     def on_message(self, message):

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.justjakob.pilight" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="de.justjakob.pilight.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="de.justjakob.pilight.MainSettings"
+            android:label="@string/title_activity_main_settings"
+            android:parentActivityName="de.justjakob.pilight.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.justjakob.pilight.MainActivity" />
+        </activity>
+
+        <service
+            android:name="de.justjakob.pilight.connection.ConnectionService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name="de.justjakob.pilight.activity.ControllableViewer"
+            android:label="@string/title_activity_controllable_viewer"
+            android:parentActivityName="de.justjakob.pilight.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.justjakob.pilight.MainActivity" />
+        </activity>
+    </application>
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>
