@@ -18,12 +18,14 @@ class FFT(Show):
                 'end':1
             }
         }
+    def getFixtures(self):
+        return FixtureManager.filter(lambda f : f.hasTag('rgb'))
     def run(self):
         self.universe = Universe(self.bands)
         for channel in self.universe:
             channel.addListener(self)
 
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.getFixtures()
 
         self.outputs = []
         self.ratio = float(len(fixtures)) / self.bands
