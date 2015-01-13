@@ -213,6 +213,13 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel'])
 
+    universe = Universe()
+    universe.setOutput(Output.factory('SerialOutput', 2, 150))
+    for i in range(50):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, i * 3)
+        fixture.addTags(['ws2801', 'pixel', 'tree'])
+
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('SocketOutput', 'fft'))
@@ -233,7 +240,7 @@ if __name__ == '__main__':
         subMaster.mapChannel('dimmer white', subMaster.getChannel('dimmer ' + name))
 
         subMaster.mapChannels('strip ' + name, FixtureManager.filter(lambda f : f.hasTag('strip')).getChannels(name))
-        subMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('pixel')).getChannels(name))
+        subMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('tree')).getChannels(name))
         subMaster.mapChannels('dimmer ' + name, FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer')).getChannels(name))
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
