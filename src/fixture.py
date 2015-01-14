@@ -84,3 +84,13 @@ class RGBFixture(Fixture):
                 'green',
                 'blue'
             ]
+
+class StairvillePAR(RGBFixture):
+    def __init__(self):
+        super(StairvillePAR, self).__init__('RGB')
+        self.addTag('par')
+    def getInputs(self):
+        inputs = super(StairvillePAR, self).getInputs()
+        inputs.insert(0, 'mode')
+        inputs.append('speed')
+        return inputs

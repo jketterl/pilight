@@ -11,7 +11,7 @@ sys.path.append('../vendors/usbdmx/')
 
 from universe import Universe
 from filter import AlphaFilter
-from fixture import RGBFixture, Dimmer, FixtureManager
+from fixture import RGBFixture, Dimmer, FixtureManager, StairvillePAR
 from output import Output
 import time
 from lirc import *
@@ -224,11 +224,10 @@ if __name__ == '__main__':
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('DEOutput', '0000000000001337'))
-    for i in range(6):
-        fixture = Dimmer()
-        fixture.mapToUniverse(universe, i)
+    for i in range(2):
+        fixture = StairvillePAR()
+        fixture.mapToUniverse(universe, i * 5)
         fixture.addTags(['dmx'])
-        bands.append(fixture)
 
     #universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'fft'))
@@ -239,21 +238,24 @@ if __name__ == '__main__':
     #    bands.append(band)
 
 
-    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj', 'dmx channels'], 17)
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white'], 20)
     for name in ['red', 'green', 'blue']:
         subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('dimmer ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('PARs ' + name))
+
         subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
         subMaster.mapChannel('strip white', subMaster.getChannel('strip ' + name))
         subMaster.mapChannel('dimmer white', subMaster.getChannel('dimmer ' + name))
+        subMaster.mapChannel('PARs white', subMaster.getChannel('PARs ' + name))
 
         subMaster.mapChannels('strip ' + name, FixtureManager.filter(lambda f : f.hasTag('strip')).getChannels(name))
         subMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('tree')).getChannels(name))
         subMaster.mapChannels('dimmer ' + name, FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer')).getChannels(name))
+        subMaster.mapChannels('PARs ' + name, FixtureManager.filter(lambda f : f.hasTag('par')).getChannels(name))
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
-    subMaster.mapChannels('dmx channels', FixtureManager.filter(lambda f : f.hasTag('dmx')).getChannels('brightness'))
     
     showRunner = ShowRunner()
     
@@ -276,6 +278,7 @@ if __name__ == '__main__':
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
     showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
+    showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
 
     lircListener = LircListener({
         "subMaster":subMaster,
