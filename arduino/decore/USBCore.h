@@ -275,11 +275,12 @@ typedef struct
 	InterfaceDescriptor			hid;
 	HIDDescDescriptor			desc;
 	EndpointDescriptor			in;
+	EndpointDescriptor			out;
 } HIDDescriptor;
 
 
 #define D_DEVICE(_class,_subClass,_proto,_packetSize0,_vid,_pid,_version,_im,_ip,_is,_configs) \
-	{ 18, 1, 0x200, _class,_subClass,_proto,_packetSize0,_vid,_pid,_version,_im,_ip,_is,_configs }
+	{ 18, 1, 0x0110, _class,_subClass,_proto,_packetSize0,_vid,_pid,_version,_im,_ip,_is,_configs }
 
 #define D_CONFIG(_totalLength,_interfaces) \
 	{ 9, 2, _totalLength,_interfaces, 1, 0, USB_CONFIG_BUS_POWERED, USB_CONFIG_POWER_MA(500) }
@@ -294,7 +295,7 @@ typedef struct
 	{ 8, 11, _firstInterface, _count, _class, _subClass, _protocol, 0 }
 
 #define D_HIDREPORT(_descriptorLength) \
-	{ 9, 0x21, 0x1, 0x1, 0, 1, 0x22, _descriptorLength, 0 }
+	{ 9, 0x21, 0x10, 0x01, 0, 1, 0x22, _descriptorLength, 0 }
 
 #define D_CDCCS(_subtype,_d0,_d1)	{ 5, 0x24, _subtype, _d0, _d1 }
 #define D_CDCCS4(_subtype,_d0)		{ 4, 0x24, _subtype, _d0 }

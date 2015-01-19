@@ -41,6 +41,7 @@ volatile u8 RxLEDPulse; /**< Milliseconds remaining for data Rx LED pulse */
 extern const u16 STRING_LANGUAGE[] PROGMEM;
 extern const u16 STRING_IPRODUCT[] PROGMEM;
 extern const u16 STRING_IMANUFACTURER[] PROGMEM;
+extern const u16 STRING_ISERIAL[] PROGMEM;
 extern const DeviceDescriptor USB_DeviceDescriptor PROGMEM;
 extern const DeviceDescriptor USB_DeviceDescriptorA PROGMEM;
 
@@ -49,8 +50,8 @@ const u16 STRING_LANGUAGE[2] = {
 	0x0409	// English
 };
 
-const u16 STRING_IPRODUCT[17] = {
-	(3<<8) | (2+2*16),
+const u16 STRING_IPRODUCT[16] = {
+	(3<<8) | (2+2*15),
 #if USB_PID == 0x8036	
 	'A','r','d','u','i','n','o',' ','L','e','o','n','a','r','d','o'
 #elif USB_PID == 0x8037
@@ -59,20 +60,33 @@ const u16 STRING_IPRODUCT[17] = {
 	'A','r','d','u','i','n','o',' ','E','s','p','l','o','r','a',' '
 #elif USB_PID == 0x9208
 	'L','i','l','y','P','a','d','U','S','B',' ',' ',' ',' ',' ',' '
+#elif USB_PID == 0x0F1F
+	'S','u','n','l','i','g','h','t',' ','K','i','l','l','e','r'
 #else
 	'U','S','B',' ','I','O',' ','B','o','a','r','d',' ',' ',' ',' '
 #endif
 };
 
-const u16 STRING_IMANUFACTURER[12] = {
-	(3<<8) | (2+2*11),
+const u16 STRING_IMANUFACTURER[22] = {
+	(3<<8) | (2+2*21),
 #if USB_VID == 0x2341
 	'A','r','d','u','i','n','o',' ','L','L','C'
 #elif USB_VID == 0x1b4f
 	'S','p','a','r','k','F','u','n',' ',' ',' '
+#elif USB_VID == 0x04b4
+	'D','i','g','i','t','a','l',' ','E','n','l','i','g','h','t','e','n','m','e','n','t'
 #else
 	'U','n','k','n','o','w','n',' ',' ',' ',' '
 #endif
+};
+
+const u16 STRING_ISERIAL[17] = {
+	(3<<8) | (2+2*16),
+	0x0030, 0x0030, 0x0030, 0x0030,
+	0x0030, 0x0030, 0x0030, 0x0030,
+	0x0030, 0x0030, 0x0030, 0x0030,
+	0x0031, 0x0033, 0x0033, 0x0037
+	//'0','0','0','0','0','0','0','0','0','0','0','0','1','3','3','7'
 };
 
 #ifdef CDC_ENABLED
@@ -83,10 +97,12 @@ const u16 STRING_IMANUFACTURER[12] = {
 
 //	DEVICE DESCRIPTOR
 const DeviceDescriptor USB_DeviceDescriptor =
-	D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
+	D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x0110,IMANUFACTURER,IPRODUCT,ISERIAL,1);
 
+/*
 const DeviceDescriptor USB_DeviceDescriptorA =
 	D_DEVICE(DEVICE_CLASS,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
+*/
 
 //==================================================================
 //==================================================================
@@ -332,7 +348,8 @@ const u8 _initEndpoints[] =
 #endif
 
 #ifdef HID_ENABLED
-	EP_TYPE_INTERRUPT_IN		// HID_ENDPOINT_INT
+	EP_TYPE_INTERRUPT_IN,		// HID_ENDPOINT_INT
+	EP_TYPE_INTERRUPT_OUT		// HID_ENDPOINT_OUT
 #endif
 };
 
@@ -357,6 +374,9 @@ void InitEndpoints()
 		UECONX = 1;
 		UECFG0X = pgm_read_byte(_initEndpoints+i);
 		UECFG1X = EP_DOUBLE_64;
+
+		// enable interrupt on receiving endpoint
+		if (i == 2) UEIENX = 1 << RXOUTE;
 	}
 	UERST = 0x7E;	// And reset them
 	UERST = 0;
@@ -485,7 +505,7 @@ bool SendDescriptor(Setup& setup)
 	{
 		if (setup.wLength == 8)
 			_cdcComposite = 1;
-		desc_addr = _cdcComposite ?  (const u8*)&USB_DeviceDescriptorA : (const u8*)&USB_DeviceDescriptor;
+		desc_addr = /* _cdcComposite ?  (const u8*)&USB_DeviceDescriptorA : */ (const u8*)&USB_DeviceDescriptor;
 	}
 	else if (USB_STRING_DESCRIPTOR_TYPE == t)
 	{
@@ -495,6 +515,8 @@ bool SendDescriptor(Setup& setup)
 			desc_addr = (const u8*)&STRING_IPRODUCT;
 		else if (setup.wValueL == IMANUFACTURER)
 			desc_addr = (const u8*)&STRING_IMANUFACTURER;
+		else if (setup.wValueL == ISERIAL)
+			desc_addr = (const u8*)&STRING_ISERIAL;
 		else
 			return false;
 	}
@@ -508,10 +530,86 @@ bool SendDescriptor(Setup& setup)
 	return true;
 }
 
+u8* DMXIn = new u8[512];
+InterfaceConfig ic = { 0, 0, 0, 0, 0, 512 };
+u8 mode = 0;
+
+void receiveInterfaceConfig(u8 data[32]) {
+	ic.flags = data[0];
+	uint16_t time;
+
+	// all time values must be scaled since they are based on a 12MHz frequency
+	// and substracted from 0xFFFF since timer1 is count-up to 0xFFFF
+
+	time = data[2] << 8 | data[1];
+	ic.breakTime = 0xFFFF - (time * 4 / 3);
+
+	time = data[4] << 8 | data[3];
+	ic.markTime = 0xFFFF - (time * 4 / 3);
+
+	time = data[6] << 8 | data[5];
+	ic.interByteTime = 0xFFFF - (time * 4 / 3);
+
+	time = data[8] << 8 | data[7];
+	ic.interFrameTime = 0xFFFF - (time * 4 / 3);
+
+	// channelCount does not need scaling; we just re-use the time variable.
+	time = data[10] << 8 | data[9];
+	ic.channelCount = time;
+
+	ic.startByte = data[11];
+}
+
+void switchMode(u8 newMode) {
+	mode = newMode;
+}
+
+void storeInterfaceConfig() {
+	// TODO write ic to eprom
+}
+
+void performCommand(u8 data[32]) {
+	u8 command = data[0];
+	if (command == 1) storeInterfaceConfig();	
+}
+
+void receiveDMX() {
+	u8 block = Recv8();
+	// lower 16 blocks are dmx data; above that there's commands
+	if (block < 16) {
+		uint16_t offset = block * 32;
+
+		//memcpy(DMXIn + offset, data + 1, 32);
+		for (int i = 0; i < 32; i++) {
+			DMXIn[offset + i] = Recv8();
+		}
+	} else {
+		u8 data[32];
+		Recv((u8*)&data, 32);
+		if (block == 16) {
+			switchMode(data[0]);
+		} else if (block == 17) {
+			receiveInterfaceConfig(data);
+		} else if (block == 18) {
+			performCommand(data);
+		}
+	}
+}
+
+u8 GetDMXValue(uint16_t channel) {
+	return DMXIn[channel];
+}
+
+InterfaceConfig getInterfaceConfig() {
+	return ic;
+}
+
 //	Endpoint 0 interrupt
 ISR(USB_COM_vect)
 {
-    SetEP(0);
+    if (UEINT & 1) {
+
+        SetEP(0);
 	if (!ReceivedSetupInt())
 		return;
 
@@ -525,7 +623,7 @@ ISR(USB_COM_vect)
 	else
 		ClearIN();
 
-    bool ok = true;
+        bool ok = true;
 	if (REQUEST_STANDARD == (requestType & REQUEST_TYPE))
 	{
 		//	Standard Requests
@@ -586,6 +684,17 @@ ISR(USB_COM_vect)
 	{
 		Stall();
 	}
+    } else if (UEINT & 4) {
+	SetEP(2);
+	WaitOUT();
+	// acknowledge interrupt
+	UEINTX &= ~(1 << RXOUTI);
+	if (UEBCLX >= 33) {
+		receiveDMX();
+	}
+	// clear FIFO
+	UEINTX &= ~(1 << FIFOCON);
+    }
 }
 
 void USB_Flush(u8 ep)

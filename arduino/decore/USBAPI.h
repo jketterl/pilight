@@ -159,6 +159,7 @@ int		HID_GetInterface(uint8_t* interfaceNum);
 int		HID_GetDescriptor(int i);
 bool	HID_Setup(Setup& setup);
 void	HID_SendReport(uint8_t id, const void* data, int len);
+int	HID_RecvReport(uint8_t id, void* data, int len);
 
 //================================================================================
 //================================================================================
@@ -192,6 +193,26 @@ int USB_Send(uint8_t ep, const void* data, int len);	// blocking
 int USB_Recv(uint8_t ep, void* data, int len);		// non-blocking
 int USB_Recv(uint8_t ep);							// non-blocking
 void USB_Flush(uint8_t ep);
+
+uint8_t GetDMXValue(uint16_t channel);
+
+typedef struct {
+	uint8_t flags;
+	uint16_t breakTime;
+	uint16_t markTime;
+	uint16_t interByteTime;
+	uint16_t interFrameTime;
+	uint16_t channelCount;
+	uint8_t startByte;
+} InterfaceConfig;
+
+// constants for flags field
+// inter byte time enabled bit
+#define IBT_ENABLED 0
+// inter frame time enabled bit
+#define IFT_ENABLED 1
+
+InterfaceConfig getInterfaceConfig();
 
 #endif
 
