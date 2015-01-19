@@ -214,12 +214,14 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel'])
 
+    '''
     universe = Universe()
     universe.setOutput(Output.factory('SerialOutput', 2, 150))
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel', 'tree'])
+    '''
 
     bands = []
     universe = Universe()
@@ -228,6 +230,8 @@ if __name__ == '__main__':
         fixture = StairvillePAR()
         fixture.mapToUniverse(universe, i * 5)
         fixture.addTags(['dmx'])
+        for c in ['red', 'green', 'blue']:
+            bands.append(fixture.getNamedChannel(c))
 
     #universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'fft'))
@@ -238,20 +242,20 @@ if __name__ == '__main__':
     #    bands.append(band)
 
 
-    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'tree red', 'tree green', 'tree blue', 'tree white', 'master red', 'master green', 'master blue', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white'], 20)
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white', 'pixel red', 'pixel green', 'pixel blue', 'pixel white', 'master red', 'master green', 'master blue'], 20)
     for name in ['red', 'green', 'blue']:
-        subMaster.mapChannel('master ' + name, subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('master ' + name, subMaster.getChannel('pixel ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('dimmer ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('PARs ' + name))
 
-        subMaster.mapChannel('tree white', subMaster.getChannel('tree ' + name))
+        subMaster.mapChannel('pixel white', subMaster.getChannel('pixel ' + name))
         subMaster.mapChannel('strip white', subMaster.getChannel('strip ' + name))
         subMaster.mapChannel('dimmer white', subMaster.getChannel('dimmer ' + name))
         subMaster.mapChannel('PARs white', subMaster.getChannel('PARs ' + name))
 
         subMaster.mapChannels('strip ' + name, FixtureManager.filter(lambda f : f.hasTag('strip')).getChannels(name))
-        subMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('tree')).getChannels(name))
+        subMaster.mapChannels('pixel ' + name, FixtureManager.filter(lambda f : f.hasTag('pixel')).getChannels(name))
         subMaster.mapChannels('dimmer ' + name, FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer')).getChannels(name))
         subMaster.mapChannels('PARs ' + name, FixtureManager.filter(lambda f : f.hasTag('par')).getChannels(name))
 
