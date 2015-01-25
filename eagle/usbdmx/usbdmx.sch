@@ -12622,14 +12622,14 @@ Source: www.kingbright.com</description>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="R3" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
-<part name="C4" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C4" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
-<part name="C5" library="rcl" deviceset="C-EU" device="C0805"/>
-<part name="C6" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C5" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
+<part name="C6" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="JP1" library="pinhead" deviceset="PINHD-2X3" device="_2.54-SMD" value="ICSP"/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
 <part name="P+7" library="supply1" deviceset="VCC" device=""/>
-<part name="C7" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C7" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="DMXOUT" library="con-neutrik_ag" deviceset="NC3" device="FAH2"/>
 <part name="DMXIN" library="con-neutrik_ag" deviceset="NC3" device="MBH"/>
 <part name="U$2" library="murata-dcdc" deviceset="NTE0505S" device="NTE0505MEC"/>
@@ -12645,7 +12645,7 @@ Source: www.kingbright.com</description>
 <part name="P+6" library="supply1" deviceset="VCC" device="" value="SVCC"/>
 <part name="SGND4" library="supply1" deviceset="GND" device="" value="SGND"/>
 <part name="SGND5" library="supply1" deviceset="GND" device="" value="SGND"/>
-<part name="C8" library="rcl" deviceset="C-EU" device="C0805"/>
+<part name="C8" library="rcl" deviceset="C-EU" device="C0805" value="4,7µ"/>
 <part name="SGND6" library="supply1" deviceset="GND" device="" value="SGND"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="R0805" value="120"/>
 <part name="OK1" library="optocoupler" deviceset="6N137" device="SO-8"/>
@@ -13101,9 +13101,10 @@ Source: www.kingbright.com</description>
 <junction x="210.82" y="27.94"/>
 <pinref part="SGND3" gate="1" pin="GND"/>
 <wire x1="213.36" y1="33.02" x2="210.82" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="210.82" y1="33.02" x2="210.82" y2="38.1" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="RE/"/>
 <wire x1="213.36" y1="38.1" x2="210.82" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="210.82" y1="38.1" x2="210.82" y2="33.02" width="0.1524" layer="91"/>
+<junction x="210.82" y="33.02"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="GND"/>
@@ -13124,22 +13125,6 @@ Source: www.kingbright.com</description>
 <pinref part="SGND5" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$2" gate="G$1" pin="VOUT+"/>
-<wire x1="142.24" y1="5.08" x2="142.24" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="C8" gate="G$1" pin="2"/>
-<wire x1="142.24" y1="2.54" x2="144.78" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="2.54" x2="149.86" y2="2.54" width="0.1524" layer="91"/>
-<junction x="144.78" y="2.54"/>
-<pinref part="SGND" gate="1" pin="GND"/>
-<wire x1="149.86" y1="2.54" x2="152.4" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="2.54" x2="177.8" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="2.54" x2="149.86" y2="5.08" width="0.1524" layer="91"/>
-<junction x="149.86" y="2.54"/>
-<pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="149.86" y1="5.08" x2="152.4" y2="5.08" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="2.54" x2="180.34" y2="2.54" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C5" gate="G$1" pin="1"/>
 <pinref part="SGND6" gate="1" pin="GND"/>
 <wire x1="246.38" y1="93.98" x2="246.38" y2="96.52" width="0.1524" layer="91"/>
@@ -13153,6 +13138,20 @@ Source: www.kingbright.com</description>
 <pinref part="OK2" gate="A" pin="C"/>
 <pinref part="SGND8" gate="1" pin="GND"/>
 <wire x1="198.12" y1="50.8" x2="200.66" y2="50.8" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U$2" gate="G$1" pin="VOUT+"/>
+<wire x1="142.24" y1="5.08" x2="142.24" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="2"/>
+<wire x1="142.24" y1="2.54" x2="144.78" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="2.54" x2="149.86" y2="2.54" width="0.1524" layer="91"/>
+<junction x="144.78" y="2.54"/>
+<wire x1="149.86" y1="2.54" x2="149.86" y2="5.08" width="0.1524" layer="91"/>
+<pinref part="R4" gate="G$1" pin="1"/>
+<wire x1="149.86" y1="5.08" x2="152.4" y2="5.08" width="0.1524" layer="91"/>
+<pinref part="SGND" gate="1" pin="GND"/>
+<wire x1="149.86" y1="2.54" x2="177.8" y2="2.54" width="0.1524" layer="91"/>
+<junction x="149.86" y="2.54"/>
 </segment>
 </net>
 <net name="N$20" class="0">
@@ -13244,6 +13243,44 @@ Source: www.kingbright.com</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="102,1,177.8,2.54,GND,SGND,,,,"/>
+<approved hash="102,1,177.8,10.16,VCC,SVCC,,,,"/>
+<approved hash="102,1,248.92,45.72,VCC,SVCC,,,,"/>
+<approved hash="102,1,248.92,25.4,GND,SGND,,,,"/>
+<approved hash="102,1,274.32,25.4,GND,SGND,,,,"/>
+<approved hash="102,1,210.82,25.4,GND,SGND,,,,"/>
+<approved hash="102,1,208.28,71.12,VCC,SVCC,,,,"/>
+<approved hash="102,1,248.92,83.82,VCC,SVCC,,,,"/>
+<approved hash="102,1,248.92,63.5,GND,SGND,,,,"/>
+<approved hash="102,1,274.32,71.12,GND,SGND,,,,"/>
+<approved hash="102,1,246.38,96.52,GND,SGND,,,,"/>
+<approved hash="102,1,187.96,83.82,VCC,SVCC,,,,"/>
+<approved hash="102,1,187.96,76.2,GND,SGND,,,,"/>
+<approved hash="102,1,200.66,50.8,GND,SGND,,,,"/>
+<approved hash="201,1,200.66,50.8,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,187.96,76.2,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,246.38,96.52,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,274.32,71.12,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,248.92,63.5,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,210.82,25.4,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,274.32,25.4,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,248.92,25.4,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,177.8,2.54,GND,GND\, SGND,,,,"/>
+<approved hash="201,1,187.96,83.82,VCC,VCC\, SVCC,,,,"/>
+<approved hash="201,1,248.92,83.82,VCC,VCC\, SVCC,,,,"/>
+<approved hash="201,1,208.28,71.12,VCC,VCC\, SVCC,,,,"/>
+<approved hash="201,1,248.92,45.72,VCC,VCC\, SVCC,,,,"/>
+<approved hash="201,1,177.8,10.16,VCC,VCC\, SVCC,,,,"/>
+<approved hash="104,1,246.38,25.4,IC1,GND,SGND,,,"/>
+<approved hash="104,1,246.38,45.72,IC1,VCC,SVCC,,,"/>
+<approved hash="104,1,246.38,63.5,IC2,GND,SGND,,,"/>
+<approved hash="104,1,246.38,83.82,IC2,VCC,SVCC,,,"/>
+<approved hash="113,1,-1.7145,66.6242,X1,,,,,"/>
+<approved hash="113,1,168.91,4.75827,LED1,,,,,"/>
+<approved hash="113,1,118.11,63.8217,LED2,,,,,"/>
+<approved hash="113,1,118.11,66.3617,LED3,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
