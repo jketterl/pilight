@@ -10992,6 +10992,22 @@ Source: HCPL7221.pdf</description>
 <rectangle x1="1.9865" y1="0.4445" x2="2.921" y2="0.8255" layer="51"/>
 <rectangle x1="1.9865" y1="1.7145" x2="2.921" y2="2.0955" layer="51"/>
 </package>
+<package name="SMD8">
+<smd name="2" x="-4.5085" y="1.27" dx="1.524" dy="1.778" layer="1"/>
+<smd name="1" x="-4.5085" y="3.81" dx="1.524" dy="1.778" layer="1"/>
+<smd name="3" x="-4.5085" y="-1.27" dx="1.524" dy="1.778" layer="1"/>
+<smd name="4" x="-4.5085" y="-3.81" dx="1.524" dy="1.778" layer="1"/>
+<smd name="8" x="4.5085" y="3.81" dx="1.524" dy="1.778" layer="1"/>
+<smd name="7" x="4.5085" y="1.27" dx="1.524" dy="1.778" layer="1"/>
+<smd name="6" x="4.5085" y="-1.27" dx="1.524" dy="1.778" layer="1"/>
+<smd name="5" x="4.5085" y="-3.81" dx="1.524" dy="1.778" layer="1"/>
+<wire x1="-3.429" y1="4.953" x2="-3.429" y2="-4.953" width="0.127" layer="21"/>
+<wire x1="-3.429" y1="-4.953" x2="3.429" y2="-4.953" width="0.127" layer="21"/>
+<wire x1="3.429" y1="-4.953" x2="3.429" y2="4.953" width="0.127" layer="21"/>
+<wire x1="3.429" y1="4.953" x2="-3.429" y2="4.953" width="0.127" layer="21"/>
+<circle x="-2.54" y="3.81" radius="0.508" width="0.127" layer="21"/>
+<text x="0" y="-2.54" size="1.27" layer="25" rot="R90">&gt;NAME</text>
+</package>
 </packages>
 <symbols>
 <symbol name="137">
@@ -11073,6 +11089,19 @@ Source: HCPL7221.pdf</description>
 </technologies>
 </device>
 <device name="SO-8" package="SO-8">
+<connects>
+<connect gate="A" pin="A" pad="2"/>
+<connect gate="A" pin="C" pad="3"/>
+<connect gate="A" pin="GND" pad="5"/>
+<connect gate="A" pin="VCC" pad="8"/>
+<connect gate="A" pin="VE" pad="7"/>
+<connect gate="A" pin="VO" pad="6"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="SMD-8" package="SMD8">
 <connects>
 <connect gate="A" pin="A" pad="2"/>
 <connect gate="A" pin="C" pad="3"/>
@@ -12648,8 +12677,8 @@ Source: www.kingbright.com</description>
 <part name="C8" library="rcl" deviceset="C-EU" device="C0805" value="4,7µ"/>
 <part name="SGND6" library="supply1" deviceset="GND" device="" value="SGND"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="R0805" value="120"/>
-<part name="OK1" library="optocoupler" deviceset="6N137" device="SO-8"/>
-<part name="OK2" library="optocoupler" deviceset="6N137" device="SO-8"/>
+<part name="OK1" library="optocoupler" deviceset="6N137" device="SMD-8" value="6N137SMD-8"/>
+<part name="OK2" library="optocoupler" deviceset="6N137" device="SMD-8" value="6N137SMD-8"/>
 <part name="P+10" library="supply1" deviceset="VCC" device="" value="SVCC"/>
 <part name="SGND7" library="supply1" deviceset="GND" device="" value="SGND"/>
 <part name="P+11" library="supply1" deviceset="VCC" device=""/>
