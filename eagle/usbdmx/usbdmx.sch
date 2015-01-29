@@ -9788,9 +9788,13 @@ Source: www.neutrik.com/... 210_165411.pdf</description>
 <description>&lt;b&gt;Neutrik Audio Connector&lt;/b&gt;&lt;p&gt;
 Source: www.neutrik.com/... 210_165121.pdf</description>
 <wire x1="-12.4" y1="-1.6" x2="-12.4" y2="17.7" width="0.2032" layer="21"/>
-<wire x1="-12.4" y1="17.7" x2="12.4" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="-12.4" y1="17.7" x2="-11.5" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="17.7" x2="11.5" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="17.7" x2="12.4" y2="17.7" width="0.2032" layer="21"/>
 <wire x1="12.4" y1="17.7" x2="12.4" y2="-1.6" width="0.2032" layer="21"/>
-<wire x1="12.4" y1="-1.6" x2="-12.4" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="12.4" y1="-1.6" x2="11.5" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="-1.6" x2="-11.5" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="-1.6" x2="-12.4" y2="-1.6" width="0.2032" layer="21"/>
 <wire x1="-10.8" y1="17.8" x2="-10.8" y2="19.95" width="0.2032" layer="21"/>
 <wire x1="-10.8" y1="19.95" x2="-10.4" y2="20.35" width="0.2032" layer="21" curve="-90"/>
 <wire x1="-10.4" y1="20.35" x2="10.4" y2="20.35" width="0.2032" layer="21"/>
@@ -9804,27 +9808,8 @@ Source: www.neutrik.com/... 210_165121.pdf</description>
 <text x="-1.27" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
 <hole x="-3.81" y="13.97" drill="1.6"/>
 <hole x="3.81" y="8.89" drill="1.6"/>
-</package>
-<package name="NC3MBH-B">
-<description>&lt;b&gt;Neutrik Audio Connector&lt;/b&gt;&lt;p&gt;
-Source: www.neutrik.com/... 210_132901.pdf</description>
-<wire x1="-12.4" y1="-1.6" x2="-12.4" y2="17.7" width="0.2032" layer="21"/>
-<wire x1="-12.4" y1="17.7" x2="12.4" y2="17.7" width="0.2032" layer="21"/>
-<wire x1="12.4" y1="17.7" x2="12.4" y2="-1.6" width="0.2032" layer="21"/>
-<wire x1="12.4" y1="-1.6" x2="-12.4" y2="-1.6" width="0.2032" layer="21"/>
-<wire x1="-10.8" y1="17.8" x2="-10.8" y2="19.95" width="0.2032" layer="21"/>
-<wire x1="-10.8" y1="19.95" x2="-10.4" y2="20.35" width="0.2032" layer="21" curve="-90"/>
-<wire x1="-10.4" y1="20.35" x2="10.4" y2="20.35" width="0.2032" layer="21"/>
-<wire x1="10.4" y1="20.35" x2="10.8" y2="19.95" width="0.2032" layer="21" curve="-90"/>
-<wire x1="10.8" y1="19.95" x2="10.8" y2="17.8" width="0.2032" layer="21"/>
-<pad name="3" x="0" y="0" drill="1.2"/>
-<pad name="2" x="-3.81" y="0" drill="1.6"/>
-<pad name="1" x="3.81" y="0" drill="1.6"/>
-<pad name="G" x="0" y="5.08" drill="1.2"/>
-<text x="-11.43" y="-3.81" size="1.27" layer="25">&gt;NAME</text>
-<text x="-1.27" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
-<hole x="-3.81" y="13.97" drill="1.6"/>
-<hole x="3.81" y="8.89" drill="1.6"/>
+<wire x1="-11.5" y1="17.7" x2="-11.5" y2="-1.6" width="0.127" layer="21"/>
+<wire x1="11.5" y1="-1.6" x2="11.5" y2="17.7" width="0.127" layer="21"/>
 </package>
 <package name="NC3MBHL">
 <description>&lt;b&gt;Neutrik Audio Connector&lt;/b&gt;&lt;p&gt;
@@ -10328,6 +10313,67 @@ Source: www.neutrik.com/... 210_91611.pdf</description>
 <rectangle x1="1.19" y1="-4.09" x2="2.2" y2="-3.8" layer="51"/>
 <rectangle x1="7.5" y1="-10.39" x2="8.83" y2="-9.69" layer="21"/>
 </package>
+<package name="NC3MBH-B">
+<description>&lt;b&gt;Neutrik Audio Connector&lt;/b&gt;&lt;p&gt;
+Source: www.neutrik.com/... 210_132901.pdf</description>
+<wire x1="-12.4" y1="-1.6" x2="-12.4" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="-12.4" y1="17.7" x2="-11.5" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="17.7" x2="11.5" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="17.7" x2="12.4" y2="17.7" width="0.2032" layer="21"/>
+<wire x1="12.4" y1="17.7" x2="12.4" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="12.4" y1="-1.6" x2="11.5" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="-1.6" x2="-11.5" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="-1.6" x2="-12.4" y2="-1.6" width="0.2032" layer="21"/>
+<wire x1="-10.8" y1="17.8" x2="-10.8" y2="19.95" width="0.2032" layer="21"/>
+<wire x1="-10.8" y1="19.95" x2="-10.4" y2="20.35" width="0.2032" layer="21" curve="-90"/>
+<wire x1="-10.4" y1="20.35" x2="10.4" y2="20.35" width="0.2032" layer="21"/>
+<wire x1="10.4" y1="20.35" x2="10.8" y2="19.95" width="0.2032" layer="21" curve="-90"/>
+<wire x1="10.8" y1="19.95" x2="10.8" y2="17.8" width="0.2032" layer="21"/>
+<pad name="3" x="0" y="0" drill="1.2"/>
+<pad name="2" x="-3.81" y="0" drill="1.6"/>
+<pad name="1" x="3.81" y="0" drill="1.6"/>
+<pad name="G" x="0" y="5.08" drill="1.2"/>
+<text x="-11.43" y="-3.81" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.27" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
+<hole x="-3.81" y="13.97" drill="1.6"/>
+<hole x="3.81" y="8.89" drill="1.6"/>
+<wire x1="-11.5" y1="17.7" x2="-11.5" y2="-1.6" width="0.127" layer="21"/>
+<wire x1="11.5" y1="17.7" x2="11.5" y2="-1.6" width="0.127" layer="21"/>
+</package>
+<package name="NC3FAH1">
+<description>&lt;b&gt;Neutrik Audio Connector&lt;/b&gt;&lt;p&gt;
+Source: www.neutrik.com/... 210_296581.pdf</description>
+<wire x1="-12.4" y1="-6.1" x2="-12.4" y2="13.2" width="0.2032" layer="21"/>
+<wire x1="-12.4" y1="13.2" x2="-11.5" y2="13.2" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="13.2" x2="11.5" y2="13.2" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="13.2" x2="12.4" y2="13.2" width="0.2032" layer="21"/>
+<wire x1="12.4" y1="13.2" x2="12.4" y2="-6.1" width="0.2032" layer="21"/>
+<wire x1="12.4" y1="-6.1" x2="11.5" y2="-6.1" width="0.2032" layer="21"/>
+<wire x1="11.5" y1="-6.1" x2="-11.5" y2="-6.1" width="0.2032" layer="21"/>
+<wire x1="-11.5" y1="-6.1" x2="-12.4" y2="-6.1" width="0.2032" layer="21"/>
+<wire x1="-10.8" y1="13.3" x2="-10.8" y2="15.45" width="0.2032" layer="21"/>
+<wire x1="-10.8" y1="15.45" x2="-10.4" y2="15.85" width="0.2032" layer="21" curve="-90"/>
+<wire x1="-10.4" y1="15.85" x2="10.4" y2="15.85" width="0.2032" layer="21"/>
+<wire x1="10.4" y1="15.85" x2="10.8" y2="15.45" width="0.2032" layer="21" curve="-90"/>
+<wire x1="10.8" y1="15.45" x2="10.8" y2="13.3" width="0.2032" layer="21"/>
+<wire x1="-2.4" y1="15.95" x2="-2.4" y2="19.4" width="0.2032" layer="21"/>
+<wire x1="-2.4" y1="19.4" x2="-5.05" y2="19.4" width="0.2032" layer="21"/>
+<wire x1="-5.05" y1="19.4" x2="-5.05" y2="20.3" width="0.2032" layer="21"/>
+<wire x1="-5.05" y1="20.3" x2="4.9" y2="20.3" width="0.2032" layer="21"/>
+<wire x1="4.9" y1="20.3" x2="4.9" y2="19.4" width="0.2032" layer="21"/>
+<wire x1="4.9" y1="19.4" x2="2.2" y2="19.4" width="0.2032" layer="21"/>
+<wire x1="2.2" y1="19.4" x2="2.2" y2="15.95" width="0.2032" layer="21"/>
+<wire x1="-2.4" y1="19.4" x2="2.15" y2="19.4" width="0.2032" layer="21"/>
+<pad name="3" x="0" y="-3.815" drill="1.2"/>
+<pad name="1+G" x="-3.81" y="0.635" drill="1.6"/>
+<pad name="2" x="3.81" y="0" drill="1.6"/>
+<text x="-11.43" y="-8.89" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.27" y="-8.89" size="1.27" layer="27">&gt;VALUE</text>
+<hole x="-3.81" y="9.525" drill="1.6"/>
+<hole x="3.81" y="4.445" drill="1.6"/>
+<wire x1="-11.5" y1="13.2" x2="-11.5" y2="-6.1" width="0.127" layer="21"/>
+<wire x1="11.5" y1="-6.1" x2="11.5" y2="13.2" width="0.127" layer="21"/>
+</package>
 </packages>
 <symbols>
 <symbol name="NC3-G">
@@ -10345,6 +10391,24 @@ Source: www.neutrik.com/... 210_91611.pdf</description>
 <pin name="2" x="-7.62" y="-2.54" visible="pad" length="short" direction="pas" swaplevel="1"/>
 <pin name="3" x="-7.62" y="0" visible="pad" length="short" direction="pas" swaplevel="1"/>
 <pin name="G" x="-7.62" y="-5.08" visible="pad" length="short" direction="pas"/>
+</symbol>
+<symbol name="NC3">
+<wire x1="-5.08" y1="2.54" x2="1.016" y2="2.54" width="0.1524" layer="94"/>
+<wire x1="-5.08" y1="-2.54" x2="1.016" y2="-2.54" width="0.1524" layer="94"/>
+<wire x1="-5.08" y1="0" x2="-2.794" y2="0" width="0.1524" layer="94"/>
+<wire x1="-4.318" y1="4.318" x2="-3.302" y2="3.556" width="0.1524" layer="94"/>
+<wire x1="-4.318" y1="4.318" x2="-5.08" y2="4.318" width="0.1524" layer="94"/>
+<wire x1="-5.08" y1="4.318" x2="-5.08" y2="2.54" width="0.1524" layer="94"/>
+<circle x="0" y="0" radius="4.8326" width="0.254" layer="94"/>
+<circle x="-2.032" y="0" radius="0.762" width="0.1524" layer="94"/>
+<circle x="1.778" y="2.54" radius="0.762" width="0.1524" layer="94"/>
+<circle x="1.778" y="-2.54" radius="0.762" width="0.1524" layer="94"/>
+<circle x="-5.08" y="2.54" radius="0.3592" width="0" layer="94"/>
+<text x="-5.08" y="5.08" size="1.778" layer="95">&gt;NAME</text>
+<text x="-5.08" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="1" x="-10.16" y="2.54" visible="pad" length="middle" direction="pas" swaplevel="1"/>
+<pin name="2" x="-10.16" y="-2.54" visible="pad" length="middle" direction="pas" swaplevel="1"/>
+<pin name="3" x="-10.16" y="0" visible="pad" length="middle" direction="pas" swaplevel="1"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -10882,6 +10946,23 @@ Source: www.neutrik.com/</description>
 <attribute name="OC_FARNELL" value="unknown" constant="no"/>
 <attribute name="OC_NEWARK" value="unknown" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="NC3SANS">
+<gates>
+<gate name="G$1" symbol="NC3" x="0" y="0"/>
+</gates>
+<devices>
+<device name="FAH1" package="NC3FAH1">
+<connects>
+<connect gate="G$1" pin="1" pad="1+G"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -12762,8 +12843,7 @@ Source: www.kingbright.com</description>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
 <part name="P+7" library="supply1" deviceset="VCC" device=""/>
 <part name="C7" library="rcl" deviceset="C-EU" device="C0805" value="100n"/>
-<part name="DMXOUT" library="con-neutrik_ag" deviceset="NC3" device="FAH2"/>
-<part name="DMXIN" library="con-neutrik_ag" deviceset="NC3" device="MBH"/>
+<part name="DMXIN" library="con-neutrik_ag" deviceset="NC3" device="MBH-B" value="NC3MBH-B"/>
 <part name="U$2" library="murata-dcdc" deviceset="NTE0505S" device="NTE0505MEC"/>
 <part name="P+8" library="supply1" deviceset="VCC" device=""/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
@@ -12799,6 +12879,7 @@ Source: www.kingbright.com</description>
 <part name="LED3" library="led" deviceset="LED" device="SML0603"/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="SJ1" library="jumper" deviceset="SJ" device=""/>
+<part name="U$3" library="con-neutrik_ag" deviceset="NC3SANS" device="FAH1"/>
 </parts>
 <sheets>
 <sheet>
@@ -12831,7 +12912,6 @@ Source: www.kingbright.com</description>
 <instance part="GND10" gate="1" x="121.92" y="83.82" rot="R180"/>
 <instance part="P+7" gate="VCC" x="114.3" y="55.88" rot="R90"/>
 <instance part="C7" gate="G$1" x="27.94" y="73.66" rot="R90"/>
-<instance part="DMXOUT" gate="G$1" x="284.48" y="76.2"/>
 <instance part="DMXIN" gate="G$1" x="284.48" y="33.02"/>
 <instance part="U$2" gate="G$1" x="129.54" y="7.62"/>
 <instance part="P+8" gate="VCC" x="109.22" y="5.08" rot="R90"/>
@@ -12845,10 +12925,10 @@ Source: www.kingbright.com</description>
 <instance part="P+5" gate="VCC" x="205.74" y="71.12" rot="R90"/>
 <instance part="P+6" gate="VCC" x="251.46" y="83.82" rot="R270"/>
 <instance part="SGND4" gate="1" x="251.46" y="63.5" rot="R90"/>
-<instance part="SGND5" gate="1" x="274.32" y="66.04"/>
+<instance part="SGND5" gate="1" x="271.78" y="86.36" rot="R180"/>
 <instance part="C8" gate="G$1" x="144.78" y="7.62"/>
 <instance part="SGND6" gate="1" x="246.38" y="99.06" rot="R180"/>
-<instance part="R5" gate="G$1" x="254" y="78.74" rot="R180"/>
+<instance part="R5" gate="G$1" x="254" y="73.66" rot="R180"/>
 <instance part="OK1" gate="A" x="175.26" y="78.74"/>
 <instance part="OK2" gate="A" x="185.42" y="48.26" rot="R180"/>
 <instance part="P+10" gate="VCC" x="190.5" y="83.82" rot="R270"/>
@@ -12868,6 +12948,7 @@ Source: www.kingbright.com</description>
 <instance part="LED3" gate="G$1" x="116.84" y="66.04" rot="R90"/>
 <instance part="GND8" gate="1" x="116.84" y="73.66" rot="R90"/>
 <instance part="SJ1" gate="1" x="106.68" y="73.66" rot="R180"/>
+<instance part="U$3" gate="G$1" x="287.02" y="76.2"/>
 </instances>
 <busses>
 </busses>
@@ -13142,11 +13223,11 @@ Source: www.kingbright.com</description>
 <net name="N$17" class="0">
 <segment>
 <pinref part="IC2" gate="G$1" pin="B"/>
-<pinref part="DMXOUT" gate="G$1" pin="3"/>
 <wire x1="246.38" y1="76.2" x2="248.92" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="R5" gate="G$1" pin="2"/>
-<wire x1="248.92" y1="76.2" x2="276.86" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="248.92" y1="78.74" x2="248.92" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="248.92" y1="73.66" x2="248.92" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="U$3" gate="G$1" pin="3"/>
+<wire x1="276.86" y1="76.2" x2="248.92" y2="76.2" width="0.1524" layer="91"/>
 <junction x="248.92" y="76.2"/>
 </segment>
 </net>
@@ -13239,16 +13320,6 @@ Source: www.kingbright.com</description>
 <pinref part="SGND4" gate="1" pin="GND"/>
 </segment>
 <segment>
-<wire x1="274.32" y1="68.58" x2="274.32" y2="71.12" width="0.1524" layer="91"/>
-<pinref part="DMXOUT" gate="G$1" pin="2"/>
-<wire x1="274.32" y1="71.12" x2="274.32" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="274.32" y1="73.66" x2="276.86" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="DMXOUT" gate="G$1" pin="G"/>
-<wire x1="276.86" y1="71.12" x2="274.32" y2="71.12" width="0.1524" layer="91"/>
-<junction x="274.32" y="71.12"/>
-<pinref part="SGND5" gate="1" pin="GND"/>
-</segment>
-<segment>
 <pinref part="C5" gate="G$1" pin="1"/>
 <pinref part="SGND6" gate="1" pin="GND"/>
 <wire x1="246.38" y1="93.98" x2="246.38" y2="96.52" width="0.1524" layer="91"/>
@@ -13277,6 +13348,12 @@ Source: www.kingbright.com</description>
 <wire x1="149.86" y1="2.54" x2="177.8" y2="2.54" width="0.1524" layer="91"/>
 <junction x="149.86" y="2.54"/>
 </segment>
+<segment>
+<pinref part="SGND5" gate="1" pin="GND"/>
+<wire x1="271.78" y1="83.82" x2="271.78" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="U$3" gate="G$1" pin="1"/>
+<wire x1="271.78" y1="78.74" x2="276.86" y2="78.74" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$20" class="0">
 <segment>
@@ -13296,13 +13373,15 @@ Source: www.kingbright.com</description>
 </net>
 <net name="N$12" class="0">
 <segment>
-<wire x1="259.08" y1="71.12" x2="259.08" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="DMXOUT" gate="G$1" pin="1"/>
-<wire x1="259.08" y1="78.74" x2="276.86" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="259.08" y1="71.12" x2="259.08" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="A"/>
 <wire x1="259.08" y1="71.12" x2="246.38" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="R5" gate="G$1" pin="1"/>
-<junction x="259.08" y="78.74"/>
+<wire x1="259.08" y1="71.12" x2="271.78" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="71.12" x2="271.78" y2="73.66" width="0.1524" layer="91"/>
+<junction x="259.08" y="71.12"/>
+<pinref part="U$3" gate="G$1" pin="2"/>
+<wire x1="271.78" y1="73.66" x2="276.86" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$23" class="0">
