@@ -134,7 +134,7 @@
 <wire x1="63.17" y1="0" x2="63.17" y2="48.5675" width="0" layer="20"/>
 <wire x1="63.17" y1="48.5675" x2="0" y2="48.5675" width="0" layer="20"/>
 <wire x1="0" y1="48.5675" x2="0" y2="0" width="0" layer="20"/>
-<text x="2.54" y="46.355" size="1.4224" layer="16" font="vector" rot="MR180">PiLight USB DMX Interface Rev. 1</text>
+<text x="2.54" y="46.355" size="1.4224" layer="16" font="vector" rot="MR180">PiLight USB DMX Interface Rev. 2</text>
 </plain>
 <libraries>
 <library name="rcl">
