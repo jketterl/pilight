@@ -12970,8 +12970,8 @@ Source: www.kingbright.com</description>
 <instance part="U$2" gate="G$1" x="129.54" y="7.62"/>
 <instance part="P+8" gate="VCC" x="109.22" y="5.08" rot="R90"/>
 <instance part="GND13" gate="1" x="109.22" y="10.16" rot="R270"/>
-<instance part="SGND" gate="1" x="180.34" y="2.54" rot="R90"/>
-<instance part="P+9" gate="VCC" x="180.34" y="10.16" rot="R270"/>
+<instance part="SGND" gate="1" x="180.34" y="10.16" rot="R90"/>
+<instance part="P+9" gate="VCC" x="180.34" y="2.54" rot="R270"/>
 <instance part="P+2" gate="VCC" x="251.46" y="45.72" rot="R270"/>
 <instance part="SGND1" gate="1" x="251.46" y="25.4" rot="R90"/>
 <instance part="SGND2" gate="1" x="274.32" y="22.86"/>
@@ -13288,19 +13288,6 @@ Source: www.kingbright.com</description>
 </net>
 <net name="SVCC" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="VOUT-"/>
-<wire x1="142.24" y1="10.16" x2="144.78" y2="10.16" width="0.1524" layer="91"/>
-<pinref part="P+9" gate="VCC" pin="VCC"/>
-<pinref part="C8" gate="G$1" pin="1"/>
-<wire x1="144.78" y1="10.16" x2="175.26" y2="10.16" width="0.1524" layer="91"/>
-<junction x="144.78" y="10.16"/>
-<pinref part="LED1" gate="G$1" pin="A"/>
-<wire x1="175.26" y1="10.16" x2="177.8" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="172.72" y1="5.08" x2="175.26" y2="5.08" width="0.1524" layer="91"/>
-<wire x1="175.26" y1="5.08" x2="175.26" y2="10.16" width="0.1524" layer="91"/>
-<junction x="175.26" y="10.16"/>
-</segment>
-<segment>
 <pinref part="IC1" gate="G$1" pin="VCC"/>
 <wire x1="246.38" y1="45.72" x2="248.92" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="C6" gate="G$1" pin="2"/>
@@ -13339,6 +13326,20 @@ Source: www.kingbright.com</description>
 <pinref part="R11" gate="G$1" pin="2"/>
 <wire x1="193.04" y1="88.9" x2="187.96" y2="88.9" width="0.1524" layer="91"/>
 <junction x="187.96" y="88.9"/>
+</segment>
+<segment>
+<pinref part="LED1" gate="G$1" pin="A"/>
+<wire x1="172.72" y1="5.08" x2="175.26" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="5.08" x2="175.26" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="P+9" gate="VCC" pin="VCC"/>
+<wire x1="175.26" y1="2.54" x2="177.8" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="U$2" gate="G$1" pin="VOUT+"/>
+<wire x1="142.24" y1="5.08" x2="142.24" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="2"/>
+<wire x1="142.24" y1="2.54" x2="144.78" y2="2.54" width="0.1524" layer="91"/>
+<junction x="144.78" y="2.54"/>
+<wire x1="175.26" y1="2.54" x2="144.78" y2="2.54" width="0.1524" layer="91"/>
+<junction x="175.26" y="2.54"/>
 </segment>
 </net>
 <net name="SGND" class="0">
@@ -13395,24 +13396,23 @@ Source: www.kingbright.com</description>
 <wire x1="198.12" y1="50.8" x2="200.66" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="U$2" gate="G$1" pin="VOUT+"/>
-<wire x1="142.24" y1="5.08" x2="142.24" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="C8" gate="G$1" pin="2"/>
-<wire x1="142.24" y1="2.54" x2="144.78" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="2.54" x2="149.86" y2="2.54" width="0.1524" layer="91"/>
-<junction x="144.78" y="2.54"/>
-<wire x1="149.86" y1="2.54" x2="149.86" y2="5.08" width="0.1524" layer="91"/>
-<pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="149.86" y1="5.08" x2="152.4" y2="5.08" width="0.1524" layer="91"/>
-<pinref part="SGND" gate="1" pin="GND"/>
-<wire x1="149.86" y1="2.54" x2="177.8" y2="2.54" width="0.1524" layer="91"/>
-<junction x="149.86" y="2.54"/>
-</segment>
-<segment>
 <pinref part="SGND5" gate="1" pin="GND"/>
 <wire x1="271.78" y1="83.82" x2="271.78" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="DMXOUT" gate="G$1" pin="1"/>
 <wire x1="271.78" y1="78.74" x2="276.86" y2="78.74" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U$2" gate="G$1" pin="VOUT-"/>
+<wire x1="142.24" y1="10.16" x2="144.78" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="C8" gate="G$1" pin="1"/>
+<wire x1="144.78" y1="10.16" x2="149.86" y2="10.16" width="0.1524" layer="91"/>
+<junction x="144.78" y="10.16"/>
+<pinref part="R4" gate="G$1" pin="1"/>
+<wire x1="149.86" y1="10.16" x2="177.8" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="5.08" x2="152.4" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="10.16" x2="149.86" y2="5.08" width="0.1524" layer="91"/>
+<junction x="149.86" y="10.16"/>
+<pinref part="SGND" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$20" class="0">
