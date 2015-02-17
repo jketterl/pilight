@@ -574,6 +574,7 @@ void setDMXModeCallback(void (*cb)(void)) {
 }
 
 void switchMode(u8 newMode) {
+	if (mode == newMode) return;
 	mode = newMode;
 	callback();
 }
