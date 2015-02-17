@@ -607,6 +607,12 @@ u8 GetDMXValue(uint16_t channel) {
 	return DMXIn[channel];
 }
 
+void DMXInit() {
+	for (int i = 0; i < 512; i++) {
+		DMXIn[i] = 0;
+	}
+}
+
 InterfaceConfig getInterfaceConfig() {
 	return ic;
 }

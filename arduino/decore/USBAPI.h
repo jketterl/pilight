@@ -195,6 +195,7 @@ int USB_Recv(uint8_t ep);							// non-blocking
 void USB_Flush(uint8_t ep);
 
 uint8_t GetDMXValue(uint16_t channel);
+void DMXInit();
 
 typedef struct {
 	uint8_t flags;
