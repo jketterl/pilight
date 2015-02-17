@@ -567,8 +567,19 @@ void receiveInterfaceConfig(u8 data[32]) {
 	ic.startByte = data[11];
 }
 
+void (*callback)(void);
+
+void setDMXModeCallback(void (*cb)(void)) {
+	callback = cb;
+}
+
 void switchMode(u8 newMode) {
 	mode = newMode;
+	callback();
+}
+
+u8 getDMXMode() {
+	return mode;
 }
 
 void storeInterfaceConfig() {
@@ -603,7 +614,7 @@ void receiveDMX() {
 	}
 }
 
-u8 GetDMXValue(uint16_t channel) {
+u8 getDMXValue(uint16_t channel) {
 	return DMXIn[channel];
 }
 
