@@ -194,7 +194,10 @@ int USB_Recv(uint8_t ep, void* data, int len);		// non-blocking
 int USB_Recv(uint8_t ep);							// non-blocking
 void USB_Flush(uint8_t ep);
 
-uint8_t GetDMXValue(uint16_t channel);
+uint8_t getDMXValue(uint16_t channel);
+uint8_t getDMXMode();
+void DMXInit();
+void setDMXModeCallback(void (*callback)(void));
 
 typedef struct {
 	uint8_t flags;

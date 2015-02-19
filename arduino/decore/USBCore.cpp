@@ -30,6 +30,13 @@
 #define EP_TYPE_ISOCHRONOUS_IN		0x41
 #define EP_TYPE_ISOCHRONOUS_OUT		0x40
 
+#define DMX_LED_INIT DDRC |= (1 << 6) | (1 << 7)
+#define DMX_TXLED1 PORTC |=  (1 << 6)
+#define DMX_TXLED0 PORTC &= ~(1 << 6)
+#define DMX_RXLED1 PORTC |=  (1 << 7)
+#define DMX_RXLED0 PORTC &= ~(1 << 7)
+
+
 /** Pulse generation counters to keep track of the number of milliseconds remaining for each pulse type */
 #define TX_RX_LED_PULSE_MS 100
 volatile u8 TxLEDPulse; /**< Milliseconds remaining for data Tx LED pulse */
@@ -142,13 +149,13 @@ void Recv(volatile u8* data, u8 count)
 	while (count--)
 		*data++ = UEDATX;
 	
-	RXLED1;					// light the RX LED
+	DMX_RXLED1;					// light the RX LED
 	RxLEDPulse = TX_RX_LED_PULSE_MS;	
 }
 
 static inline u8 Recv8()
 {
-	RXLED1;					// light the RX LED
+	DMX_RXLED1;					// light the RX LED
 	RxLEDPulse = TX_RX_LED_PULSE_MS;
 
 	return UEDATX;	
@@ -331,7 +338,7 @@ int USB_Send(u8 ep, const void* d, int len)
 				ReleaseTX();
 		}
 	}
-	TXLED1;					// light the TX LED
+	DMX_TXLED1;					// light the TX LED
 	TxLEDPulse = TX_RX_LED_PULSE_MS;
 	return r;
 }
@@ -560,8 +567,20 @@ void receiveInterfaceConfig(u8 data[32]) {
 	ic.startByte = data[11];
 }
 
+void (*callback)(void);
+
+void setDMXModeCallback(void (*cb)(void)) {
+	callback = cb;
+}
+
 void switchMode(u8 newMode) {
+	if (mode == newMode) return;
 	mode = newMode;
+	callback();
+}
+
+u8 getDMXMode() {
+	return mode;
 }
 
 void storeInterfaceConfig() {
@@ -596,8 +615,14 @@ void receiveDMX() {
 	}
 }
 
-u8 GetDMXValue(uint16_t channel) {
+u8 getDMXValue(uint16_t channel) {
 	return DMXIn[channel];
+}
+
+void DMXInit() {
+	for (int i = 0; i < 512; i++) {
+		DMXIn[i] = 0;
+	}
 }
 
 InterfaceConfig getInterfaceConfig() {
@@ -727,9 +752,9 @@ ISR(USB_GEN_vect)
 		
 		// check whether the one-shot period has elapsed.  if so, turn off the LED
 		if (TxLEDPulse && !(--TxLEDPulse))
-			TXLED0;
+			DMX_TXLED0;
 		if (RxLEDPulse && !(--RxLEDPulse))
-			RXLED0;
+			DMX_RXLED0;
 	}
 }
 
@@ -774,6 +799,7 @@ void USBDevice_::attach()
 	UDCON = 0;							// enable attach resistor
 	
 	TX_RX_LED_INIT;
+	DMX_LED_INIT;
 }
 
 void USBDevice_::detach()

@@ -33,6 +33,8 @@ int main(void)
 
 	initVariant();
 
+	DMXInit();
+
 #if defined(USBCON)
 	USBDevice.attach();
 #endif

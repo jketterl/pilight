@@ -20,18 +20,28 @@ uint8_t		gDmxState;
 
 enum {BREAK, STARTB, DATA};
 
-// the setup function runs once when you press reset or power the board
-void setup() {
+void uartStart() {
   //USART
   UBRR1H  = 0;
   UBRR1L  = ((F_OSC/4000)-1);			//250kbaud, 8N2
   UCSR1C |= (3<<UCSZ10)|(1<<USBS1);
   UCSR1B |= (1<<TXEN1)|(1<<TXCIE1);
+  
   delay(1);
   UDR1    = 0;							//start USART
   
   //Data
   gDmxState= BREAK;					//start with break
+}
+
+void modeChange() {
+  if (getDMXMode() == 0) return;
+  uartStart();
+}
+  
+// the setup function runs once when you press reset or power the board
+void setup() {
+  setDMXModeCallback(modeChange);
   
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
@@ -45,6 +55,7 @@ void setup() {
 
 // send complete interrupt
 ISR (USART1_TX_vect) {
+  if (getDMXMode() == 0) return;
   uint8_t DmxState= gDmxState;
   InterfaceConfig c = getInterfaceConfig();
 
@@ -82,7 +93,7 @@ ISR (TIMER1_OVF_vect) {
 
 void sendNextByte() {
   uint16_t CurDmxCh= gCurDmxCh;
-  UDR1= GetDMXValue(CurDmxCh++);				//send data
+  UDR1= getDMXValue(CurDmxCh++);				//send data
   if (CurDmxCh == 512) gDmxState= BREAK; //new break if all ch sent
   else gCurDmxCh= CurDmxCh;
 }
