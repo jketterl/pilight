@@ -1,6 +1,5 @@
 from . import Show
 from audio import BeatDetector, BeatDelegate
-from fixture import FixtureManager
 from threading import Event
 import random
 
@@ -9,7 +8,7 @@ class PARBlip(Show, BeatDelegate):
         super(PARBlip, self).__init__()
         self.event = Event()
     def run(self):
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('par'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('par'))
 
         detector = BeatDetector(self)
         detector.start();

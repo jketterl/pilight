@@ -1,7 +1,6 @@
 from . import Show
 from threading import Event, Thread
 import random, time
-from fixture import FixtureManager
 
 class PoliceLight(Thread):
     def __init__(self, fixtures, color, delay):
@@ -37,7 +36,7 @@ class Police(Show):
         self.event = Event() 
     def run(self):
         lights = []
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         for i in range(5):
             size = random.randint(1, 5)
             pos = random.randint(0, len(fixtures) - size * 3)

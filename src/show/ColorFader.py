@@ -1,6 +1,5 @@
 from . import Show
 import time, threading
-from fixture import FixtureManager
 
 class Fader(threading.Thread):
     def __init__(self, pattern, callback, interval = 50.7):
@@ -52,7 +51,7 @@ class Fader(threading.Thread):
         self.event.set()
 
 class ColorFader(Show):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.colors = [
             {'red':255},
             {'red':0, 'green':255},
@@ -73,10 +72,10 @@ class ColorFader(Show):
             {'red':0, 'green':0, 'blue':0}
         ]
 
-        super(ColorFader, self).__init__()
+        super(ColorFader, self).__init__(*args, **kwargs)
 
     def run(self):
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         def setColor(color):
             for fixture in fixtures:
                 fixture.setChannels(color)

@@ -6,7 +6,6 @@ Created on Nov 19, 2012
 
 from . import Show
 import time
-from fixture import FixtureManager
 
 class KnightRider(Show):
     def __init__(self, highval, lowval):
@@ -15,7 +14,7 @@ class KnightRider(Show):
         super(KnightRider, self).__init__();
         
     def run(self):
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         previous = fixtures[0]
         while self.doRun:
             for i in range(len(fixtures)):
