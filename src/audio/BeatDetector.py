@@ -9,6 +9,7 @@ from .FFTReader import FFTReader
 import threading, numpy, time
 import math
 from universe import Universe
+from alsaaudio import ALSAAudioError
 
 class CombFilter(object):
     def __init__(self, band, tempo):
@@ -92,61 +93,69 @@ class BeatDetector(threading.Thread):
         beat = False
         
         universe = Universe(8)
-        fftreader = FFTReader(AudioReader.instance("hw:1,0"), universe, 8)
-        fftreader.start()
+        try:
+            fftreader = FFTReader(AudioReader.instance("hw:1,0"), universe, 8)
+            fftreader.start()
+            pass
 
-        bands = []
-        for i in range(8):
-            band = Band(i)
-            bands.append(band)
-            universe[i].valueCheck = False
-            universe[i].addListener(band)
-        
-        lastTime = time.time()
-        history = []
-        while self.doRun:
-            count = 0
-            bpms = []
-            weights = []
-            for band in bands:
-                #if band.hasBeat(): count += 1
-                (bpm, weight) = band.getBpm()
-                if bpm is not False:
-                    bpms.append(bpm)
-                    weights.append(weight)
-            if len(bpms) > 0:
-                #print bpms
-                #print weights
-                try:
-                    bpm = numpy.average(bpms, weights=weights) * .97
-                except ZeroDivisionError:
-                    bpm = 0
-            else:
-                bpm = 0
-            if (bpm > 0):
-                history.append(bpm)
-                while len(history) > 30: history.pop(0)
-                bpm = numpy.mean(history)
-                print "synthesizing %f BPM" % bpm
-                wait = 60 / bpm
-            else:
-                wait = 2
+            bands = []
+            for i in range(8):
+                band = Band(i)
+                bands.append(band)
+                universe[i].valueCheck = False
+                universe[i].addListener(band)
             
-            '''
-            if count >= len(bands) / 2 and not beat:
+            lastTime = time.time()
+            history = []
+            while self.doRun:
+                count = 0
+                bpms = []
+                weights = []
+                for band in bands:
+                    #if band.hasBeat(): count += 1
+                    (bpm, weight) = band.getBpm()
+                    if bpm is not False:
+                        bpms.append(bpm)
+                        weights.append(weight)
+                if len(bpms) > 0:
+                    #print bpms
+                    #print weights
+                    try:
+                        bpm = numpy.average(bpms, weights=weights) * .97
+                    except ZeroDivisionError:
+                        bpm = 0
+                else:
+                    bpm = 0
+                if (bpm > 0):
+                    history.append(bpm)
+                    while len(history) > 30: history.pop(0)
+                    bpm = numpy.mean(history)
+                    print "synthesizing %f BPM" % bpm
+                    wait = 60 / bpm
+                else:
+                    wait = 2
+                
+                '''
+                if count >= len(bands) / 2 and not beat:
+                    self.delegate.onBeat()
+                    beat = True
+                elif beat:
+                    beat = False
+                '''
+
                 self.delegate.onBeat()
-                beat = True
-            elif beat:
-                beat = False
-            '''
+                currentTime = time.time()
+                wait += lastTime  - currentTime
+                if wait > 0: time.sleep(wait)
+                lastTime = currentTime + wait
 
-            self.delegate.onBeat()
-            currentTime = time.time()
-            wait += lastTime  - currentTime
-            if wait > 0: time.sleep(wait)
-            lastTime = currentTime + wait
+            fftreader.stop()
 
-        fftreader.stop()
+
+        except ALSAAudioError:
+            while self.doRun:
+                time.sleep(.5)
+                self.delegate.onBeat()
             
     def stop(self):
         self.doRun = False

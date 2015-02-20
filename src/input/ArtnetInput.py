@@ -20,9 +20,10 @@ class ArtnetSocket(threading.Thread):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(('', 6454))
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 0)
 
         while (self.doRun):
-            data, addr = sock.recvfrom(1024)
+            data, addr = sock.recvfrom(65535)
             p = packet.ArtNetPacket.parse(addr, data)
             if isinstance(p, packet.DmxPacket):
                 self.input.receive(p)

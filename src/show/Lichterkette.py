@@ -22,7 +22,7 @@ class Lichterkette(Show):
         value = {}
 
         for color in ['red', 'green', 'blue']:
-            value[color] = (colors & 1) * 127
+            value[color] = (colors & 1) * 255
             colors = colors >> 1
         return value
     def stop(self):

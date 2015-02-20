@@ -10,10 +10,10 @@ class FFT(Show):
         self.colorConfig = {
             'blue':{
                 'start':0,
-                'end':.8
+                'end':.75
             },
             'red':{
-                'start':.8,
+                'start':.75,
                 'end':1
             }
         }
