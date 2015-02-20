@@ -34,8 +34,11 @@ Ext.define('pilight.showrunner.Panel', {
 
         me.socket.listen('showmanager', me);
 
-        var startshow = function(show) {
+        var startShow = function(show) {
             me.socket.sendCommand({module:'showmanager', command:'startShow', params:{id:show.get('id')}}); 
+        };
+        var stopShow = function(show) {
+            me.socket.sendCommand({module:'showmanager', command:'stopShow', params:{id:show.get('id')}});
         };
 
         me.dockedItems = [{
@@ -46,19 +49,21 @@ Ext.define('pilight.showrunner.Panel', {
                 text:'Show starten',
                 handler:function(){
                     var show = me.getSelectionModel().getSelection()[0];
-                    startshow(show);
+                    startShow(show);
                 }
             },{
                 xtype:'button',
                 text:'Show stoppen',
                 handler:function(){
-                    me.socket.sendCommand({module:'showmanager', command:'stopShow'});
+                    var show = me.getSelectionModel().getSelection()[0];
+                    stopShow(show);
                 }
             }]
         }];
 
         me.on('itemdblclick', function(grid, show) {
-            startshow(show);
+            var fn = show.get('running') ? stopShow : startShow;
+            fn(show);
         });
 
         me.callParent(arguments);
@@ -66,13 +71,9 @@ Ext.define('pilight.showrunner.Panel', {
     receiveEvent:function(data){
         var me = this;
         var show;
-        while (show = me.store.getAt(me.store.find('running', true))) {
-            show.set('running', false);
-            show.commit();
-        }
         if (data.show) {
             var show = me.store.getById(data.show);
-            show.set('running', true);
+            show.set('running', data.running || false);
             show.commit();
         }
     }
