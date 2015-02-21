@@ -2,7 +2,6 @@ from . import Show
 import time
 import colorsys
 import random
-from fixture import FixtureManager
 
 class Twinkle(Show):
     def __init__(self, *args, **kwargs):
@@ -13,7 +12,7 @@ class Twinkle(Show):
         self.twinkles = []
     def run(self):
         baseColor = self.hsv_to_rgb(self.hue, self.saturation, self.value * .1)
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         for f in fixtures:
             f.setChannels(baseColor)
         while self.doRun:

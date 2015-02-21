@@ -7,7 +7,6 @@ Created on Nov 19, 2012
 from . import Show
 from audio import AudioReader
 import audioop, math, threading, time
-from fixture import FixtureManager
 
 class SmoothingThread(threading.Thread):
     def __init__(self, output):
@@ -101,7 +100,7 @@ class VUMeter(Show):
         hi = 32000
         log_lo = math.log(lo)
         log_hi = math.log(hi)
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('strip'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('strip'))
         
         output = VUOutput(fixtures)
 

@@ -1,12 +1,11 @@
 from . import Show
 import time
-from fixture import FixtureManager
 
 class Strobe(Show):
-    def __init__(self, start, end):
-        super(Strobe, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(Strobe, self).__init__(*args, **kwargs)
     def run(self):
-        self.fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb', 'dimmer'))
+        self.fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         while self.doRun:
             self.setValue(255)
             time.sleep(.05)

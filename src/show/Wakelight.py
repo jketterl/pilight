@@ -1,11 +1,10 @@
 from . import Show
 import time
-from fixture import FixtureManager
 
 class Wakelight(Show):
     time = 15 * 60 # target time: 15 minutes
     def run(self):
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         startTime = time.time()
         elapsed = 0
         while self.doRun and elapsed < self.time:

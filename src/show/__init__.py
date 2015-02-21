@@ -1,11 +1,16 @@
 import threading
 from control import Controllable
 from module import ShowRunner
+from fixture import FixtureManager
 
 class Show(threading.Thread):
-    def __init__(self):
+    def __init__(self, filter = None):
         self.endEvent = threading.Event()
         self.doRun = True
+        if filter is None:
+            self.fixtureList = FixtureManager
+        else:
+            self.fixtureList = FixtureManager.filter(filter)
         super(Show, self).__init__();
     def stop(self):
         self.doRun = False
@@ -27,15 +32,15 @@ class ShowManager(Controllable):
             show = self.shows[id]
             res.append({'id':id, 'name':show['name'], 'running': id in self.runningShows})
         return res
-    def addShow(self, id, name, definition):
-        self.shows[id] = {'name':name, 'definition':definition}
+    def addShow(self, id, name, definition, filter = None):
+        self.shows[id] = {'name':name, 'definition':definition, 'filter':filter}
     def startShow(self, id=None, **kwargs):
         if id is None: return
         if id in self.runningShows: return
         args = self.shows[id]['definition'][:]
 
         runner = ShowRunner()
-        runner.startShow(*tuple(args))
+        runner.startShow(*tuple(args), filter = self.shows[id]['filter'])
         self.runningShows[id] = runner
         self.emit({'show':id, 'running':True})
     def stopShow(self, id = None, **kwargs):

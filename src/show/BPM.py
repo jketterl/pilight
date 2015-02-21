@@ -7,7 +7,6 @@ Created on Nov 21, 2012
 from . import Show
 from audio import BeatDetector, BeatDelegate
 import threading
-from fixture import FixtureManger
 
 class BPM(Show, BeatDelegate):
     def __init__(self):
@@ -17,7 +16,7 @@ class BPM(Show, BeatDelegate):
         detector = BeatDetector(self)
         detector.start()
         index = None
-        fixtures = FixtureManager.filter(lambda f : f.hasTag('rgb'))
+        fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
         while (self.doRun):
             self.event.wait()
             if index is None:
