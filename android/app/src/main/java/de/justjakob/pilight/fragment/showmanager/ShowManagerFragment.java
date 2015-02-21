@@ -79,6 +79,7 @@ public class ShowManagerFragment extends Fragment {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_show_manager, container, false);
 
+        /*
         Button stopAllButton = (Button) v.findViewById(R.id.stopAllButton);
         stopAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,18 +87,20 @@ public class ShowManagerFragment extends Fragment {
                 showManager.stopShow();
             }
         });
+        */
 
         final ShowListView slv = (ShowListView) v.findViewById(R.id.showList);
         slv.setShowStartStopListener(new ShowListView.ShowStartStopListener() {
             @Override
             public void startShow(Show show) {
+                if (show.isRunning()) return;
                 showManager.startShow(show);
             }
 
             @Override
             public void stopShow(Show show) {
                 if (!show.isRunning()) return;
-                showManager.stopShow();
+                showManager.stopShow(show);
             }
         });
 

@@ -56,9 +56,14 @@ public class ShowManager extends Controllable {
 
     private class StopShowCommand extends AbstractCommand<Object> {
 
-        protected StopShowCommand() {
+        protected StopShowCommand(Show show) {
             super("stopShow");
             setModule(ShowManager.this);
+            JSONObject params = new JSONObject();
+            try {
+                params.put("id", show.getId());
+            } catch (JSONException ignored) {}
+            setParams(params);
         }
 
         @Override
@@ -98,9 +103,9 @@ public class ShowManager extends Controllable {
     public void receiveMessage(JSONObject data) {
         try {
             String id = data.getString("show");
-            for (Show s : shows) {
-                s.setRunning(s.getId().equals(id));
-            }
+            Show s = findShow(id);
+            if (s == null) return;
+            s.setRunning(data.getBoolean("running"));
         } catch (JSONException e) {
             Log.w("ShowManager", "unexpected status update", e);
         }
@@ -126,8 +131,8 @@ public class ShowManager extends Controllable {
         ConnectionService.runCommand(context, c);
     }
 
-    public void stopShow() {
-        StopShowCommand c = new StopShowCommand();
+    public void stopShow(Show show) {
+        StopShowCommand c = new StopShowCommand(show);
         ConnectionService.runCommand(context, c);
     }
 
