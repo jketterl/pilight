@@ -14,34 +14,40 @@ class Show(threading.Thread):
             self.endEvent.wait(60)
 
 class ShowManager(Controllable):
-    def __init__(self, runner = None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(ShowManager, self).__init__(*args, **kwargs)
-        if runner is None:
-            self.runner = ShowRunner()
-        else:
-            self.runner = runner
         self.shows = {}
+        self.runningShows = {}
 
-        self.setShow(None)
     def getId(self):
         return 'showmanager'
     def getShows(self, **kwargs):
         res = []
         for id in self.shows:
             show = self.shows[id]
-            res.append({'id':id, 'name':show['name'], 'running':id == self.show})
+            res.append({'id':id, 'name':show['name'], 'running': id in self.runningShows})
         return res
     def addShow(self, id, name, definition):
         self.shows[id] = {'name':name, 'definition':definition}
     def startShow(self, id=None, **kwargs):
         if id is None: return
+        if id in self.runningShows: return
         args = self.shows[id]['definition'][:]
 
-        self.runner.startShow(*tuple(args))
-        self.setShow(id)
-    def stopShow(self, **kwargs):
-        self.runner.stopCurrentShow()
-        self.setShow(None)
+        runner = ShowRunner()
+        runner.startShow(*tuple(args))
+        self.runningShows[id] = runner
+        self.emit({'show':id, 'running':True})
+    def stopShow(self, id = None, **kwargs):
+        def stopShow(id):
+            self.runningShows[id].stopCurrentShow()
+            del self.runningShows[id]
+            self.emit({'show':id, 'running':False})
+        if id is None:
+            # stop all shows
+            pass
+        else:
+            stopShow(id)
     def setShow(self, show):
         self.show = show
         self.emit({'show':show})
