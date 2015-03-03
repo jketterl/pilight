@@ -5,7 +5,7 @@ Created on Nov 19, 2012
 '''
 
 from tornado import ioloop, web, websocket
-import threading, json
+import threading, json, traceback
 
 class ControlSocket(websocket.WebSocketHandler):
     def __init__(self, *args, **kwargs):
@@ -31,7 +31,7 @@ class ControlSocket(websocket.WebSocketHandler):
         try:
             response = {'status':'OK','data':controllable.executeCommand(message['command'], **params)}
         except Exception as e:
-            print e
+            print traceback.format_exc()
             response = {'status':'EXCEPTION'}
 
         if 'sequence' in message: response['sequence'] = message['sequence']
