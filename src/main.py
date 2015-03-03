@@ -15,7 +15,7 @@ from fixture import RGBFixture, Dimmer, FixtureManager, StairvillePAR
 from output import Output
 import time
 from lirc import *
-from module import SubMaster, ShowRunner
+from module import SubMaster
 from show import ShowManager
 
 from message import Messenger
@@ -110,7 +110,7 @@ class LircListener(LircDelegate):
         {
             'keys':['stop','standby'],
             'module':'showManager',
-            'method':'stopShow'
+            'method':'stopAllShows'
         },
         {
             'keys':['red','R'],
@@ -261,9 +261,7 @@ if __name__ == '__main__':
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
     
-    showRunner = ShowRunner()
-    
-    showManager = ShowManager(runner = showRunner)
+    showManager = ShowManager()
 
     showManager.addShow('knightrider', 'Knight Rider', [
         'KnightRider',
@@ -278,7 +276,7 @@ if __name__ == '__main__':
     showManager.addShow('fft', 'FFT Show', ['FFT'])
     showManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'])
     showManager.addShow('police', 'Police', ['Police'])
-    showManager.addShow('directffct', 'FFT Direct', ['DirectFFT', bands])
+    showManager.addShow('directfft', 'FFT Direct', ['DirectFFT', bands])
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
     showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
