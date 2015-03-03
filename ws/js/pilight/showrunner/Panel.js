@@ -58,6 +58,12 @@ Ext.define('pilight.showrunner.Panel', {
                     var show = me.getSelectionModel().getSelection()[0];
                     stopShow(show);
                 }
+            },{
+                xtype:'button',
+                text:'Alle Shows stoppen',
+                handler:function(){
+                    me.socket.sendCommand({module:'showmanager', command:'stopAllShows'});
+                }
             }]
         }];
 
