@@ -212,7 +212,7 @@ if __name__ == '__main__':
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
-        fixture.addTags(['ws2801', 'pixel'])
+        fixture.addTags(['ws2801', 'pixel', 'wall'])
 
     '''
     universe = Universe()
@@ -232,6 +232,11 @@ if __name__ == '__main__':
         fixture.addTags(['dmx'])
         for c in ['red', 'green', 'blue']:
             bands.append(fixture.getNamedChannel(c))
+
+    for i in range(50):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, 49 + i * 3)
+        fixture.addTags(['ws2801', 'pixel', 'balcony'])
 
     #universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'fft'))
