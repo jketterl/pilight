@@ -79,6 +79,7 @@ Ext.define('pilight.Application', {
 
                 socket.on('close', function(){
                     destroyAllWindows();
+                    connectWin.setLoading(false);
                     connectWin.show();
                 });
             }
