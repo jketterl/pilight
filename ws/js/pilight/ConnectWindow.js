@@ -5,6 +5,9 @@ Ext.define('pilight.ConnectWindow', {
     initComponent:function(){
         var me = this;
         var form = Ext.create('Ext.form.Panel', {
+            border:false,
+            padding:10,
+            ui:'window',
             items:[{
                 fieldLabel:'PiLight Server',
                 xtype:'textfield',
