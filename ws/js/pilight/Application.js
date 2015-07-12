@@ -29,6 +29,19 @@ Ext.define('pilight.Application', {
             windows[id] = win;
         };
 
+        var destroyWindow = function(id){
+            var win = windows[id];
+            if (!win) return;
+            win.close();
+            delete(windows[id]);
+        };
+
+        var destroyAllWindows = function() {
+            for (var id in windows) {
+                destroyWindow(id);
+            }
+        };
+
         var socket;
         var connectWin = Ext.create('pilight.ConnectWindow', {
             connectionHandler:function(host, port){
@@ -55,17 +68,18 @@ Ext.define('pilight.Application', {
                                             break;
                                         case 'remove':
                                             var id = data[key]['id'];
-                                            var win = windows[id];
-                                            if (win) {
-                                                win.close();
-                                                delete(windows[id]);
-                                            }
+                                            destroyWindow(id);
                                             break;
                                     }
                                 }
                             }
                         });
                     });
+                });
+
+                socket.on('close', function(){
+                    destroyAllWindows();
+                    connectWin.show();
                 });
             }
         });

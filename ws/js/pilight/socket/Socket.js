@@ -35,6 +35,10 @@ Ext.define('pilight.socket.Socket', {
             }
         };
 
+        me.socket.onclose = function(){
+            me.fireEvent('close', me);
+        };
+
         me.listeners = {};
 	},
     sendCommand:function(command, callback) {
