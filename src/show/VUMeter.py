@@ -92,7 +92,7 @@ class VUOutput(object):
         self.setValue(0)
 
 class VUMeter(Show):
-    def __init__(self, card = 'hw:0,0'):
+    def __init__(self, card = 'hw:0,0', filter = None):
         self.card = card
         super(VUMeter, self).__init__()
     def run(self):
