@@ -5,8 +5,6 @@ Ext.onReady(function(){
 		}
 	});
 
-    var viewport = Ext.create('Ext.Viewport')
-
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
     var app = Ext.create('pilight.Application');

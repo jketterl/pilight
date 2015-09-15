@@ -8,6 +8,14 @@ Ext.define('pilight.Application', {
         }
 
         var windows = {};
+        var viewport = Ext.create('Ext.Viewport', {
+            layout:'border',
+            items:[
+                {
+                    region:'center'
+                }
+            ]
+        });
 
         var generateWindow = function(controllable){
             var type = controllable.type;
@@ -42,7 +50,8 @@ Ext.define('pilight.Application', {
             }
         };
 
-        var socket;
+        var socket,
+            controlServerUI = false;
         var connectWin = Ext.create('pilight.ConnectWindow', {
             connectionHandler:function(host, port){
                 connectWin.setLoading('Connecting');
@@ -55,6 +64,13 @@ Ext.define('pilight.Application', {
                 socket.on('connect', function(){
                     connectWin.setLoading(false);
                     connectWin.hide();
+
+                    var controlServerUI = Ext.create('pilight.controlserver.List', {
+                        region:'west',
+                        split:true,
+                        resizable:true
+                    });
+                    viewport.add(controlServerUI);
 
                     socket.sendCommand({'command':'getControllables'}, function(data){
                         data.forEach(generateWindow);
@@ -79,6 +95,7 @@ Ext.define('pilight.Application', {
 
                 socket.on('close', function(){
                     destroyAllWindows();
+                    if (controlServerUI) viewport.remove(controlServerUI);
                     connectWin.setLoading(false);
                     connectWin.show();
                 });
