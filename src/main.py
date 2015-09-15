@@ -285,6 +285,7 @@ if __name__ == '__main__':
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
     showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
+    showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
     showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
 
     lircListener = LircListener({
