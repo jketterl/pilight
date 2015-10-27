@@ -10,6 +10,7 @@ sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
 sys.path.append('../vendors/usbdmx/')
 
 from universe import Universe
+from channel import ChannelMapping
 from filter import AlphaFilter
 from fixture import RGBFixture, Dimmer, FixtureManager, StairvillePAR
 from output import Output
@@ -25,6 +26,8 @@ from midi import MidiInput
 
 from alert import Alert
 import datetime
+
+from net import UDPReceiver, RemoteServer, Bank
 
 class LightWake(Alert):
     def __init__(self, manager):
@@ -182,6 +185,12 @@ if __name__ == '__main__':
     Messenger.addOutput(LCDOutput())
     Messenger.addOutput(Messaging())
 
+    receiver = UDPReceiver()
+    receiver.start()
+
+    remoteServer = RemoteServer()
+    remoteServer.start()
+
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
     output.addFilter(AlphaFilter())
@@ -226,17 +235,29 @@ if __name__ == '__main__':
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('DEOutput', '0000000000001337'))
-    for i in range(2):
+    for i in range(4):
         fixture = StairvillePAR()
         fixture.mapToUniverse(universe, i * 5)
         fixture.addTags(['dmx'])
         for c in ['red', 'green', 'blue']:
             bands.append(fixture.getNamedChannel(c))
 
+    for i in range(6):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, 20 + i * 6)
+        fixture.addTags(['dmx', 'par'])
+
+    '''
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, 49 + i * 3)
         fixture.addTags(['ws2801', 'pixel', 'balcony'])
+    '''
+
+    for i in range(6):
+        fixture = Dimmer()
+        fixture.mapToUniverse(universe, 56 + i)
+        fixture.addTags(['halogen', '230v'])
 
     #universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'fft'))
@@ -247,7 +268,7 @@ if __name__ == '__main__':
     #    bands.append(band)
 
 
-    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white', 'pixel red', 'pixel green', 'pixel blue', 'pixel white', 'master red', 'master green', 'master blue'], 20)
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white', 'pixel red', 'pixel green', 'pixel blue', 'pixel white', 'halogen', 'master red', 'master green', 'master blue'], 21)
     for name in ['red', 'green', 'blue']:
         subMaster.mapChannel('master ' + name, subMaster.getChannel('pixel ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
@@ -265,6 +286,25 @@ if __name__ == '__main__':
         subMaster.mapChannels('PARs ' + name, FixtureManager.filter(lambda f : f.hasTag('par')).getChannels(name))
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
+
+    subMaster.mapChannels('halogen', FixtureManager.filter(lambda f : f.hasTag('halogen')).getChannels('brightness'))
+
+    bank = Bank("default")
+    ChannelMapping(bank.universe[0], subMaster.getChannel('PARs red'))
+    ChannelMapping(bank.universe[2], subMaster.getChannel('PARs green'))
+    ChannelMapping(bank.universe[4], subMaster.getChannel('PARs blue'))
+    ChannelMapping(bank.universe[1], subMaster.getChannel('dimmer red'))
+    ChannelMapping(bank.universe[3], subMaster.getChannel('dimmer green'))
+    ChannelMapping(bank.universe[5], subMaster.getChannel('dimmer blue'))
+    ChannelMapping(bank.universe[6], subMaster.getChannel('dj'))
+    ChannelMapping(bank.universe[7], subMaster.getChannel('halogen'))
+    remoteServer.addBank(bank)
+
+    bank = Bank("master")
+    ChannelMapping(bank.universe[0], subMaster.getChannel('master red'))
+    ChannelMapping(bank.universe[2], subMaster.getChannel('master green'))
+    ChannelMapping(bank.universe[4], subMaster.getChannel('master blue'))
+    remoteServer.addBank(bank)
     
     showManager = ShowManager()
 
