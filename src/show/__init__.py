@@ -18,6 +18,9 @@ class Show(threading.Thread):
     def waitForEnd(self):
         while not self.endEvent.is_set():
             self.endEvent.wait(60)
+    def setParams(self, **kwargs):
+        # override in child classes if available
+        pass
 
 class ShowManager(Controllable):
     def __init__(self, *args, **kwargs):
@@ -56,3 +59,38 @@ class ShowManager(Controllable):
     def stopAllShows(self, **kwargs):
         keys = self.runningShows.keys()
         for id in keys: self.stopShow(id)
+    def getShowInstance(self, id):
+        if not id in self.runningShows: return None
+        return self.runningShows[id].currentShow
+    def isRunning(self, id):
+        return id in self.runningShows
+
+class ShowFaderMapping(object):
+    def __init__(self, channel, showManager, showName, param = None):
+        self.showManager = showManager
+        self.showName = showName
+        self.param = param
+        channel.addListener(self)
+    def onValueChange(self, source, value):
+        if (value > 0):
+            self.showManager.startShow(self.showName)
+            if self.param is None: return
+            i = self.showManager.getShowInstance(self.showName)
+            if not i is None: i.setParams(**{self.param: value})
+        else:
+            self.showManager.stopShow(self.showName)
+
+class ShowButtonMapping(object):
+    def __init__(self, channel, showManager, showName):
+        self.showManager = showManager
+        self.showName = showName
+        channel.addListener(self)
+    def onValueChange(self, source, value):
+        # trigger only on button release
+        if value > 0: return
+        if self.showManager.isRunning(self.showName):
+            self.showManager.stopShow(self.showName)
+            self.running = False
+        else:
+            self.showManager.startShow(self.showName)
+            self.running = True

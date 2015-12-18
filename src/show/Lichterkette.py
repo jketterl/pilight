@@ -6,6 +6,7 @@ class Lichterkette(Show):
         super(Lichterkette, self).__init__(*args, **kwargs)
         self.shouldEnd = threading.Event()
         self.fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
+        self.brightness = 255
     def run(self):
         for f in self.fixtures:
             f.setChannels(self.getRandomColor())
@@ -22,8 +23,11 @@ class Lichterkette(Show):
         value = {}
 
         for color in ['red', 'green', 'blue']:
-            value[color] = (colors & 1) * 255
+            value[color] = (colors & 1) * self.brightness
             colors = colors >> 1
         return value
     def stop(self):
         self.shouldEnd.set()
+    def setParams(self, brightness = None, **kwargs):
+        if brightness is not None:
+            self.brightness = brightness
