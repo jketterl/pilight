@@ -4,8 +4,8 @@ from threading import Event
 import random
 
 class PARBlip(Show, BeatDelegate):
-    def __init__(self):
-        super(PARBlip, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(PARBlip, self).__init__(*args, **kwargs)
         self.event = Event()
     def run(self):
         fixtures = self.fixtureList.filter(lambda f : f.hasTag('par'))
