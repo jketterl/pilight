@@ -48,13 +48,13 @@ class ColorWheel(Controllable, Show):
 
     def setParams(self, saturation = None, value = None, speed = None, **kwargs):
         if not saturation is None:
-            self.saturation = saturation / 100.0
+            self.saturation = saturation / 255.0
             self.wheel = None
         if not value is None:
-            self.value = value / 100.0
+            self.value = value / 255.0
             self.wheel = None
         if not speed is None:
-            self.speed = speed / 100.0
+            self.speed = speed / 255.0
 
     def getId(self):
         return 'colorwheel'

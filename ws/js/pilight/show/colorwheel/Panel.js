@@ -24,14 +24,14 @@ Ext.define('pilight.show.colorwheel.Panel', {
     items:[{
         fieldLabel:'Saturation',
         name:'saturation',
-        value:100
+        value:255
     }, {
         fieldLabel:'Value',
         name:'value',
-        value:100
+        value:255
     }, {
         fieldLabel:'Speed',
         name:'speed',
-        value:50
+        value:255
     }]
 });
