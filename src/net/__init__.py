@@ -25,7 +25,7 @@ class UDPReceiver(Thread):
 class Bank:
     def __init__(self, name, universe = None):
         if universe is None:
-            universe = Universe(8)
+            universe = Universe(16)
         self.name = name;
         self.universe = universe
 
@@ -67,9 +67,9 @@ class RemoteThread(Thread):
                 print "WARN: error receiving on socket"
             if (read >= 11):
                 type = buf[0:3]
+                bank = self.getCurrentBank()
 
                 if (type == "VAL"):
-                    bank = self.getCurrentBank()
                     if bank is not None:
                         for i in range(8):
                             bank.universe[i].setValue(buf[i+3])
@@ -79,3 +79,8 @@ class RemoteThread(Thread):
                 elif (type == "BDN"):
                     self.bank = (self.bank - 1) % len(self.banks)
                     print("bank down: " + self.getCurrentBank().name)
+                elif (type == "BUT"):
+                    buttons = buf[3]
+                    if bank is not None:
+                        for i in range(8):
+                            bank.universe[8 + i].setValue(255 if buttons & (1 << i) else 0)
