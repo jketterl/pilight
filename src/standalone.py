@@ -7,7 +7,7 @@ from output import Output
 from fixture import FixtureManager, RGBFixture, StairvillePAR
 from module import SubMaster
 from filter import AlphaFilter
-from show import ShowManager
+from show import ShowManager, ShowFaderMapping, ShowButtonMapping
 from channel import ChannelMapping
 from net import UDPReceiver, RemoteServer, Bank
 
@@ -39,12 +39,6 @@ if __name__ == '__main__':
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
 
-    bank = Bank("default")
-    ChannelMapping(bank.universe[1], subMaster.getChannel('red'))
-    ChannelMapping(bank.universe[3], subMaster.getChannel('green'))
-    ChannelMapping(bank.universe[5], subMaster.getChannel('blue'))
-    remoteServer.addBank(bank)
-
     showManager = ShowManager()
 
     #showManager.addShow('knightrider', 'Knight Rider', [
@@ -73,6 +67,18 @@ if __name__ == '__main__':
     #showManager.addShow('twinklepar', 'Twinkle @ Par', ['Twinkle'], filter = parFilter)
     showManager.addShow('lichterkettepixel', 'Lichterkette @ Pixel', ['Lichterkette'], filter = pixelFilter)
     #showManager.addShow('lichterkettepar', 'Lichterkette @ Par', ['Lichterkette'], filter = parFilter)
+
+    bank = Bank("default")
+    ShowFaderMapping(bank.universe[1], showManager, 'colorwheelpixel', 'value')
+    ShowFaderMapping(bank.universe[3], showManager, 'colorwheelpixel', 'saturation')
+    ShowFaderMapping(bank.universe[5], showManager, 'colorwheelpixel', 'speed')
+    ShowFaderMapping(bank.universe[7], showManager, 'lichterkettepixel', 'brightness')
+    ShowButtonMapping(bank.universe[8], showManager, 'colorfaderpixel')
+    ShowButtonMapping(bank.universe[9], showManager, 'snowpixel')
+    ShowButtonMapping(bank.universe[10], showManager, 'twinklepixel')
+    ShowButtonMapping(bank.universe[11], showManager, 'bpmstrobe')
+    ShowButtonMapping(bank.universe[12], showManager, 'police')
+    remoteServer.addBank(bank)
 
     showManager.startShow('colorfaderpixel')
     #showManager.startShow('lichterkettepar')
