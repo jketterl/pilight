@@ -10,6 +10,7 @@ sys.path.append('../vendors/adafruit/Adafruit_PWM_Servo_Driver/')
 sys.path.append('../vendors/usbdmx/')
 
 from universe import Universe
+from channel import ChannelMapping
 from filter import AlphaFilter
 from fixture import RGBFixture, Dimmer, FixtureManager, StairvillePAR
 from output import Output
@@ -25,6 +26,8 @@ from midi import MidiInput
 
 from alert import Alert
 import datetime
+
+from net import UDPReceiver, RemoteServer, Bank
 
 class LightWake(Alert):
     def __init__(self, manager):
@@ -182,6 +185,12 @@ if __name__ == '__main__':
     Messenger.addOutput(LCDOutput())
     Messenger.addOutput(Messaging())
 
+    receiver = UDPReceiver()
+    receiver.start()
+
+    remoteServer = RemoteServer()
+    remoteServer.start()
+
     universe = Universe()
     output = Output.factory('LPD8806Output', 180)
     output.addFilter(AlphaFilter())
@@ -226,7 +235,7 @@ if __name__ == '__main__':
     bands = []
     universe = Universe()
     universe.setOutput(Output.factory('DEOutput', '0000000000001337'))
-    for i in range(2):
+    for i in range(4):
         fixture = StairvillePAR()
         fixture.mapToUniverse(universe, i * 5)
         fixture.addTags(['dmx'])
@@ -238,10 +247,17 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, 20 + i * 6)
         fixture.addTags(['dmx', 'par'])
 
+    '''
+    for i in range(50):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, 20 + i * 6)
+        fixture.addTags(['dmx', 'par'])
+
     for i in range(100):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, 99 + i * 3)
         fixture.addTags(['ws2801', 'pixel', 'balcony'])
+    '''
 
     for i in range(6):
         fixture = Dimmer()
@@ -257,7 +273,7 @@ if __name__ == '__main__':
     #    bands.append(band)
 
 
-    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white', 'pixel red', 'pixel green', 'pixel blue', 'pixel white', 'master red', 'master green', 'master blue'], 20)
+    subMaster = SubMaster(['strip red', 'strip green', 'strip blue', 'strip white', 'dimmer red', 'dimmer green', 'dimmer blue', 'dimmer white', 'dj', 'PARs red', 'PARs green', 'PARs blue', 'PARs white', 'pixel red', 'pixel green', 'pixel blue', 'pixel white', 'halogen', 'master red', 'master green', 'master blue'], 21)
     for name in ['red', 'green', 'blue']:
         subMaster.mapChannel('master ' + name, subMaster.getChannel('pixel ' + name))
         subMaster.mapChannel('master ' + name, subMaster.getChannel('strip ' + name))
