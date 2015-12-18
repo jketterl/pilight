@@ -30,7 +30,7 @@ class LightWake(Alert):
     def __init__(self, manager):
         print "initializing light wake"
         self.manager = manager
-        super(LightWake, self).__init__(datetime.time(05, 45))
+        super(LightWake, self).__init__(datetime.time(06, 45))
     def run(self):
         print "starting wakeup light show"
         self.manager.startShow('wakelight')
@@ -233,10 +233,20 @@ if __name__ == '__main__':
         for c in ['red', 'green', 'blue']:
             bands.append(fixture.getNamedChannel(c))
 
-    for i in range(50):
+    for i in range(4):
         fixture = RGBFixture(channelSequence='RGB')
-        fixture.mapToUniverse(universe, 49 + i * 3)
+        fixture.mapToUniverse(universe, 20 + i * 6)
+        fixture.addTags(['dmx', 'par'])
+
+    for i in range(100):
+        fixture = RGBFixture(channelSequence='RGB')
+        fixture.mapToUniverse(universe, 99 + i * 3)
         fixture.addTags(['ws2801', 'pixel', 'balcony'])
+
+    for i in range(6):
+        fixture = Dimmer()
+        fixture.mapToUniverse(universe, 56 + i)
+        fixture.addTags(['halogen', '230v'])
 
     #universe = Universe()
     #universe.setOutput(Output.factory('SocketOutput', 'fft'))
@@ -265,6 +275,30 @@ if __name__ == '__main__':
         subMaster.mapChannels('PARs ' + name, FixtureManager.filter(lambda f : f.hasTag('par')).getChannels(name))
 
     subMaster.mapChannels('dj', FixtureManager.filter(lambda f : f.hasTag('ikea')).getChannels('brightness'))
+
+    subMaster.mapChannels('halogen', FixtureManager.filter(lambda f : f.hasTag('halogen')).getChannels('brightness'))
+
+    bank = Bank("default")
+    ChannelMapping(bank.universe[1], subMaster.getChannel('PARs red'))
+    ChannelMapping(bank.universe[3], subMaster.getChannel('PARs green'))
+    ChannelMapping(bank.universe[5], subMaster.getChannel('PARs blue'))
+    ChannelMapping(bank.universe[0], subMaster.getChannel('dimmer red'))
+    ChannelMapping(bank.universe[2], subMaster.getChannel('dimmer green'))
+    ChannelMapping(bank.universe[4], subMaster.getChannel('dimmer blue'))
+    ChannelMapping(bank.universe[7], subMaster.getChannel('dj'))
+    ChannelMapping(bank.universe[6], subMaster.getChannel('halogen'))
+    ChannelMapping(bank.universe[8], subMaster.getChannel('dimmer red'))
+    ChannelMapping(bank.universe[9], subMaster.getChannel('dimmer green'))
+    ChannelMapping(bank.universe[10], subMaster.getChannel('dimmer blue'))
+    ChannelMapping(bank.universe[11], subMaster.getChannel('dimmer white'))
+    ChannelMapping(bank.universe[12], subMaster.getChannel('dj'))
+    remoteServer.addBank(bank)
+
+    bank = Bank("master")
+    ChannelMapping(bank.universe[1], subMaster.getChannel('master red'))
+    ChannelMapping(bank.universe[3], subMaster.getChannel('master green'))
+    ChannelMapping(bank.universe[5], subMaster.getChannel('master blue'))
+    remoteServer.addBank(bank)
     
     showManager = ShowManager()
 
