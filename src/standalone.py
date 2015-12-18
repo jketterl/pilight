@@ -8,8 +8,16 @@ from fixture import FixtureManager, RGBFixture, StairvillePAR
 from module import SubMaster
 from filter import AlphaFilter
 from show import ShowManager
+from channel import ChannelMapping
+from net import UDPReceiver, RemoteServer, Bank
 
 if __name__ == '__main__':
+    receiver = UDPReceiver()
+    receiver.start()
+
+    remoteServer = RemoteServer()
+    remoteServer.start()
+
     subMaster = SubMaster(['red', 'green', 'blue'], 3)
     universe = Universe()
     output = Output.factory('WS2801Output', channels=300)
@@ -30,6 +38,12 @@ if __name__ == '__main__':
     for fixture in FixtureManager.filter(lambda f : f.hasTag('rgb')):
         for name in ['red', 'green', 'blue']:
             subMaster.mapChannel(name, fixture.getNamedChannel(name))
+
+    bank = Bank("default")
+    ChannelMapping(bank.universe[1], subMaster.getChannel('red'))
+    ChannelMapping(bank.universe[3], subMaster.getChannel('green'))
+    ChannelMapping(bank.universe[5], subMaster.getChannel('blue'))
+    remoteServer.addBank(bank)
 
     showManager = ShowManager()
 
