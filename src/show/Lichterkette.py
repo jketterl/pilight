@@ -11,7 +11,7 @@ class Lichterkette(Show):
         count = len(self.fixtures)
         map = [self.getRandomColor() for i in range(0, count)]
         while self.doRun and not self.shouldEnd.isSet():
-            map[random.randint(0, count)] = self.getRandomColor()
+            map[random.randint(0, count - 1)] = self.getRandomColor()
             for i, c in enumerate(map):
                 self.fixtures[i].setChannels(self.scale(c))
             self.shouldEnd.wait(random.random())
