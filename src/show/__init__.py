@@ -65,18 +65,27 @@ class ShowManager(Controllable):
     def isRunning(self, id):
         return id in self.runningShows
 
+class ParamMapper(object):
+    def __init__(self, mapping, param):
+        self.mapping = mapping
+        self.param = param
+    def onValueChange(self, source, value):
+        self.mapping.updateParam(self.param, value)
+
 class ShowFaderMapping(object):
-    def __init__(self, channel, showManager, showName, param = None):
+    def __init__(self, showManager, showName, mappings):
         self.showManager = showManager
         self.showName = showName
-        self.param = param
-        channel.addListener(self)
-    def onValueChange(self, source, value):
-        if (value > 0):
+        self.params = {}
+        for param, channel in mappings.iteritems():
+            self.params[param] = channel.getValue()
+            channel.addListener(ParamMapper(self, param))
+    def updateParam(self, param, value):
+        self.params[param] = value
+        if sum(self.params.values()) > 0:
             self.showManager.startShow(self.showName)
-            if self.param is None: return
-            i = self.showManager.getShowInstance(self.showName)
-            if not i is None: i.setParams(**{self.param: value})
+            instance = self.showManager.getShowInstance(self.showName)
+            if not instance is None: instance.setParams(**self.params)
         else:
             self.showManager.stopShow(self.showName)
 
