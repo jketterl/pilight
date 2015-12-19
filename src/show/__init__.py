@@ -90,16 +90,19 @@ class ShowFaderMapping(object):
             self.showManager.stopShow(self.showName)
 
 class ShowButtonMapping(object):
-    def __init__(self, channel, showManager, showName):
+    def __init__(self, channel, showManager, showName, outChannel = None):
         self.showManager = showManager
         self.showName = showName
+        self.outChannel = outChannel
         channel.addListener(self)
     def onValueChange(self, source, value):
         # trigger only on button release
         if value > 0: return
         if self.showManager.isRunning(self.showName):
             self.showManager.stopShow(self.showName)
+            if not self.outChannel is None: self.outChannel.setValue(0)
             self.running = False
         else:
             self.showManager.startShow(self.showName)
+            if not self.outChannel is None: self.outChannel.setValue(255)
             self.running = True

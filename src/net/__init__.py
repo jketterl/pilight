@@ -2,6 +2,7 @@ from threading import Thread
 import select, socket, time
 
 from universe import Universe
+from output import Output
 
 class UDPReceiver(Thread):
     def run(self):
@@ -28,10 +29,26 @@ class Bank:
             universe = Universe(16)
         self.name = name;
         self.universe = universe
+        self.out = Universe(8)
+
+class SocketOutput(Output):
+    def __init__(self, distributor, channelCount):
+        self.distributor = distributor
+        self.values = [0 for i in range(channelCount)]
+        super(SocketOutput, self).__init__()
+    def _setChannelValue(self, channel, value):
+        self.values[channel] = value
+        message = bytearray(11)
+        message[0:3] = 'LED'
+        for i in range(8):
+            message[3 + i] = self.values[i]
+        self.distributor.distribute(message)
+
 
 class RemoteServer(Thread):
     def __init__(self):
         self.banks = []
+        self.sockets = []
         super(RemoteServer, self).__init__()
     def run(self):
         self.doRun = True
@@ -44,9 +61,19 @@ class RemoteServer(Thread):
         while (self.doRun):
             conn, addr = s.accept()
             print "new remote connection from ", addr
-            RemoteThread(conn, self.banks).start()
+            remote = RemoteThread(conn, self.banks)
+            self.sockets.append(remote)
+            remote.start()
     def addBank(self, bank):
         self.banks.append(bank)
+        bank.out.setOutput(SocketOutput(self, 8))
+    def distribute(self, message):
+        print(message)
+        for sock in self.sockets:
+            try:
+                sock.send(message)
+            except socket.error as e:
+                print(e)
 
 class RemoteThread(Thread):
     def __init__(self, conn, banks):
@@ -84,3 +111,5 @@ class RemoteThread(Thread):
                     if bank is not None:
                         for i in range(8):
                             bank.universe[8 + i].setValue(255 if buttons & (1 << i) else 0)
+    def send(self, message):
+        self.conn.sendall(message)
