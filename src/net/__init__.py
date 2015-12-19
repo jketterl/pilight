@@ -68,7 +68,6 @@ class RemoteServer(Thread):
         self.banks.append(bank)
         bank.out.setOutput(SocketOutput(self, 8))
     def distribute(self, message):
-        print(message)
         for sock in self.sockets:
             try:
                 sock.send(message)
