@@ -69,10 +69,15 @@ if __name__ == '__main__':
     #showManager.addShow('lichterkettepar', 'Lichterkette @ Par', ['Lichterkette'], filter = parFilter)
 
     bank = Bank("default")
-    ShowFaderMapping(bank.universe[1], showManager, 'colorwheelpixel', 'value')
-    ShowFaderMapping(bank.universe[3], showManager, 'colorwheelpixel', 'saturation')
-    ShowFaderMapping(bank.universe[5], showManager, 'colorwheelpixel', 'speed')
-    ShowFaderMapping(bank.universe[7], showManager, 'lichterkettepixel', 'brightness')
+    ShowFaderMapping(showManager, 'colorwheelpixel', {
+        'value': bank.universe[1],
+        'saturation': bank.universe[3],
+        'speed': bank.universe[5]
+    })
+    ShowFaderMapping(showManager, 'lichterkettepixel', {'brightness': bank.universe[7]})
+    ChannelMapping(bank.universe[0], subMaster.getChannel('red'))
+    ChannelMapping(bank.universe[2], subMaster.getChannel('green'))
+    ChannelMapping(bank.universe[4], subMaster.getChannel('blue'))
     ShowButtonMapping(bank.universe[8], showManager, 'colorfaderpixel')
     ShowButtonMapping(bank.universe[9], showManager, 'snowpixel')
     ShowButtonMapping(bank.universe[10], showManager, 'twinklepixel')
