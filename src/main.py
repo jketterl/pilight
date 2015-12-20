@@ -17,7 +17,7 @@ from output import Output
 import time
 from lirc import *
 from module import SubMaster
-from show import ShowManager
+from show import ShowManager, ShowButtonMapping, ShowFaderMapping
 
 from message import Messenger
 from message.output import ConsoleOutput, LCDOutput, Messaging
@@ -294,28 +294,6 @@ if __name__ == '__main__':
 
     subMaster.mapChannels('halogen', FixtureManager.filter(lambda f : f.hasTag('halogen')).getChannels('brightness'))
 
-    bank = Bank("default")
-    ChannelMapping(bank.faders[1], subMaster.getChannel('PARs red'))
-    ChannelMapping(bank.faders[3], subMaster.getChannel('PARs green'))
-    ChannelMapping(bank.faders[5], subMaster.getChannel('PARs blue'))
-    ChannelMapping(bank.faders[0], subMaster.getChannel('dimmer red'))
-    ChannelMapping(bank.faders[2], subMaster.getChannel('dimmer green'))
-    ChannelMapping(bank.faders[4], subMaster.getChannel('dimmer blue'))
-    ChannelMapping(bank.faders[7], subMaster.getChannel('dj'))
-    ChannelMapping(bank.faders[6], subMaster.getChannel('halogen'))
-    ChannelMapping(bank.buttons[0], subMaster.getChannel('dimmer red'))
-    ChannelMapping(bank.buttons[1], subMaster.getChannel('dimmer green'))
-    ChannelMapping(bank.buttons[2], subMaster.getChannel('dimmer blue'))
-    ChannelMapping(bank.buttons[3], subMaster.getChannel('dimmer white'))
-    ChannelMapping(bank.buttons[4], subMaster.getChannel('dj'))
-    remoteServer.addBank(bank)
-
-    bank = Bank("master")
-    ChannelMapping(bank.faders[1], subMaster.getChannel('master red'))
-    ChannelMapping(bank.faders[3], subMaster.getChannel('master green'))
-    ChannelMapping(bank.faders[5], subMaster.getChannel('master blue'))
-    remoteServer.addBank(bank)
-    
     showManager = ShowManager()
 
     showManager.addShow('knightrider', 'Knight Rider', [
@@ -338,6 +316,35 @@ if __name__ == '__main__':
     showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
     showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
 
+    bank = Bank("default")
+    ChannelMapping(bank.faders[1], subMaster.getChannel('PARs red'))
+    ChannelMapping(bank.faders[3], subMaster.getChannel('PARs green'))
+    ChannelMapping(bank.faders[5], subMaster.getChannel('PARs blue'))
+    ChannelMapping(bank.faders[0], subMaster.getChannel('dimmer red'))
+    ChannelMapping(bank.faders[2], subMaster.getChannel('dimmer green'))
+    ChannelMapping(bank.faders[4], subMaster.getChannel('dimmer blue'))
+    ChannelMapping(bank.faders[7], subMaster.getChannel('dj'))
+    ChannelMapping(bank.faders[6], subMaster.getChannel('halogen'))
+    '''
+    ChannelMapping(bank.buttons[0], subMaster.getChannel('dimmer red'))
+    ChannelMapping(bank.buttons[1], subMaster.getChannel('dimmer green'))
+    ChannelMapping(bank.buttons[2], subMaster.getChannel('dimmer blue'))
+    ChannelMapping(bank.buttons[3], subMaster.getChannel('dimmer white'))
+    ChannelMapping(bank.buttons[4], subMaster.getChannel('dj'))
+    '''
+    ShowButtonMapping(bank.buttons[0], showManager, 'colorwheel', bank.leds[0])
+    ShowButtonMapping(bank.buttons[1], showManager, 'twinkle', bank.leds[1])
+    ShowButtonMapping(bank.buttons[2], showManager, 'fft', bank.leds[2])
+    ShowButtonMapping(bank.buttons[3], showManager, 'vu', bank.leds[3])
+    ShowButtonMapping(bank.buttons[4], showManager, 'bpmstrobe', bank.leds[4])
+    remoteServer.addBank(bank)
+
+    bank = Bank("master")
+    ChannelMapping(bank.faders[1], subMaster.getChannel('master red'))
+    ChannelMapping(bank.faders[3], subMaster.getChannel('master green'))
+    ChannelMapping(bank.faders[5], subMaster.getChannel('master blue'))
+    remoteServer.addBank(bank)
+    
     lircListener = LircListener({
         "subMaster":subMaster,
         "showManager":showManager
