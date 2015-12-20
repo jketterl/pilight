@@ -24,12 +24,11 @@ class UDPReceiver(Thread):
         self.doRun = False
 
 class Bank:
-    def __init__(self, name, universe = None):
-        if universe is None:
-            universe = Universe(16)
+    def __init__(self, name):
         self.name = name;
-        self.universe = universe
-        self.out = Universe(8)
+        self.faders = Universe(8)
+        self.buttons = Universe(8)
+        self.leds = Universe(8)
 
 class SocketOutput(Output):
     def __init__(self, distributor, channelCount):
@@ -66,7 +65,7 @@ class RemoteServer(Thread):
             remote.start()
     def addBank(self, bank):
         self.banks.append(bank)
-        bank.out.setOutput(SocketOutput(self, 8))
+        bank.leds.setOutput(SocketOutput(self, 8))
     def distribute(self, message):
         for sock in self.sockets:
             try:
@@ -98,7 +97,7 @@ class RemoteThread(Thread):
                 if (type == "VAL"):
                     if bank is not None:
                         for i in range(8):
-                            bank.universe[i].setValue(buf[i+3])
+                            bank.faders[i].setValue(buf[i+3])
                 elif (type == "BUP"):
                     self.bank = (self.bank + 1) % len(self.banks)
                     print("bank up: " + self.getCurrentBank().name)
@@ -109,6 +108,6 @@ class RemoteThread(Thread):
                     buttons = buf[3]
                     if bank is not None:
                         for i in range(8):
-                            bank.universe[8 + i].setValue(255 if buttons & (1 << i) else 0)
+                            bank.buttons[i].setValue(255 if buttons & (1 << i) else 0)
     def send(self, message):
         self.conn.sendall(message)
