@@ -253,11 +253,11 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, 20 + i * 6)
         fixture.addTags(['dmx', 'par'])
 
+    '''
     for i in range(100):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, 99 + i * 3)
-        fixture.addTags(['ws2801', 'pixel', 'balcony'])
-    '''
+        fixture.addTags(['ws2811', 'pixel', 'tree'])
 
     for i in range(6):
         fixture = Dimmer()
@@ -315,6 +315,12 @@ if __name__ == '__main__':
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
     showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
     showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
+
+    def treeFilter(f):
+        return f.hasTag('tree')
+
+    treeShowManager = ShowManager(id = 'treeshowmanager')
+    treeShowManager.addShow('twinkle', 'Twinkle', ['Twinkle'], treeFilter)
 
     bank = Bank("default")
     ChannelMapping(bank.faders[1], subMaster.getChannel('PARs red'))
