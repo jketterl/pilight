@@ -23,13 +23,14 @@ class Show(threading.Thread):
         pass
 
 class ShowManager(Controllable):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, id = None, *args, **kwargs):
+        self.id = id if id is not None else 'showmanager'
         super(ShowManager, self).__init__(*args, **kwargs)
         self.shows = {}
         self.runningShows = {}
 
     def getId(self):
-        return 'showmanager'
+        return self.id
     def getShows(self, **kwargs):
         res = []
         for id in self.shows:

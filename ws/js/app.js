@@ -34,6 +34,7 @@ Ext.onReady(function(){
             stateId:id,
             items:[
                 Ext.create(typemap[type], {
+                    id:id,
                     socket:socket
                 })
             ]

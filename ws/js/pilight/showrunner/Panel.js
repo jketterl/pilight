@@ -9,36 +9,38 @@ Ext.define('pilight.showrunner.Show', {
 
 Ext.define('pilight.showrunner.Panel', {
     extend:'Ext.grid.Panel',
-    store:Ext.data.Store({
-        model:'pilight.showrunner.Show',
-        data:[]
-    }),
-    columns:[
-        {header:'Name', dataIndex:'name', flex:1},
-        {header:'', dataIndex:'running', width:50, renderer:function(v){
-            if (v) return 'ON';
-            return '';
-        }}
-    ],
     width:250,
     height:300,
     initComponent:function(){
         var me = this;
 
-        me.socket.sendCommand({module:'showmanager', command:'getShows'}, function(data){
+        me.store = Ext.create('Ext.data.Store', {
+            model:'pilight.showrunner.Show',
+            data:[]
+        });
+
+        me.columns = [
+            {header:'Name', dataIndex:'name', flex:1},
+            {header:'', dataIndex:'running', width:50, renderer:function(v){
+                if (v) return 'ON';
+                return '';
+            }}
+        ]
+
+        me.socket.sendCommand({module:me.getId(), command:'getShows'}, function(data){
             data.forEach(function(data){
                 var show = Ext.create('pilight.showrunner.Show', data);
                 me.store.add(show);
             });
         });
 
-        me.socket.listen('showmanager', me);
+        me.socket.listen(me.getId(), me);
 
         var startShow = function(show) {
-            me.socket.sendCommand({module:'showmanager', command:'startShow', params:{id:show.get('id')}}); 
+            me.socket.sendCommand({module:me.getId(), command:'startShow', params:{id:show.get('id')}}); 
         };
         var stopShow = function(show) {
-            me.socket.sendCommand({module:'showmanager', command:'stopShow', params:{id:show.get('id')}});
+            me.socket.sendCommand({module:me.getId(), command:'stopShow', params:{id:show.get('id')}});
         };
 
         me.dockedItems = [{
@@ -62,7 +64,7 @@ Ext.define('pilight.showrunner.Panel', {
                 xtype:'button',
                 text:'Alle Shows stoppen',
                 handler:function(){
-                    me.socket.sendCommand({module:'showmanager', command:'stopAllShows'});
+                    me.socket.sendCommand({module:me.getId(), command:'stopAllShows'});
                 }
             }]
         }];
