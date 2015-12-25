@@ -79,6 +79,7 @@ class RemoteThread(Thread):
         self.banks = banks
         self.bank = 0
         super(RemoteThread, self).__init__()
+        self.sendBankName()
     def getCurrentBank(self):
         if (self.bank >= len(self.banks)): return None
         return self.banks[self.bank]
@@ -100,10 +101,10 @@ class RemoteThread(Thread):
                             bank.faders[i].setValue(buf[i+3])
                 elif (type == "BUP"):
                     self.bank = (self.bank + 1) % len(self.banks)
-                    print("bank up: " + self.getCurrentBank().name)
+                    self.sendBankName()
                 elif (type == "BDN"):
                     self.bank = (self.bank - 1) % len(self.banks)
-                    print("bank down: " + self.getCurrentBank().name)
+                    self.sendBankName()
                 elif (type == "BUT"):
                     buttons = buf[3]
                     if bank is not None:
@@ -111,3 +112,10 @@ class RemoteThread(Thread):
                             bank.buttons[i].setValue(255 if buttons & (1 << i) else 0)
     def send(self, message):
         self.conn.sendall(message)
+    def sendBankName(self):
+        name = self.getCurrentBank().name
+        message = bytearray(4 + len(name))
+        message[0:3] = 'BNK'
+        message[3] = len(name)
+        message[4:] = name
+        self.send(message)
