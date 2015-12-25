@@ -1,7 +1,7 @@
 Ext.define('pilight.submaster.Submaster', {
     extend:'pilight.control.Controllable',
     getId:function(){
-        return 'submaster'
+        return this.id
     },
     getChannels:function(callback){
         var me = this;

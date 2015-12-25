@@ -9,7 +9,8 @@ Ext.define('pilight.submaster.Panel', {
         var me = this;
 
         var submaster = Ext.create('pilight.submaster.Submaster', {
-            socket:me.socket
+            socket:me.socket,
+            id:me.id
         });
         
         submaster.getChannels(function(channels){
