@@ -17,7 +17,8 @@ class ChannelListener(object):
         self.submaster.emit({'name':self.name, 'value':value})
 
 class SubMaster(Controllable, Universe):
-    def __init__(self, channelNames = [], count = 512):
+    def __init__(self, channelNames = [], count = 512, id = "submaster"):
+        self.id = id
         super(SubMaster, self).__init__(count)
         master = Channel()
         master.addListener(ChannelListener('master', self))
@@ -53,7 +54,7 @@ class SubMaster(Controllable, Universe):
         self.currentChannel.setValue(0);
 
     def getId(self):
-        return "submaster"
+        return self.id
     def setChannelValue(self, channel='main', value=0, **kwargs):
         self.getChannel(channel).setValue(value)
     def getValues(self, **kwargs):
