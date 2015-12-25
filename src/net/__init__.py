@@ -113,7 +113,9 @@ class RemoteThread(Thread):
     def send(self, message):
         self.conn.sendall(message)
     def sendBankName(self):
-        name = self.getCurrentBank().name
+        bank = self.getCurrentBank()
+        if bank is None: return
+        name = bank.name
         message = bytearray(4 + len(name))
         message[0:3] = 'BNK'
         message[3] = len(name)
