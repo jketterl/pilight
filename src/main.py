@@ -321,6 +321,10 @@ if __name__ == '__main__':
 
     treeShowManager = ShowManager(id = 'treeshowmanager')
     treeShowManager.addShow('twinkle', 'Twinkle', ['Twinkle'], treeFilter)
+    treeShowManager.addShow('snow', 'Snow', ['Snow'], treeFilter)
+    treeShowManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'], treeFilter)
+    treeShowManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'], treeFilter)
+    treeShowManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'], treeFilter)
 
     bank = Bank("default")
     ChannelMapping(bank.faders[1], subMaster.getChannel('PARs red'))
