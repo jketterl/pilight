@@ -31,6 +31,8 @@ from net import UDPReceiver, RemoteServer, Bank
 
 from gpio import GPIOInput
 
+import threading, ctypes
+
 class LightWake(Alert):
     def __init__(self, manager):
         print "initializing light wake"
@@ -386,6 +388,33 @@ if __name__ == '__main__':
         try:
             time.sleep(10)
         except (KeyboardInterrupt):
-            showRunner.stopCurrentShow()
             Output.stopAll()
             run = False
+
+            print('killing background threads...')
+            for thread in threading.enumerate():
+                if (thread != threading.currentThread()):
+                    try:
+                        thread.stop()
+                        print("regular stop: " + str(thread))
+                    except AttributeError:
+                        print("force kiling " + str(thread))
+                        exc = ctypes.py_object(SystemExit)
+                        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc)
+                        if res == 0:
+                            raise ValueError("nonexistent thread id")
+                        elif res > 1:
+                            # """if it returns a number greater than one, you're in trouble,
+                            # and you should call it again with exc=NULL to revert the effect"""
+                            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread.ident, None)
+                            print("unable to kill " + str(thread))
+                            #raise SystemError("PyThreadState_SetAsyncExc failed") 
+            print('done')
+
+            '''
+            while threading.activeCount() > 1:
+                for thread in threading.enumerate():
+                    print('still running: ' + str(thread))
+
+                time.sleep(10)
+            '''

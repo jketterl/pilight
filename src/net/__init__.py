@@ -1,5 +1,5 @@
 from threading import Thread
-import select, socket, time
+import select, socket, time, os
 
 from universe import Universe
 from output import Output
@@ -11,17 +11,21 @@ class UDPReceiver(Thread):
         s.bind(('', 9000))
         s.setblocking(0)
 
-        while (self.doRun):
-            result = select.select([s], [], [])
-            msg, src = result[0][0].recvfrom(1024)
-            if (msg.rstrip('\0') == 'hello pilight'):
-                print "incoming pilight broadcast from " + src[0]
+        self.interruptPipe = os.pipe()
 
-                res = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                res.sendto("hello remote", (src[0], 9001))
+        while (self.doRun):
+            result = select.select([s, self.interruptPipe[0]], [], [])
+            if (result[0][0] == s):
+                msg, src = result[0][0].recvfrom(1024)
+                if (msg.rstrip('\0') == 'hello pilight'):
+                    print "incoming pilight broadcast from " + src[0]
+
+                    res = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    res.sendto("hello remote", (src[0], 9001))
 
     def stop(self):
         self.doRun = False
+        os.write(self.interruptPipe[1], 'x')
 
 class Bank:
     def __init__(self, name):
@@ -51,6 +55,7 @@ class RemoteServer(Thread):
         super(RemoteServer, self).__init__()
     def run(self):
         self.doRun = True
+        self.interruptPipe = os.pipe()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -58,11 +63,16 @@ class RemoteServer(Thread):
         s.listen(1)
 
         while (self.doRun):
-            conn, addr = s.accept()
-            print "new remote connection from ", addr
-            remote = RemoteThread(conn, self.banks)
-            self.sockets.append(remote)
-            remote.start()
+            res = select.select([s, self.interruptPipe[0]], [], [])
+            if (res[0][0] == s):
+                conn, addr = s.accept()
+                print "new remote connection from ", addr
+                remote = RemoteThread(conn, self.banks)
+                self.sockets.append(remote)
+                remote.start()
+    def stop(self):
+        self.doRun = False
+        os.write(self.interruptPipe[1], 'x')
     def addBank(self, bank):
         self.banks.append(bank)
         bank.leds.setOutput(SocketOutput(self, 8))
@@ -85,31 +95,38 @@ class RemoteThread(Thread):
         return self.banks[self.bank]
     def run(self):
         self.doRun = True
+        self.interruptPipe = os.pipe()
+
         buf = bytearray(11)
         view = memoryview(buf)
         while (self.doRun):
-            read = self.conn.recv_into(view, 11)
-            if (read < 0):
-                print "WARN: error receiving on socket"
-            if (read >= 11):
-                type = buf[0:3]
-                bank = self.getCurrentBank()
+            res = select.select([self.conn, self.interruptPipe[0]], [], [])
+            if (res[0][0] == self.conn):
+                read = self.conn.recv_into(view, 11)
+                if (read < 0):
+                    print "WARN: error receiving on socket"
+                if (read >= 11):
+                    type = buf[0:3]
+                    bank = self.getCurrentBank()
 
-                if (type == "VAL"):
-                    if bank is not None:
-                        for i in range(8):
-                            bank.faders[i].setValue(buf[i+3])
-                elif (type == "BUP"):
-                    self.bank = (self.bank + 1) % len(self.banks)
-                    self.sendBankName()
-                elif (type == "BDN"):
-                    self.bank = (self.bank - 1) % len(self.banks)
-                    self.sendBankName()
-                elif (type == "BUT"):
-                    buttons = buf[3]
-                    if bank is not None:
-                        for i in range(8):
-                            bank.buttons[i].setValue(255 if buttons & (1 << i) else 0)
+                    if (type == "VAL"):
+                        if bank is not None:
+                            for i in range(8):
+                                bank.faders[i].setValue(buf[i+3])
+                    elif (type == "BUP"):
+                        self.bank = (self.bank + 1) % len(self.banks)
+                        self.sendBankName()
+                    elif (type == "BDN"):
+                        self.bank = (self.bank - 1) % len(self.banks)
+                        self.sendBankName()
+                    elif (type == "BUT"):
+                        buttons = buf[3]
+                        if bank is not None:
+                            for i in range(8):
+                                bank.buttons[i].setValue(255 if buttons & (1 << i) else 0)
+    def stop(self):
+        self.doRun = False
+        os.write(self.interruptPipe[1], 'x')
     def send(self, message):
         self.conn.sendall(message)
     def sendBankName(self):

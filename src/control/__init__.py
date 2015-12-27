@@ -61,6 +61,12 @@ class Controllable(object):
     def unregister(self):
         ControlServer.getInstance().unregisterControllable(self)
 
+class IOThread(threading.Thread):
+    def run(self):
+        ioloop.IOLoop.instance().start()
+    def stop(self):
+        ioloop.IOLoop.instance().stop()
+
 class ControlServer(Controllable):
     _instance = None
     @staticmethod
@@ -71,7 +77,8 @@ class ControlServer(Controllable):
     def __init__(self, *args, **kwargs):
         self.app = web.Application([(r"/control", ControlSocket)])
         self.app.listen(9001)
-        threading.Thread(target = ioloop.IOLoop.instance().start).start()
+        IOThread().start()
+        #threading.Thread(target = ioloop.IOLoop.instance().start).start()
 
         self.controllables = {}
 
