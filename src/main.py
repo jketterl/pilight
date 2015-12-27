@@ -294,6 +294,10 @@ if __name__ == '__main__':
 
     subMaster.mapChannels('halogen', FixtureManager.filter(lambda f : f.hasTag('halogen')).getChannels('brightness'))
 
+    treeSubMaster = SubMaster(['tree red', 'tree green', 'tree blue'], id='treesubmaster')
+    for name in ['red', 'green', 'blue']:
+        treeSubMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('tree')).getChannels(name))
+
     showManager = ShowManager()
 
     showManager.addShow('knightrider', 'Knight Rider', [
@@ -335,13 +339,6 @@ if __name__ == '__main__':
     ChannelMapping(bank.faders[4], subMaster.getChannel('dimmer blue'))
     ChannelMapping(bank.faders[7], subMaster.getChannel('dj'))
     ChannelMapping(bank.faders[6], subMaster.getChannel('halogen'))
-    '''
-    ChannelMapping(bank.buttons[0], subMaster.getChannel('dimmer red'))
-    ChannelMapping(bank.buttons[1], subMaster.getChannel('dimmer green'))
-    ChannelMapping(bank.buttons[2], subMaster.getChannel('dimmer blue'))
-    ChannelMapping(bank.buttons[3], subMaster.getChannel('dimmer white'))
-    ChannelMapping(bank.buttons[4], subMaster.getChannel('dj'))
-    '''
     ShowButtonMapping(bank.buttons[0], showManager, 'colorwheel', bank.leds[0])
     ShowButtonMapping(bank.buttons[1], showManager, 'twinkle', bank.leds[1])
     ShowButtonMapping(bank.buttons[2], showManager, 'fft', bank.leds[2])
@@ -353,6 +350,18 @@ if __name__ == '__main__':
     ChannelMapping(bank.faders[1], subMaster.getChannel('master red'))
     ChannelMapping(bank.faders[3], subMaster.getChannel('master green'))
     ChannelMapping(bank.faders[5], subMaster.getChannel('master blue'))
+    remoteServer.addBank(bank)
+
+    bank = Bank("xmas tree")
+    ChannelMapping(bank.faders[0], treeSubMaster.getChannel('tree red'))
+    ChannelMapping(bank.faders[2], treeSubMaster.getChannel('tree green'))
+    ChannelMapping(bank.faders[4], treeSubMaster.getChannel('tree blue'))
+    ChannelMapping(bank.faders[6], treeSubMaster.getChannel('master'))
+    ShowButtonMapping(bank.buttons[0], treeShowManager, 'twinkle', bank.leds[0])
+    ShowButtonMapping(bank.buttons[1], treeShowManager, 'snow', bank.leds[1])
+    ShowButtonMapping(bank.buttons[2], treeShowManager, 'bpmstrobe', bank.leds[2])
+    ShowFaderMapping(treeShowManager, 'colorwheel', {'value': bank.faders[1], 'speed': bank.faders[3]})
+    ShowFaderMapping(treeShowManager, 'lichterkette', {'brightness': bank.faders[5]})
     remoteServer.addBank(bank)
     
     lircListener = LircListener({
