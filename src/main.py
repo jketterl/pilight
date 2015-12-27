@@ -29,6 +29,8 @@ import datetime
 
 from net import UDPReceiver, RemoteServer, Bank
 
+from gpio import GPIOInput
+
 class LightWake(Alert):
     def __init__(self, manager):
         print "initializing light wake"
@@ -259,7 +261,7 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, 99 + i * 3)
         fixture.addTags(['ws2811', 'pixel', 'tree'])
 
-    for i in range(6):
+    for i in range(2):
         fixture = Dimmer()
         fixture.mapToUniverse(universe, 56 + i)
         fixture.addTags(['halogen', '230v'])
@@ -375,6 +377,9 @@ if __name__ == '__main__':
     #MidiBridge(subMaster)
 
     LightWake(showManager)
+
+    gpio = GPIOInput([4])
+    ChannelMapping(gpio.universe[0], subMaster.getChannel('dimmer white'))
 
     run = True
     while run:
