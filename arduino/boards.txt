@@ -1,4 +1,9 @@
 deonardo.name=DEonardo
+deonardo.vid.0=0x04B4
+deonardo.pid.0=0x0F1F
+deonardo.vid.1=0x04B4
+deonardo.pid.1=0x0F1F
+deonardo.upload.tool=avrdude
 deonardo.upload.protocol=avr109
 deonardo.upload.maximum_size=28672
 deonardo.upload.speed=57600
@@ -16,3 +21,4 @@ deonardo.build.vid=0x04B4
 deonardo.build.pid=0x0F1F
 deonardo.build.core=decore
 deonardo.build.variant=leonardo
+deonardo.build.extra_flags={build.usb_flags}
