@@ -227,14 +227,12 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel', 'wall'])
 
-    '''
     universe = Universe()
-    universe.setOutput(Output.factory('SerialOutput', 2, 150))
+    universe.setOutput(Output.factory('ArtnetOutput', '192.168.1.255'))
     for i in range(50):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
-        fixture.addTags(['ws2801', 'pixel', 'tree'])
-    '''
+        fixture.addTags(['ws2811', 'pixel', 'artnet'])
 
     bands = []
     universe = Universe()
@@ -250,18 +248,6 @@ if __name__ == '__main__':
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, 20 + i * 6)
         fixture.addTags(['dmx', 'par'])
-
-    '''
-    for i in range(50):
-        fixture = RGBFixture(channelSequence='RGB')
-        fixture.mapToUniverse(universe, 20 + i * 6)
-        fixture.addTags(['dmx', 'par'])
-
-    '''
-    for i in range(100):
-        fixture = RGBFixture(channelSequence='RGB')
-        fixture.mapToUniverse(universe, 99 + i * 3)
-        fixture.addTags(['ws2811', 'pixel', 'tree'])
 
     for i in range(2):
         fixture = Dimmer()
@@ -298,10 +284,6 @@ if __name__ == '__main__':
 
     subMaster.mapChannels('halogen', FixtureManager.filter(lambda f : f.hasTag('halogen')).getChannels('brightness'))
 
-    treeSubMaster = SubMaster(['tree red', 'tree green', 'tree blue'], id='treesubmaster')
-    for name in ['red', 'green', 'blue']:
-        treeSubMaster.mapChannels('tree ' + name, FixtureManager.filter(lambda f : f.hasTag('tree')).getChannels(name))
-
     showManager = ShowManager()
 
     showManager.addShow('knightrider', 'Knight Rider', [
@@ -323,16 +305,6 @@ if __name__ == '__main__':
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
     showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
     showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
-
-    def treeFilter(f):
-        return f.hasTag('tree')
-
-    treeShowManager = ShowManager(id = 'treeshowmanager')
-    treeShowManager.addShow('twinkle', 'Twinkle', ['Twinkle'], treeFilter)
-    treeShowManager.addShow('snow', 'Snow', ['Snow'], treeFilter)
-    treeShowManager.addShow('colorwheel', 'Color Wheel', ['ColorWheel'], treeFilter)
-    treeShowManager.addShow('bpmstrobe', 'BPM Strobe', ['BPMStrobe'], treeFilter)
-    treeShowManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'], treeFilter)
 
     bank = Bank("default")
     ChannelMapping(bank.faders[1], subMaster.getChannel('PARs red'))
@@ -356,18 +328,6 @@ if __name__ == '__main__':
     ChannelMapping(bank.faders[5], subMaster.getChannel('master blue'))
     remoteServer.addBank(bank)
 
-    bank = Bank("xmas tree")
-    ChannelMapping(bank.faders[0], treeSubMaster.getChannel('tree red'))
-    ChannelMapping(bank.faders[2], treeSubMaster.getChannel('tree green'))
-    ChannelMapping(bank.faders[4], treeSubMaster.getChannel('tree blue'))
-    ChannelMapping(bank.faders[6], treeSubMaster.getChannel('master'))
-    ShowButtonMapping(bank.buttons[0], treeShowManager, 'twinkle', bank.leds[0])
-    ShowButtonMapping(bank.buttons[1], treeShowManager, 'snow', bank.leds[1])
-    ShowButtonMapping(bank.buttons[2], treeShowManager, 'bpmstrobe', bank.leds[2])
-    ShowFaderMapping(treeShowManager, 'colorwheel', {'value': bank.faders[1], 'speed': bank.faders[3]})
-    ShowFaderMapping(treeShowManager, 'lichterkette', {'brightness': bank.faders[5]})
-    remoteServer.addBank(bank)
-    
     lircListener = LircListener({
         "subMaster":subMaster,
         "showManager":showManager
