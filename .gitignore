@@ -38,3 +38,6 @@ eagle.epf
 *.info
 
 *.eps
+
+# android studio
+*.iml
