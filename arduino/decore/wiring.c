@@ -140,7 +140,7 @@ void delayMicroseconds(unsigned int us)
 	// delay requested.
 	us = (us<<2) + us; // x5 us
 
-	// account for the time taken in the preceeding commands.
+	// account for the time taken in the preceding commands.
 	us -= 2;
 
 #elif F_CPU >= 16000000L
@@ -156,7 +156,7 @@ void delayMicroseconds(unsigned int us)
 	// delay requested.
 	us <<= 2;
 
-	// account for the time taken in the preceeding commands.
+	// account for the time taken in the preceding commands.
 	us -= 2;
 #else
 	// for the 8 MHz internal clock on the ATmega168
@@ -174,7 +174,7 @@ void delayMicroseconds(unsigned int us)
 	// delay requested.
 	us <<= 1;
     
-	// partially compensate for the time taken by the preceeding commands.
+	// partially compensate for the time taken by the preceding commands.
 	// we can't subtract any more than this or we'd overflow w/ small delays.
 	us--;
 #endif
