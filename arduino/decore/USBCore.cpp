@@ -546,7 +546,7 @@ void receiveInterfaceConfig(u8 data[32]) {
 	uint16_t time;
 
 	// all time values must be scaled since they are based on a 12MHz frequency
-	// and substracted from 0xFFFF since timer1 is count-up to 0xFFFF
+	// and subtracted from 0xFFFF since timer1 is count-up to 0xFFFF
 
 	time = data[2] << 8 | data[1];
 	ic.breakTime = 0xFFFF - (time * 4 / 3);
