@@ -8,10 +8,10 @@ from . import Show
 import time
 
 class KnightRider(Show):
-    def __init__(self, highval, lowval):
+    def __init__(self, highval, lowval, *args, **kwargs):
         self.highval = highval
         self.lowval = lowval
-        super(KnightRider, self).__init__();
+        super(KnightRider, self).__init__(*args, **kwargs);
         
     def run(self):
         fixtures = self.fixtureList.filter(lambda f : f.hasTag('rgb'))
