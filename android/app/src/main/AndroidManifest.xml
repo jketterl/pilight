@@ -2,13 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.justjakob.pilight" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="de.justjakob.pilight.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,30 +19,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.justjakob.pilight.MainSettings"
+            android:name=".MainSettings"
             android:label="@string/title_activity_main_settings"
-            android:parentActivityName="de.justjakob.pilight.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.justjakob.pilight.MainActivity" />
         </activity>
 
         <service
-            android:name="de.justjakob.pilight.connection.ConnectionService"
+            android:name=".connection.ConnectionService"
             android:enabled="true"
             android:exported="true" >
         </service>
 
-        <activity
-            android:name="de.justjakob.pilight.activity.ControllableViewer"
-            android:label="@string/title_activity_controllable_viewer"
-            android:parentActivityName="de.justjakob.pilight.MainActivity" >
+        <service
+            android:name=".LightSwitchService"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <receiver android:name=".LightSwitchWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.justjakob.pilight.MainActivity" />
+                android:name="android.appwidget.provider"
+                android:resource="@xml/light_switch_widget_info" />
+        </receiver>
+
+        <activity android:name=".LightSwitchWidgetConfigureActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
         </activity>
     </application>
-    
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
