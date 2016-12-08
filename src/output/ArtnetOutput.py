@@ -9,9 +9,12 @@ class ArtnetOutput(BufferedOutput):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.socket.connect((target, 6454))
-        super(ArtnetOutput, self).__init__(256)
+        super(ArtnetOutput, self).__init__(512)
     def write(self):
         packet = DmxPacket(universe = self.artnetUniverse)
         for i, value in enumerate(self.buffer):
             packet[i] = value
-        self.socket.sendall(packet.encode())
+        try:
+            self.socket.sendall(packet.encode())
+        except socket.error:
+            pass
