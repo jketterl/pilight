@@ -227,12 +227,14 @@ if __name__ == '__main__':
         fixture.mapToUniverse(universe, i * 3)
         fixture.addTags(['ws2801', 'pixel', 'wall'])
 
+    '''
     universe = Universe()
-    universe.setOutput(Output.factory('ArtnetOutput', 0, '192.168.1.124'))
-    for i in range(50):
+    universe.setOutput(Output.factory('ArtnetOutput', 0))
+    for i in range(100):
         fixture = RGBFixture(channelSequence='RGB')
         fixture.mapToUniverse(universe, i * 3)
-        fixture.addTags(['ws2811', 'pixel', 'artnet'])
+        fixture.addTags(['ws2811', 'pixel', 'artnet', 'balcony'])
+    '''
 
     '''
     pixels = [
@@ -250,7 +252,7 @@ if __name__ == '__main__':
 
     for ip, uni in pixels:
         universe = Universe()
-        universe.setOutput(Output.factory('ArtnetOutput', uni, ip))
+        universe.setOutput(Output.factory('ArtnetOutput', uni))
         for k in reversed(range(60)):
             fixture = RGBFixture(channelSequence='GRB')
             fixture.mapToUniverse(universe, k * 3)
@@ -326,7 +328,7 @@ if __name__ == '__main__':
     showManager.addShow('twinkle', 'Twinkle', ['Twinkle'])
     showManager.addShow('wakelight', 'Wakelight', ['Wakelight'])
     showManager.addShow('lichterkette', 'Lichterkette', ['Lichterkette'])
-    showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
+    #showManager.addShow('lichterketteb', 'Lichterkette @ Balkon', ['Lichterkette'], lambda x: x.hasTag('balcony'))
     showManager.addShow('parblip', 'Par Blip', ['PARBlip'])
     showManager.addShow('bigfft', 'Big FFT', ['FFT'], lambda x: x.hasTag('ledbar'))
 
