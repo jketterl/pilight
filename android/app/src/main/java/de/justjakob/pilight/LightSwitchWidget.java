@@ -68,7 +68,7 @@ public class LightSwitchWidget extends AppWidgetProvider {
         intent.setAction(LIGHTSWITCH_ACTION);
         intent.putExtra("widgetId", appWidgetId);
         intent.putExtra("channel", channelName);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA | PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.lightswitch, pendingIntent);
 
         // Instruct the widget manager to update the widget

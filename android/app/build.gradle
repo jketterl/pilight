@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 34
     defaultConfig {
         applicationId 'de.justjakob.pilight'
-        minSdkVersion 15
-        targetSdkVersion 21
+        minSdkVersion 23
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
     }
@@ -18,9 +17,16 @@ android {
     }
     productFlavors {
     }
+    namespace 'de.justjakob.pilight'
+    useLibrary  'org.apache.http.legacy'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
